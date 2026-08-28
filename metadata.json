@@ -1,0 +1,11 @@
+{
+  "name": "ArtLynk",
+  "description": "The Pan-India Multilingual Handmade Craft Direct Interface connecting verified grassroots Indian artisans with global buyers via Gemini AI voice \u0026 visual cataloging in 10+ Indian languages.",
+  "requestFramePermissions": [
+    "microphone",
+    "camera"
+  ],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}

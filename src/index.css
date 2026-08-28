@@ -1,0 +1,234 @@
+@import "tailwindcss";
+
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+@layer base {
+  :root {
+    --font-heading: 'Playfair Display', Georgia, serif;
+    --font-royal: 'Rozha One', 'Cinzel', serif;
+    --color-canvas: #FAF9F6;
+    --color-surface: #FFFFFF;
+    --color-primary: #0F1E2E;
+    --color-terracotta: #A84A2C;
+    --color-ochre: #B88E28;
+    --color-border: #E8E2D8;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
+    overflow-x: hidden;
+    max-width: 100vw;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    overscroll-behavior-y: none; /* Prevents unwanted rubber-band / bounce gaps */
+    overflow-x: hidden;
+    max-width: 100vw;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    background-color: #FAF9F6;
+    color: #1E2838;
+    line-height: 1.6;
+    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+  }
+
+  #root {
+    overflow-x: hidden;
+    max-width: 100vw;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    min-height: 100vh;
+  }
+}
+
+/* Editorial Aesthetic & Indian Subtle Textures */
+.jaali-pattern {
+  background-image: radial-gradient(#B88E28 0.5px, transparent 0.5px);
+  background-size: 24px 24px;
+  opacity: 0.08;
+}
+
+.mandala-spinner {
+  border: 1.5px dashed #B88E28;
+  border-radius: 50%;
+  width: 320px;
+  height: 320px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  animation: spin-slow 40s linear infinite;
+  pointer-events: none;
+  opacity: 0.25;
+}
+
+.bhasha-tag {
+  font-family: ui-sans-serif, system-ui, sans-serif;
+  font-size: 10px;
+  padding: 3px 8px;
+  border-radius: 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+}
+
+.bg-jaali-pattern {
+  background-color: #FAF8F5;
+  background-image: radial-gradient(#B88E28 0.6px, transparent 0.6px), radial-gradient(#A84A2C 0.6px, #FAF8F5 0.6px);
+  background-size: 32px 32px;
+  background-position: 0 0, 16px 16px;
+}
+
+.bg-jaali-dark {
+  background-color: #1E2838;
+  background-image: radial-gradient(#B88E28 0.5px, transparent 0.5px), radial-gradient(#A84A2C 0.5px, #1E2838 0.5px);
+  background-size: 30px 30px;
+  background-position: 0 0, 15px 15px;
+}
+
+.bg-mandala-radial {
+  background: radial-gradient(circle at center, rgba(184, 142, 40, 0.08) 0%, rgba(168, 74, 44, 0.03) 50%, transparent 70%);
+}
+
+.gold-glow {
+  box-shadow: 0 4px 20px -4px rgba(184, 142, 40, 0.15);
+}
+
+.gold-border-gradient {
+  border-image: linear-gradient(to right, #B88E28, #D4A373, #B88E28) 1;
+}
+
+.royal-parchment {
+  background: radial-gradient(circle at 50% 50%, #FAF8F5 0%, #F5F0E8 100%);
+  box-shadow: inset 0 0 20px rgba(168, 74, 44, 0.02), 0 8px 24px -8px rgba(30, 40, 56, 0.08);
+}
+
+/* Animations */
+@keyframes spin-slow {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes spin-reverse-slow {
+  from {
+    transform: rotate(360deg);
+  }
+  to {
+    transform: rotate(0deg);
+  }
+}
+
+@keyframes laser-sweep {
+  0% {
+    top: 0%;
+    opacity: 0.7;
+  }
+  50% {
+    top: 96%;
+    opacity: 0.9;
+  }
+  100% {
+    top: 0%;
+    opacity: 0.7;
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+.animate-spin-slow {
+  animation: spin-slow 28s linear infinite;
+}
+
+.animate-spin-reverse-slow {
+  animation: spin-reverse-slow 22s linear infinite;
+}
+
+.animate-laser-sweep {
+  animation: laser-sweep 3s ease-in-out infinite;
+}
+
+.shimmer-gold {
+  background: linear-gradient(90deg, rgba(184,142,40,0) 0%, rgba(184,142,40,0.2) 50%, rgba(184,142,40,0) 100%);
+  background-size: 200% 100%;
+  animation: shimmer 3s infinite;
+}
+
+/* Universal Scrollbar Visibility Removal (Fully Scrollable, Zero Visible Scrollbar) */
+* {
+  scrollbar-width: none !important; /* Firefox */
+  -ms-overflow-style: none !important; /* IE 10+ and Edge */
+}
+
+*::-webkit-scrollbar {
+  display: none !important; /* Chrome, Safari, Opera */
+  width: 0px !important;
+  height: 0px !important;
+  background: transparent !important;
+}
+
+*::-webkit-scrollbar-track,
+*::-webkit-scrollbar-track-piece,
+*::-webkit-scrollbar-thumb,
+*::-webkit-scrollbar-corner {
+  display: none !important;
+  background: transparent !important;
+}
+
+html, body, #root, div, section, main, aside, nav, article, ul, ol, form {
+  scrollbar-width: none !important;
+  -ms-overflow-style: none !important;
+}
+
+/* Locomotive Scroll in-view transition classes */
+[data-scroll] {
+  transition: opacity 0.8s cubic-bezier(0.25, 1, 0.5, 1), transform 0.8s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+.is-inview {
+  opacity: 1 !important;
+  transform: translateY(0) scale(1) !important;
+}
+
+/* Scroll-Lock & Anti-Leakage Rules */
+body.overflow-hidden,
+html.overflow-hidden {
+  overflow: hidden !important;
+}
+
+[data-lenis-prevent],
+.overscroll-contain,
+.overflow-y-auto {
+  overscroll-behavior: contain !important;
+  -webkit-overflow-scrolling: touch !important;
+  touch-action: pan-y !important;
+  pointer-events: auto !important;
+}
+
+
