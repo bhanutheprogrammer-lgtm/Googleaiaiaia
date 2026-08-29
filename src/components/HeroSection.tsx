@@ -143,7 +143,9 @@ export const HeroSection: React.FC = () => {
         {/* Editorial Search & Category Filter Strip */}
         <div className={`mt-6 sm:mt-8 pt-6 border-t ${isDarkMode ? 'border-amber-500/20' : 'border-amber-900/10'}`}>
           <div className="max-w-4xl mx-auto">
-            <div className={`relative flex items-center rounded-2xl shadow-sm border p-2 focus-within:border-[#A84A2C] focus-within:ring-2 focus-within:ring-[#A84A2C]/20 transition-all ${
+            <div 
+              id="voice-search-bar"
+              className={`relative flex items-center rounded-2xl shadow-sm border p-2 focus-within:border-[#A84A2C] focus-within:ring-2 focus-within:ring-[#A84A2C]/20 transition-all ${
               isDarkMode 
                 ? 'bg-[#0C1F30]/90 border-amber-500/30' 
                 : 'bg-white border-amber-900/15'
@@ -192,7 +194,7 @@ export const HeroSection: React.FC = () => {
             </div>
 
             {/* Category Chips - Editorial Styling */}
-            <div className="flex items-center justify-center flex-wrap gap-2 mt-4">
+            <div id="craft-categories-container" className="flex items-center justify-center flex-wrap gap-2 mt-4">
               {categories.map((cat) => (
                 <button
                   key={cat.name}
