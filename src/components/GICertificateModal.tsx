@@ -16,7 +16,7 @@ import {
   FileText
 } from 'lucide-react';
 import gsap from 'gsap';
-import html2canvas from 'html2canvas';
+import { toPng } from 'html-to-image';
 import jsPDF from 'jspdf';
 import { useArtisan } from '../context/ArtisanContext';
 import { useAuth } from '../context/AuthContext';
@@ -184,27 +184,36 @@ export const GICertificateModal: React.FC = () => {
       setDownloadProgress(15);
       setDownloadStage('Preparing parchment & high-res vector seals...');
 
-      await new Promise((resolve) => setTimeout(resolve, 250));
-      setDownloadProgress(40);
+      await new Promise((resolve) => setTimeout(resolve, 200));
+      setDownloadProgress(45);
       setDownloadStage('Rasterizing GI typography and security watermarks...');
 
       const certificateElement = printRef.current;
 
-      // Render crisp canvas at 2x pixel ratio for print-ready resolution
-      const canvas = await html2canvas(certificateElement, {
-        scale: 2,
-        useCORS: true,
-        allowTaint: true,
+      // Render crisp image at 2x pixel ratio for print-ready resolution using native SVG foreignObject
+      // skipFonts: true and fontEmbedCSS: '' prevent SecurityError on cross-origin CDN stylesheets (Google Fonts)
+      const imgData = await toPng(certificateElement, {
+        pixelRatio: 2,
         backgroundColor: '#FCF9F2',
-        logging: false,
-        windowWidth: certificateElement.scrollWidth,
-        windowHeight: certificateElement.scrollHeight,
+        skipFonts: true,
+        fontEmbedCSS: '',
+        cacheBust: true,
       });
 
       setDownloadProgress(75);
       setDownloadStage('Formatting high-resolution A4 document...');
 
-      const imgData = canvas.toDataURL('image/jpeg', 0.98);
+      // Load image to compute exact aspect ratio
+      const img = new Image();
+      img.src = imgData;
+      await new Promise((resolve) => {
+        img.onload = () => resolve(true);
+        img.onerror = () => resolve(true);
+      });
+
+      const imgWidth = img.naturalWidth || certificateElement.scrollWidth || 800;
+      const imgHeight = img.naturalHeight || certificateElement.scrollHeight || 1100;
+      const imgRatio = imgWidth / imgHeight;
 
       // Create jsPDF instance (Standard A4 Portrait: 210mm x 297mm)
       const pdf = new jsPDF({
@@ -220,7 +229,6 @@ export const GICertificateModal: React.FC = () => {
       const maxPrintWidth = pageWidth - (margin * 2);
       const maxPrintHeight = pageHeight - (margin * 2);
 
-      const imgRatio = canvas.width / canvas.height;
       let printWidth = maxPrintWidth;
       let printHeight = printWidth / imgRatio;
 
@@ -232,7 +240,7 @@ export const GICertificateModal: React.FC = () => {
       const xOffset = margin + (maxPrintWidth - printWidth) / 2;
       const yOffset = margin + (maxPrintHeight - printHeight) / 2;
 
-      pdf.addImage(imgData, 'JPEG', xOffset, yOffset, printWidth, printHeight, undefined, 'FAST');
+      pdf.addImage(imgData, 'PNG', xOffset, yOffset, printWidth, printHeight, undefined, 'FAST');
 
       setDownloadProgress(95);
       setDownloadStage('Saving PDF to your device...');
