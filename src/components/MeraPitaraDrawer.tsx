@@ -226,15 +226,14 @@ export const MeraPitaraDrawer: React.FC = () => {
 
                       <button
                         onClick={() => {
-                          acquireCraftCertificate(craft);
+                          setSelectedCraftForCertificate(craft);
                           handleClose();
-                          setActiveTab('certificates');
                         }}
                         className="py-1.5 px-2 bg-white/10 hover:bg-white/20 border border-amber-500/30 text-amber-200 rounded-lg text-[10px] font-bold font-sans flex items-center justify-center gap-1 transition-colors cursor-pointer"
-                        title="Acquire & generate Certificate in Vault"
+                        title="View Official GI Certificate"
                       >
                         <Award className="w-3 h-3 text-amber-300" />
-                        <span>Acquire</span>
+                        <span>Certificate</span>
                       </button>
 
                       <SocialShareButton
