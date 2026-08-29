@@ -1,9 +1,10 @@
-import React from 'react';
+import React, { useRef, useEffect } from 'react';
 import { 
   ShieldCheck,
   Heart
 } from 'lucide-react';
 import { motion } from 'motion/react';
+import gsap from 'gsap';
 import { useArtisan } from '../../context/ArtisanContext';
 import { useAuth } from '../../context/AuthContext';
 import { BuyerProfile } from '../../types';
@@ -20,9 +21,38 @@ interface BuyerMarketplaceViewProps {
 export const BuyerMarketplaceView: React.FC<BuyerMarketplaceViewProps> = ({ buyer: propBuyer }) => {
   const { activeTab, setActiveTab, t } = useArtisan();
   const { buyerUser, wishlistIds, setIsPitaraDrawerOpen } = useAuth();
+  const tabContainerRef = useRef<HTMLElement>(null);
 
   const currentBuyer = propBuyer || buyerUser;
   const certCount = currentBuyer?.purchasedCertificates?.length || 1;
+
+  // GSAP matchMedia and timeline-based smooth cross-fade animation when switching tabs
+  useEffect(() => {
+    if (!tabContainerRef.current) return;
+    const mm = gsap.matchMedia();
+
+    mm.add('(min-width: 0px)', () => {
+      const tl = gsap.timeline();
+      tl.fromTo(
+        tabContainerRef.current,
+        { 
+          opacity: 0, 
+          y: 16,
+          scale: 0.99
+        },
+        { 
+          opacity: 1, 
+          y: 0, 
+          scale: 1,
+          duration: 0.38, 
+          ease: 'power2.out',
+          clearProps: 'transform'
+        }
+      );
+    });
+
+    return () => mm.revert();
+  }, [activeTab]);
 
   const userProfileCard = (
     <div id="patron-overview-card" className="bg-[#0F1E2E] text-white border border-amber-500/30 rounded-3xl p-5 sm:p-7 md:p-8 shadow-xl relative overflow-hidden">
@@ -49,7 +79,7 @@ export const BuyerMarketplaceView: React.FC<BuyerMarketplaceViewProps> = ({ buye
               {t.welcome || 'Welcome'}, {currentBuyer?.name || 'Ananya Sharma'}
             </h1>
             <p className="text-stone-300 text-xs sm:text-sm font-sans mt-0.5">
-              Direct Patronage • 📍 {currentBuyer?.deliveryCity || 'Bengaluru'}, {currentBuyer?.deliveryState || 'Karnataka'}
+              {t.buyer_direct_patronage || 'Direct Patronage'} • 📍 {currentBuyer?.deliveryCity || 'Bengaluru'}, {currentBuyer?.deliveryState || 'Karnataka'}
             </p>
           </div>
         </div>
@@ -80,7 +110,7 @@ export const BuyerMarketplaceView: React.FC<BuyerMarketplaceViewProps> = ({ buye
               {currentBuyer?.familiesEmpowered || 2}
             </span>
             <span className="text-xs sm:text-sm font-semibold truncate text-emerald-300">
-              Families
+              {t.stat_families || 'Families'}
             </span>
           </div>
           <span className="text-[10px] sm:text-xs text-slate-300 leading-tight">
@@ -116,7 +146,7 @@ export const BuyerMarketplaceView: React.FC<BuyerMarketplaceViewProps> = ({ buye
               {wishlistIds.length}
             </motion.span>
             <span className="text-xs sm:text-sm font-semibold truncate text-red-300">
-              Masterpieces
+              {t.stat_masterpieces || 'Masterpieces'}
             </span>
           </div>
           <span className="text-[10px] sm:text-xs text-slate-300 leading-tight">
@@ -140,7 +170,7 @@ export const BuyerMarketplaceView: React.FC<BuyerMarketplaceViewProps> = ({ buye
             </span>
           </div>
           <span className="text-[10px] sm:text-xs text-slate-300 leading-tight">
-            Download parchment
+            {t.buyer_download_parchment || 'Download parchment'}
           </span>
         </div>
       </div>
@@ -150,31 +180,31 @@ export const BuyerMarketplaceView: React.FC<BuyerMarketplaceViewProps> = ({ buye
   return (
     <div id="buyer-marketplace-workspace" className="min-h-screen bg-[#FAF9F6] text-[#0F1E2E]">
       
-      {/* Active Tab Views */}
-      <section id="buyer-active-tab-container">
+      {/* Active Tab Views with Smooth GSAP cross-fade */}
+      <section ref={tabContainerRef} id="buyer-active-tab-container">
         {activeTab === 'bazaar' && (
-          <div className="space-y-8 animate-in fade-in duration-200">
-            <HeroSection userCard={userProfileCard} />
+          <div className="space-y-8">
+            <HeroSection />
             <CraftGrid />
           </div>
         )}
 
         {activeTab === 'craft_map' && (
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 animate-in fade-in duration-200 space-y-6">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
             {userProfileCard}
             <CraftMapSection />
           </div>
         )}
 
         {activeTab === 'certificates' && (
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 animate-in fade-in duration-200 space-y-6">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
             {userProfileCard}
             <BuyerCertificateVault />
           </div>
         )}
 
         {activeTab === 'stories' && (
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 animate-in fade-in duration-200 space-y-6">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
             {userProfileCard}
             <StoriesSection />
           </div>

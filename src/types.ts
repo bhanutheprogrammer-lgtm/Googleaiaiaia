@@ -1,15 +1,21 @@
 export type LanguageCode =
+  | 'te'
   | 'en'
   | 'hi'
-  | 'te'
   | 'ta'
   | 'kn'
-  | 'mr'
   | 'ml'
-  | 'pa'
-  | 'or'
+  | 'mr'
   | 'gu'
   | 'bn'
+  | 'or'
+  | 'pa'
+  | 'as'
+  | 'kok'
+  | 'ne'
+  | 'mni'
+  | 'kha'
+  | 'lus'
   | 'ur';
 
 export interface LanguageMeta {
@@ -107,6 +113,11 @@ export interface CraftItem {
   hindiTitle: string;
   regionalTitle: string;
   regionalLanguage: LanguageCode;
+  titleTranslations?: Partial<Record<LanguageCode, string>>;
+  craftLineageTranslations?: Partial<Record<LanguageCode, string>>;
+  categoryTranslations?: Partial<Record<LanguageCode, string>>;
+  storyTranslations?: Partial<Record<LanguageCode, string>>;
+  materialsTranslations?: Partial<Record<LanguageCode, string[]>>;
   craftLineage: string;
   category: CraftCategory;
   stateOfOrigin: string;

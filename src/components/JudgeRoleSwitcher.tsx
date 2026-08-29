@@ -57,8 +57,7 @@ export const JudgeRoleSwitcher: React.FC = () => {
         }`}
       >
         <span>🪔</span>
-        <span className="hidden xs:inline">Artisan</span>
-        <span className="hidden sm:inline">Studio</span>
+        <span className="truncate max-w-[110px]">{t.role_artisan_short || t.role_artisan || 'Studio'}</span>
       </button>
 
       {/* 2. Buyer Marketplace Button */}
@@ -72,8 +71,7 @@ export const JudgeRoleSwitcher: React.FC = () => {
         }`}
       >
         <span>🛍️</span>
-        <span className="hidden xs:inline">Buyer</span>
-        <span className="hidden sm:inline">Market</span>
+        <span className="truncate max-w-[110px]">{t.role_buyer_short || t.role_buyer || 'Market'}</span>
       </button>
 
       {/* 3. Guest View Button */}
@@ -87,7 +85,7 @@ export const JudgeRoleSwitcher: React.FC = () => {
         }`}
       >
         <span>👁️</span>
-        <span>Guest</span>
+        <span className="truncate max-w-[90px]">{t.role_guest_short || t.role_guest || 'Guest'}</span>
       </button>
     </aside>
   );

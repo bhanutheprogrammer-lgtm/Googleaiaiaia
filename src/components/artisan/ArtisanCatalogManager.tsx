@@ -20,6 +20,7 @@ import {
 import gsap from 'gsap';
 import { useArtisan } from '../../context/ArtisanContext';
 import { CraftItem } from '../../types';
+import { getCraftTitle, getCraftCategoryLabel } from '../../utils/craftTranslations';
 
 export const ArtisanCatalogManager: React.FC = () => {
   const {
@@ -33,6 +34,7 @@ export const ArtisanCatalogManager: React.FC = () => {
     setActiveTab,
     generateWhatsAppLink,
     triggerMarigoldConfetti,
+    currentLanguage,
     t
   } = useArtisan();
 
@@ -258,18 +260,18 @@ export const ArtisanCatalogManager: React.FC = () => {
                 <div className="p-5 flex-1 flex flex-col justify-between space-y-4">
                   <div>
                     <div className="flex items-center gap-2 text-[10px] font-sans font-bold text-[#B83227] uppercase tracking-wider">
-                      <span>{craft.category}</span>
+                      <span>{getCraftCategoryLabel(craft.category, currentLanguage)}</span>
                       <span>•</span>
                       <span>{craft.stateOfOrigin}</span>
                     </div>
 
                     <h3 className="font-serif font-bold text-base text-[#0C243C] mt-1 leading-snug line-clamp-2">
-                      {craft.title}
+                      {getCraftTitle(craft, currentLanguage)}
                     </h3>
                     
-                    {craft.regionalTitle && (
+                    {currentLanguage !== 'en' && getCraftTitle(craft, currentLanguage) !== craft.title && (
                       <p className="text-xs text-stone-600 font-sans mt-0.5 truncate">
-                        {craft.regionalTitle}
+                        {craft.title}
                       </p>
                     )}
 

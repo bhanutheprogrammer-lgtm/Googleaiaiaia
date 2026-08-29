@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useRef, useEffect } from 'react';
 import { 
   Sparkles, 
   ShoppingBag, 
@@ -9,6 +9,7 @@ import {
   Users,
   Coins
 } from 'lucide-react';
+import gsap from 'gsap';
 import { useArtisan } from '../../context/ArtisanContext';
 import { useAuth } from '../../context/AuthContext';
 import { HeroSection } from '../HeroSection';
@@ -21,8 +22,23 @@ interface PublicMarketplaceViewProps {
 }
 
 export const PublicMarketplaceView: React.FC<PublicMarketplaceViewProps> = ({ onAuthPrompt }) => {
-  const { activeTab } = useArtisan();
+  const { activeTab, t } = useArtisan();
   const { openAuthModal } = useAuth();
+  const tabContainerRef = useRef<HTMLElement>(null);
+
+  // GSAP cross-fade animation when switching tabs in Guest view
+  useEffect(() => {
+    if (!tabContainerRef.current) return;
+    const ctx = gsap.context(() => {
+      gsap.fromTo(
+        tabContainerRef.current,
+        { opacity: 0, y: 14 },
+        { opacity: 1, y: 0, duration: 0.4, ease: 'power2.out' }
+      );
+    }, tabContainerRef);
+
+    return () => ctx.revert();
+  }, [activeTab]);
 
   const handleOpenAuth = (role: 'artisan' | 'buyer') => {
     if (onAuthPrompt) onAuthPrompt(role);
@@ -46,21 +62,21 @@ export const PublicMarketplaceView: React.FC<PublicMarketplaceViewProps> = ({ on
                 🪔
               </div>
               <span className="px-3 py-1 rounded-full bg-[#B83227] text-white text-[10px] font-sans font-bold uppercase tracking-wider">
-                For Karigars & Weavers
+                {t.guest_artisan_card_badge || 'For Karigars & Weavers'}
               </span>
             </div>
 
             <div className="mt-4 space-y-1.5">
               <h3 className="font-serif font-black text-xl text-[#FAF6EE] group-hover:text-amber-300 transition-colors">
-                Are you a Master Artisan (कारीगर)?
+                {t.guest_artisan_card_title || 'Are you a Master Artisan (Karigar)?'}
               </h3>
               <p className="text-stone-300 text-xs font-sans leading-relaxed">
-                Open your digital Karkhana studio. Scan crafts via Vernacular AI, generate instant GI certificates, and receive 100% direct WhatsApp orders.
+                {t.guest_artisan_card_desc || 'Open your digital Karkhana studio. Scan crafts via Vernacular AI, generate instant GI certificates, and receive 100% direct WhatsApp orders.'}
               </p>
             </div>
 
             <div className="mt-5 flex items-center gap-2 text-xs font-bold font-sans uppercase tracking-wider text-amber-300 group-hover:translate-x-1 transition-transform">
-              <span>Open Your Workshop Studio</span>
+              <span>{t.guest_artisan_card_cta || 'Open Your Workshop Studio'}</span>
               <ArrowRight className="w-4 h-4" />
             </div>
           </div>
@@ -75,21 +91,21 @@ export const PublicMarketplaceView: React.FC<PublicMarketplaceViewProps> = ({ on
                 🛍️
               </div>
               <span className="px-3 py-1 rounded-full bg-[#0C243C] text-emerald-300 text-[10px] font-sans font-bold uppercase tracking-wider border border-emerald-400/40">
-                For Patrons & Collectors
+                {t.guest_buyer_card_badge || 'For Patrons & Collectors'}
               </span>
             </div>
 
             <div className="mt-4 space-y-1.5">
               <h3 className="font-serif font-black text-xl text-[#FAF6EE] group-hover:text-amber-200 transition-colors">
-                Are you an Art Patron (कला प्रेमी)?
+                {t.guest_buyer_card_title || 'Are you an Art Patron (Art Lover)?'}
               </h3>
               <p className="text-emerald-100 text-xs font-sans leading-relaxed">
-                Discover 100% verified handmade Indian crafts directly from weavers & sculptors. Save wishlists, collect authenticity certificates, and pay zero middleman commissions.
+                {t.guest_buyer_card_desc || 'Discover 100% verified handmade Indian crafts directly from weavers & sculptors. Save wishlists, collect authenticity certificates, and pay zero middleman commissions.'}
               </p>
             </div>
 
             <div className="mt-5 flex items-center gap-2 text-xs font-bold font-sans uppercase tracking-wider text-amber-200 group-hover:translate-x-1 transition-transform">
-              <span>Join as Heritage Buyer</span>
+              <span>{t.guest_buyer_card_cta || 'Join as Heritage Buyer'}</span>
               <ArrowRight className="w-4 h-4" />
             </div>
           </div>
@@ -97,23 +113,23 @@ export const PublicMarketplaceView: React.FC<PublicMarketplaceViewProps> = ({ on
         </div>
       </section>
 
-      {/* 2. Public Hero and Craft Grid */}
-      <section id="guest-content-tabs">
+      {/* 2. Public Hero and Craft Grid with GSAP cross-fade */}
+      <section ref={tabContainerRef} id="guest-content-tabs">
         {activeTab === 'bazaar' && (
-          <div className="space-y-8 animate-in fade-in duration-200">
+          <div className="space-y-8">
             <HeroSection />
             <CraftGrid />
           </div>
         )}
 
         {activeTab === 'craft_map' && (
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 animate-in fade-in duration-200">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
             <CraftMapSection />
           </div>
         )}
 
         {activeTab === 'stories' && (
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 animate-in fade-in duration-200">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
             <StoriesSection />
           </div>
         )}

@@ -13,10 +13,11 @@ import {
 import { useAuth } from '../../context/AuthContext';
 import { useArtisan } from '../../context/ArtisanContext';
 import { ArtLynkLogo } from '../ArtLynkLogo';
+import { getCraftTitle } from '../../utils/craftTranslations';
 
 export const BuyerCertificateVault: React.FC = () => {
   const { buyerUser } = useAuth();
-  const { crafts, setSelectedCraftForCertificate, t } = useArtisan();
+  const { crafts, setSelectedCraftForCertificate, currentLanguage, t } = useArtisan();
 
   const certificates = buyerUser?.purchasedCertificates || [];
 
@@ -83,7 +84,7 @@ export const BuyerCertificateVault: React.FC = () => {
                   />
                   <div>
                     <h3 className="font-serif font-bold text-base text-[#0C243C] leading-snug">
-                      {cert.craftTitle}
+                      {matchingCraft ? getCraftTitle(matchingCraft, currentLanguage) : cert.craftTitle}
                     </h3>
                     <p className="text-xs text-stone-600 font-sans mt-1">
                       {t.craft_artisan || 'Master Karigar'}: <span className="font-bold text-[#0C243C]">{cert.artisanName}</span>

@@ -7,6 +7,7 @@ import { AuthProvider, useAuth } from './context/AuthContext';
 import { ThemeProvider, useTheme } from './context/ThemeContext';
 import { ArtisanProfile, BuyerProfile } from './types';
 import { IntroLoader } from './components/IntroLoader';
+import { LanguageGatewayScreen } from './components/LanguageGatewayScreen';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -234,17 +235,27 @@ const MainLayout: React.FC = () => {
 
 export default function App() {
   const [introFinished, setIntroFinished] = useState(false);
+  const [gatewayFinished, setGatewayFinished] = useState(false);
 
   const handleIntroComplete = () => {
     setIntroFinished(true);
+  };
+
+  const handleGatewayComplete = () => {
+    setGatewayFinished(true);
   };
 
   return (
     <ThemeProvider>
       <AuthProvider>
         <ArtisanProvider>
-          {!introFinished && <IntroLoader onComplete={handleIntroComplete} />}
-          <MainLayout />
+          {!introFinished ? (
+            <IntroLoader onComplete={handleIntroComplete} />
+          ) : !gatewayFinished ? (
+            <LanguageGatewayScreen onComplete={handleGatewayComplete} />
+          ) : (
+            <MainLayout />
+          )}
         </ArtisanProvider>
       </AuthProvider>
     </ThemeProvider>

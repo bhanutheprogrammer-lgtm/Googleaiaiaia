@@ -9,10 +9,22 @@ export interface TranslationSchema {
   role_artisan: string;
   role_buyer: string;
   role_guest: string;
+  role_artisan_short?: string;
+  role_buyer_short?: string;
+  role_guest_short?: string;
+  welcome?: string;
+  patron_badge?: string;
+  patron_wages_supported?: string;
+  patron_families_empowered?: string;
+  cert_verified_badge?: string;
+  stat_masterpieces?: string;
+  stat_families?: string;
+  stat_wages?: string;
 
   // Navbars
   nav_crafts: string;
   nav_marketplace: string;
+  nav_bazaar?: string;
   nav_stories: string;
   nav_map: string;
   nav_scan: string;

@@ -16,6 +16,7 @@ import { useAuth } from '../context/AuthContext';
 import { useArtisan } from '../context/ArtisanContext';
 import { SocialShareButton } from './SocialShareButton';
 import { lockScroll, unlockScroll } from '../lib/scrollLock';
+import { getCraftTitle } from '../utils/craftTranslations';
 
 export const MeraPitaraDrawer: React.FC = () => {
   const {
@@ -27,7 +28,7 @@ export const MeraPitaraDrawer: React.FC = () => {
     buyerUser
   } = useAuth();
 
-  const { crafts, generateWhatsAppLink, setSelectedCraftForCertificate, setSelectedCraftForStory, setActiveTab, t } = useArtisan();
+  const { crafts, generateWhatsAppLink, setSelectedCraftForCertificate, setSelectedCraftForStory, setActiveTab, currentLanguage, t } = useArtisan();
 
   const overlayRef = useRef<HTMLDivElement>(null);
   const drawerRef = useRef<HTMLDivElement>(null);
@@ -187,7 +188,7 @@ export const MeraPitaraDrawer: React.FC = () => {
                     <div>
                       <div className="flex items-start justify-between gap-1">
                         <h4 className="text-xs font-bold font-serif text-amber-100 line-clamp-1">
-                          {craft.title}
+                          {getCraftTitle(craft, currentLanguage)}
                         </h4>
                         <button
                           onClick={() => toggleWishlist(craft.id)}

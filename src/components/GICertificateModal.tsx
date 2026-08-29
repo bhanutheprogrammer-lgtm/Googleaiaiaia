@@ -22,11 +22,13 @@ import { useArtisan } from '../context/ArtisanContext';
 import { useAuth } from '../context/AuthContext';
 import { ArtLynkLogo } from './ArtLynkLogo';
 import { lockScroll, unlockScroll } from '../lib/scrollLock';
+import { getCraftTitle, getCraftCategoryLabel, getCraftLineage } from '../utils/craftTranslations';
 
 export const GICertificateModal: React.FC = () => {
   const {
     selectedCraftForCertificate,
     setSelectedCraftForCertificate,
+    currentLanguage,
     t
   } = useArtisan();
 
@@ -500,15 +502,15 @@ export const GICertificateModal: React.FC = () => {
                   Craft Title & Category
                 </span>
                 <p className="text-sm sm:text-base font-bold text-[#0F1E2E] font-serif leading-snug break-words">
-                  {craft.title}
+                  {getCraftTitle(craft, currentLanguage)}
                 </p>
-                {craft.regionalTitle && (
-                  <p className="text-xs font-semibold text-[#A84A2C] font-sans leading-normal break-words">
-                    {craft.regionalTitle}
+                {currentLanguage !== 'en' && getCraftTitle(craft, currentLanguage) !== craft.title && (
+                  <p className="text-xs text-stone-600 font-sans leading-normal break-words">
+                    {craft.title}
                   </p>
                 )}
                 <p className="text-[11px] text-stone-600 font-medium font-sans">
-                  Category: <strong className="text-stone-800">{craft.category}</strong>
+                  Category: <strong className="text-stone-800">{getCraftCategoryLabel(craft.category, currentLanguage)}</strong>
                 </p>
               </div>
 

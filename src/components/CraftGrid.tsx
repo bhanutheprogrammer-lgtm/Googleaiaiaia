@@ -21,6 +21,7 @@ import { CraftItem } from '../types';
 import { INDIAN_LANGUAGES } from '../data/mockCrafts';
 import { FavoriteHeartButton } from './FavoriteHeartButton';
 import { SocialShareButton } from './SocialShareButton';
+import { getCraftTitle, getCraftCategoryLabel, getCraftLineage } from '../utils/craftTranslations';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -84,7 +85,7 @@ export const CraftGrid: React.FC = () => {
     });
   }, [crafts, searchQuery, selectedCategory, selectedState, giOnlyFilter]);
 
-  // ScrollTrigger Stagger Animation for Craft Grid Items
+  // GSAP cross-fade when category, state, or search filters change
   useEffect(() => {
     if (!gridRef.current) return;
     const cards = gridRef.current.querySelectorAll('.craft-card-item');
@@ -95,36 +96,27 @@ export const CraftGrid: React.FC = () => {
         cards,
         {
           opacity: 0,
-          y: 40,
-          scale: 0.96,
+          y: 20,
+          scale: 0.98,
         },
         {
           opacity: 1,
           y: 0,
           scale: 1,
-          duration: 0.6,
+          duration: 0.35,
           stagger: {
-            each: 0.07,
+            each: 0.04,
             from: 'start',
           },
-          ease: 'power3.out',
-          scrollTrigger: {
-            trigger: gridRef.current,
-            start: 'top 88%',
-            toggleActions: 'play none none none',
-            once: true,
-          },
+          ease: 'power2.out',
         }
       );
     }, gridRef);
 
-    // Refresh calculations for scroll triggers
-    ScrollTrigger.refresh();
-
     return () => {
       ctx.revert();
     };
-  }, [filteredCrafts]);
+  }, [selectedCategory, selectedState, giOnlyFilter, filteredCrafts.length]);
 
   return (
     <section 
@@ -239,9 +231,10 @@ const CraftCard: React.FC<CraftCardProps> = ({
   const { wishlistIds, toggleWishlist } = useAuth();
   const isWishlisted = wishlistIds.includes(craft.id);
 
-  const displayTitle = currentLanguage === 'hi' ? craft.hindiTitle : craft.title;
+  const categoryLabel = getCraftCategoryLabel(craft.category, currentLanguage) || t.cat_handloom || craft.category;
+  const displayTitle = getCraftTitle(craft, currentLanguage);
   const artisanSubtitle = `${craft.artisan.name} • ${craft.artisan.village ? `${craft.artisan.village}, ` : ''}${craft.stateOfOrigin}`;
-  const craftType = craft.craftLineage || craft.materialsDetected?.[0] || 'Handmade';
+  const craftType = getCraftLineage(craft, currentLanguage) || craft.materialsDetected?.[0] || (t.app_badge_handmade || 'Handmade');
 
   return (
     <article
@@ -260,7 +253,7 @@ const CraftCard: React.FC<CraftCardProps> = ({
 
         {/* Floating Pill Badge (Top-Right): Light beige/cream pill badge with Category name */}
         <span className="absolute top-2.5 right-2.5 bg-[#f4efe6]/90 backdrop-blur-xs text-stone-800 text-xs px-2.5 py-1 rounded-full font-medium shadow-xs z-10 pointer-events-none border border-stone-200/50">
-          {craft.category}
+          {categoryLabel}
         </span>
 
         {/* Wishlist Heart Button with Framer Motion Animation (Top-Left) */}
@@ -277,7 +270,7 @@ const CraftCard: React.FC<CraftCardProps> = ({
         {craft.isGiTagged && (
           <span className="absolute bottom-2.5 left-2.5 px-2 py-0.5 rounded-full bg-[#0F1E2E]/90 backdrop-blur-md text-amber-300 text-[10px] font-sans font-medium border border-[#D4AF37]/30 shadow-xs flex items-center gap-1">
             <ShieldCheck className="w-3 h-3 text-amber-300" />
-            <span className="hidden xs:inline sm:inline">GI Tagged</span>
+            <span className="hidden xs:inline sm:inline">{t.hero_stamp_gi || t.bazaar_gi_seal || 'GI Tagged'}</span>
           </span>
         )}
       </div>

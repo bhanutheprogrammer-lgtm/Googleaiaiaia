@@ -122,8 +122,8 @@ export const MobileBottomNav: React.FC = () => {
               <div className={`p-1 rounded-lg ${activeTab === 'scan_studio' ? 'bg-linear-to-r from-[#B83227] to-[#E67E22] text-white shadow-xs' : ''}`}>
                 <Sparkles className="w-4 h-4" />
               </div>
-              <span className="text-[9px] mt-0.5 tracking-tight font-sans">
-                AI Scan
+              <span className="text-[9px] mt-0.5 tracking-tight font-sans truncate max-w-[65px]">
+                {t.nav_scan || 'AI Scan'}
               </span>
             </button>
 
@@ -139,8 +139,8 @@ export const MobileBottomNav: React.FC = () => {
               <div className={`p-1 rounded-lg ${activeTab === 'ledger' ? 'bg-[#D4AF37] text-[#0C243C] shadow-xs' : ''}`}>
                 <Package className="w-4 h-4" />
               </div>
-              <span className="text-[9px] mt-0.5 tracking-tight font-sans">
-                Catalog
+              <span className="text-[9px] mt-0.5 tracking-tight font-sans truncate max-w-[65px]">
+                {t.nav_catalog || 'Catalog'}
               </span>
             </button>
 
@@ -159,8 +159,8 @@ export const MobileBottomNav: React.FC = () => {
                   <span className="absolute -top-1 -right-1 w-2.5 h-2.5 rounded-full bg-[#B83227] border border-white" />
                 )}
               </div>
-              <span className="text-[9px] mt-0.5 tracking-tight font-sans">
-                Leads
+              <span className="text-[9px] mt-0.5 tracking-tight font-sans truncate max-w-[65px]">
+                {t.nav_inquiries || 'Leads'}
               </span>
             </button>
 
@@ -176,8 +176,8 @@ export const MobileBottomNav: React.FC = () => {
               <div className={`p-1 rounded-lg ${activeTab === 'fair_pricing' ? 'bg-amber-600 text-white shadow-xs' : ''}`}>
                 <Calculator className="w-4 h-4" />
               </div>
-              <span className="text-[9px] mt-0.5 tracking-tight font-sans">
-                Pricing
+              <span className="text-[9px] mt-0.5 tracking-tight font-sans truncate max-w-[65px]">
+                {t.nav_pricing || 'Pricing'}
               </span>
             </button>
 
@@ -193,8 +193,8 @@ export const MobileBottomNav: React.FC = () => {
               <div className={`p-1 rounded-lg ${activeTab === 'store_qr' ? 'bg-purple-800 text-white shadow-xs' : ''}`}>
                 <QrCode className="w-4 h-4" />
               </div>
-              <span className="text-[9px] mt-0.5 tracking-tight font-sans">
-                Store QR
+              <span className="text-[9px] mt-0.5 tracking-tight font-sans truncate max-w-[65px]">
+                {t.nav_qr || 'Store QR'}
               </span>
             </button>
           </>
@@ -215,8 +215,8 @@ export const MobileBottomNav: React.FC = () => {
               <div className={`p-1 rounded-lg ${activeTab === 'bazaar' ? 'bg-linear-to-r from-[#B83227] to-[#E67E22] text-white shadow-xs' : ''}`}>
                 <ShoppingBag className="w-4 h-4" />
               </div>
-              <span className="text-[9px] mt-0.5 tracking-tight font-sans">
-                Bazaar
+              <span className="text-[9px] mt-0.5 tracking-tight font-sans truncate max-w-[65px]">
+                {t.nav_bazaar || t.nav_crafts || 'Bazaar'}
               </span>
             </button>
 
@@ -232,8 +232,8 @@ export const MobileBottomNav: React.FC = () => {
               <div className={`p-1 rounded-lg ${activeTab === 'craft_map' ? 'bg-[#117A65] text-white shadow-xs' : ''}`}>
                 <Map className="w-4 h-4" />
               </div>
-              <span className="text-[9px] mt-0.5 tracking-tight font-sans">
-                GI Map
+              <span className="text-[9px] mt-0.5 tracking-tight font-sans truncate max-w-[65px]">
+                {t.nav_map || 'GI Map'}
               </span>
             </button>
 
@@ -250,8 +250,8 @@ export const MobileBottomNav: React.FC = () => {
                   </span>
                 )}
               </div>
-              <span className="text-[9px] mt-0.5 tracking-tight font-sans">
-                Wishlist
+              <span className="text-[9px] mt-0.5 tracking-tight font-sans truncate max-w-[65px]">
+                {t.nav_pitara || 'Wishlist'}
               </span>
             </button>
 
@@ -267,8 +267,8 @@ export const MobileBottomNav: React.FC = () => {
               <div className={`p-1 rounded-lg ${activeTab === 'certificates' ? 'bg-[#D4AF37] text-[#0C243C] shadow-xs' : ''}`}>
                 <Award className="w-4 h-4" />
               </div>
-              <span className="text-[9px] mt-0.5 tracking-tight font-sans">
-                Certificates
+              <span className="text-[9px] mt-0.5 tracking-tight font-sans truncate max-w-[65px]">
+                {t.nav_certificates || 'Certificates'}
               </span>
             </button>
 
@@ -284,8 +284,8 @@ export const MobileBottomNav: React.FC = () => {
               <div className={`p-1 rounded-lg ${activeTab === 'stories' ? 'bg-amber-600 text-white shadow-xs' : ''}`}>
                 <BookOpen className="w-4 h-4" />
               </div>
-              <span className="text-[9px] mt-0.5 tracking-tight font-sans">
-                Stories
+              <span className="text-[9px] mt-0.5 tracking-tight font-sans truncate max-w-[65px]">
+                {t.nav_stories || 'Stories'}
               </span>
             </button>
           </>

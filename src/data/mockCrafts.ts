@@ -1,4 +1,23 @@
 import { CraftItem, LanguageCode, LanguageMeta, InquiryMessage, BuyerProfile, ArtisanProfile, PurchasedCertificate } from '../types';
+import { 
+  CRAFT_TRANSLATIONS, 
+  CATEGORY_TRANSLATIONS, 
+  getCraftTitle, 
+  getCraftCategoryLabel, 
+  getCraftLineage, 
+  getCraftStory, 
+  getCraftMaterials 
+} from '../utils/craftTranslations';
+
+export { 
+  CRAFT_TRANSLATIONS, 
+  CATEGORY_TRANSLATIONS, 
+  getCraftTitle, 
+  getCraftCategoryLabel, 
+  getCraftLineage, 
+  getCraftStory, 
+  getCraftMaterials 
+};
 
 export const DEFAULT_DEMO_ARTISAN: ArtisanProfile = {
   id: 'artisan-ramesh-rao',
@@ -63,17 +82,23 @@ export const DEFAULT_DEMO_BUYER: BuyerProfile = {
 };
 
 export const INDIAN_LANGUAGES: LanguageMeta[] = [
+  { code: 'te', label: 'Telugu', nativeName: 'తెలుగు', scriptFont: 'font-["Noto_Sans_Telugu"]', region: 'Telangana & Andhra Pradesh', greeting: 'భారతీయ చేతివృత్తుల వేదికకు స్వాగతం' },
   { code: 'en', label: 'English', nativeName: 'English', scriptFont: 'font-sans', region: 'Pan-India / Global', greeting: 'Welcome to Bharat’s Artisans' },
   { code: 'hi', label: 'Hindi', nativeName: 'हिन्दी', scriptFont: 'font-["Noto_Sans_Devanagari"]', region: 'Uttar Pradesh, MP, Bihar, Rajasthan', greeting: 'कलाLink में आपका स्वागत है' },
-  { code: 'te', label: 'Telugu', nativeName: 'తెలుగు', scriptFont: 'font-["Noto_Sans_Telugu"]', region: 'Telangana & Andhra Pradesh', greeting: 'భారతీయ చేతివృత్తుల వేదికకు స్వాగతం' },
   { code: 'ta', label: 'Tamil', nativeName: 'தமிழ்', scriptFont: 'font-["Noto_Sans_Tamil"]', region: 'Tamil Nadu', greeting: 'பாரம்பரிய கைவினைஞர்களின் தளத்திற்கு நல்வரவு' },
   { code: 'kn', label: 'Kannada', nativeName: 'ಕನ್ನಡ', scriptFont: 'font-["Noto_Sans_Kannada"]', region: 'Karnataka', greeting: 'ಭಾರತೀಯ ಕರಕುಶಲ ಜಗತ್ತಿಗೆ ಸುಸ್ವಾಗತ' },
-  { code: 'mr', label: 'Marathi', nativeName: 'मराठी', scriptFont: 'font-["Noto_Sans_Devanagari"]', region: 'Maharashtra', greeting: 'भारतीय कारागिरांच्या व्यासपीठावर आपले स्वागत आहे' },
   { code: 'ml', label: 'Malayalam', nativeName: 'മലയാളം', scriptFont: 'font-["Noto_Sans_Malayalam"]', region: 'Kerala', greeting: 'ഭാരതീയ കൈത്തറി ലോകത്തേക്ക് സ്വാਗതം' },
-  { code: 'pa', label: 'Punjabi', nativeName: 'ਪੰਜਾਬੀ', scriptFont: 'font-["Noto_Sans_Gurmukhi"]', region: 'Punjab, Haryana, Delhi', greeting: 'ਕਲਾLink ਵਿੱਚ ਤੁਹਾਡਾ ਸਵਾਗਤ ਹੈ' },
-  { code: 'or', label: 'Odia', nativeName: 'ଓଡ଼ିଆ', scriptFont: 'font-["Noto_Sans_Oriya"]', region: 'Odisha', greeting: 'ଭାରତୀୟ ହସ୍ତତନ୍ତ୍ର ମଞ୍ଚକୁ ସ୍ଵାਗਤ' },
+  { code: 'mr', label: 'Marathi', nativeName: 'मराठी', scriptFont: 'font-["Noto_Sans_Devanagari"]', region: 'Maharashtra', greeting: 'भारतीय कारागिरांच्या व्यासपीठावर आपले स्वागत आहे' },
   { code: 'gu', label: 'Gujarati', nativeName: 'ગુજરાતી', scriptFont: 'font-["Noto_Sans_Gujarati"]', region: 'Gujarat', greeting: 'ભારતીય હસ્તકળા મંચ પર આપનું સ્વાગત છે' },
   { code: 'bn', label: 'Bengali', nativeName: 'বাংলা', scriptFont: 'font-["Noto_Sans_Bengali"]', region: 'West Bengal', greeting: 'ভারতীয় কারিগরদের আঙিনায় আপনাকে স্বাগতম' },
+  { code: 'or', label: 'Odia', nativeName: 'ଓଡ଼ିଆ', scriptFont: 'font-["Noto_Sans_Oriya"]', region: 'Odisha', greeting: 'ଭାରତୀୟ ହସ୍ତତନ୍ତ୍ର ମଞ୍ଚକୁ ସ୍ଵାଗତ' },
+  { code: 'pa', label: 'Punjabi', nativeName: 'ਪੰਜਾਬੀ', scriptFont: 'font-["Noto_Sans_Gurmukhi"]', region: 'Punjab, Haryana, Delhi', greeting: 'ਕਲਾLink ਵਿੱਚ ਤੁਹਾਡਾ ਸਵਾਗਤ ਹੈ' },
+  { code: 'as', label: 'Assamese', nativeName: 'অসমীয়া', scriptFont: 'font-["Noto_Sans_Bengali"]', region: 'Assam', greeting: 'ভাৰতীয় হস্তশিল্প মজিয়ালৈ স্বাগতম' },
+  { code: 'kok', label: 'Konkani', nativeName: 'कोंकणी', scriptFont: 'font-["Noto_Sans_Devanagari"]', region: 'Goa & Konkan Coast', greeting: 'भारतीय कारागिरांच्या व्यासपीठाचेर येवकार' },
+  { code: 'ne', label: 'Nepali', nativeName: 'नेपाली', scriptFont: 'font-["Noto_Sans_Devanagari"]', region: 'Sikkim, West Bengal & Himalayan Belt', greeting: 'भारतीय हस्तकला मञ्चमा स्वागत छ' },
+  { code: 'mni', label: 'Manipuri', nativeName: 'মৈতৈলোন্', scriptFont: 'font-["Noto_Sans_Bengali"]', region: 'Manipur', greeting: 'ভারতকী শিন্মীশিংগী মফমদা তরাম্না ওকচরি' },
+  { code: 'kha', label: 'Khasi', nativeName: 'Ka Ktien Khasi', scriptFont: 'font-sans', region: 'Meghalaya', greeting: 'Pdiang burom sha ka ArtLynk Bharat' },
+  { code: 'lus', label: 'Mizo', nativeName: 'Mizo ṭawng', scriptFont: 'font-sans', region: 'Mizoram', greeting: 'ArtLynk Bharat-ah kan lo lawm a che' },
 ];
 
 export const DEMO_CRAFT_PRESETS = [
@@ -115,7 +140,7 @@ export const DEMO_CRAFT_PRESETS = [
   }
 ];
 
-export const INITIAL_CRAFTS: CraftItem[] = [
+const BASE_INITIAL_CRAFTS: CraftItem[] = [
   {
     id: 'craft-pochampally-ikat',
     title: 'Handwoven Pochampally Double Ikat Pure Silk Saree',
@@ -697,6 +722,18 @@ export const INITIAL_CRAFTS: CraftItem[] = [
     districtCluster: 'Aranmula, Pathanamthitta'
   }
 ];
+
+export const INITIAL_CRAFTS: CraftItem[] = BASE_INITIAL_CRAFTS.map((craft) => {
+  const trans = CRAFT_TRANSLATIONS[craft.id];
+  return {
+    ...craft,
+    titleTranslations: trans?.title || {},
+    craftLineageTranslations: trans?.craftLineage || {},
+    categoryTranslations: trans?.category || {},
+    storyTranslations: trans?.story || {},
+    materialsTranslations: trans?.materials || {}
+  };
+});
 
 export const INITIAL_INQUIRIES: InquiryMessage[] = [
   {

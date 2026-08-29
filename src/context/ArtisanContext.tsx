@@ -75,7 +75,25 @@ const ArtisanContext = createContext<ArtisanContextType | undefined>(undefined);
 
 export const ArtisanProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { artisanUser } = useAuth();
-  const [currentLanguage, setCurrentLanguage] = useState<LanguageCode>('en');
+  const [currentLanguage, setCurrentLanguageState] = useState<LanguageCode>(() => {
+    try {
+      const saved = localStorage.getItem('artisan_link_language') as LanguageCode;
+      if (saved) return saved;
+    } catch {
+      // fallback
+    }
+    return 'te';
+  });
+
+  const setLanguage = (lang: LanguageCode) => {
+    setCurrentLanguageState(lang);
+    try {
+      localStorage.setItem('artisan_link_language', lang);
+    } catch {
+      // ignore
+    }
+  };
+
   const [activeRole, setActiveRole] = useState<'buyer' | 'artisan'>('buyer');
   const [activeTab, setActiveTab] = useState<AppTab>('bazaar');
 
@@ -319,7 +337,7 @@ export const ArtisanProvider: React.FC<{ children: React.ReactNode }> = ({ child
     <ArtisanContext.Provider
       value={{
         currentLanguage,
-        setLanguage: setCurrentLanguage,
+        setLanguage,
         t,
         activeRole,
         setActiveRole,

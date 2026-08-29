@@ -26,6 +26,7 @@ import { LanguageModal } from './LanguageModal';
 import { FavoriteHeartButton } from './FavoriteHeartButton';
 import { SocialShareButton } from './SocialShareButton';
 import { lockScroll, unlockScroll } from '../lib/scrollLock';
+import { getCraftTitle, getCraftCategoryLabel, getCraftLineage, getCraftStory, getCraftMaterials } from '../utils/craftTranslations';
 
 export const CraftStoryDrawer: React.FC = () => {
   const {
@@ -132,6 +133,10 @@ export const CraftStoryDrawer: React.FC = () => {
   const craft = selectedCraftForStory;
   const whatsAppLink = generateWhatsAppLink(craft, currentLanguage);
 
+  const displayTitle = getCraftTitle(craft, currentLanguage);
+  const displayCategory = getCraftCategoryLabel(craft.category, currentLanguage);
+  const displayLineage = getCraftLineage(craft, currentLanguage);
+
   const handleCopyShare = () => {
     navigator.clipboard.writeText(window.location.href);
     setCopiedLink(true);
@@ -194,7 +199,7 @@ export const CraftStoryDrawer: React.FC = () => {
           <div className="flex items-center justify-between border-b border-white/15 pb-4 shrink-0">
             <div className="flex items-center space-x-2.5">
               <span className="px-2.5 py-1 rounded-full bg-[#A84A2C] text-white text-[10px] font-bold tracking-wider uppercase font-sans border border-amber-500/30">
-                {craft.category}
+                {displayCategory}
               </span>
               <span className="text-xs text-amber-200 font-semibold flex items-center gap-1 font-sans">
                 <MapPin className="w-3.5 h-3.5 text-amber-400" />
@@ -279,16 +284,11 @@ export const CraftStoryDrawer: React.FC = () => {
             <div className="space-y-4">
               <div>
                 <h2 className="text-xl sm:text-2xl font-bold text-amber-200 font-serif leading-snug">
-                  {currentLanguage === 'hi' ? craft.hindiTitle : (currentLanguage === craft.regionalLanguage ? craft.regionalTitle : craft.title)}
+                  {displayTitle}
                 </h2>
-                {currentLanguage !== 'en' && (
-                  <p className="text-sm font-semibold text-amber-400 mt-1 font-sans">
-                    {craft.regionalTitle}
-                  </p>
-                )}
-                {currentLanguage !== 'hi' && currentLanguage !== 'en' && (
-                  <p className="text-xs text-stone-300 mt-0.5 font-serif">
-                    {craft.hindiTitle}
+                {currentLanguage !== 'en' && displayTitle !== craft.title && (
+                  <p className="text-xs text-stone-300 mt-1 font-serif">
+                    {craft.title}
                   </p>
                 )}
               </div>

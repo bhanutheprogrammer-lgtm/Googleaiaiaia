@@ -60,7 +60,7 @@ export interface AuthTranslationDictionary {
   categories: Record<string, string>;
 }
 
-export const authTranslations: Record<LanguageCode, AuthTranslationDictionary> = {
+export const authTranslations: Record<string, AuthTranslationDictionary> = {
   en: {
     headerTitle: "ArtLynk",
     headerSubtitle: "Connecting genuine Indian master craftspeople directly with conscious global patrons.",
@@ -876,3 +876,7 @@ export const authTranslations: Record<LanguageCode, AuthTranslationDictionary> =
     }
   }
 };
+
+export function getAuthTranslations(lang: LanguageCode): AuthTranslationDictionary {
+  return authTranslations[lang] || authTranslations.en;
+}

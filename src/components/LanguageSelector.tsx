@@ -32,7 +32,7 @@ export function LanguageSelector({
         type="button"
         onClick={() => setIsModalOpen(true)}
         aria-haspopup="dialog"
-        aria-label="Select Language (11 Indian Languages)"
+        aria-label="Select Language (17 Indian Languages)"
         className={
           buttonClassName ||
           'flex items-center gap-1 sm:gap-1.5 px-2 sm:px-3 py-1 sm:py-1.5 rounded-full text-xs font-semibold border border-amber-500/40 bg-[#A0522D] text-white hover:border-amber-400 hover:bg-[#8B4513] transition shadow-md cursor-pointer shrink-0'

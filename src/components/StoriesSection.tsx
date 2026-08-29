@@ -14,6 +14,7 @@ import {
 import { useArtisan } from '../context/ArtisanContext';
 import { CraftItem } from '../types';
 import { INDIAN_LANGUAGES } from '../data/mockCrafts';
+import { getCraftTitle, getCraftCategoryLabel } from '../utils/craftTranslations';
 
 export const StoriesSection: React.FC = () => {
   const {
@@ -135,14 +136,14 @@ export const StoriesSection: React.FC = () => {
                 />
                 <div className="overflow-hidden flex-1">
                   <span className="text-[10px] font-bold uppercase tracking-wider text-[#A84A2C] block truncate">
-                    {craft.category} • {craft.stateOfOrigin}
+                    {getCraftCategoryLabel(craft.category, currentLanguage)} • {craft.stateOfOrigin}
                   </span>
                   <h3 className="text-xs font-bold text-[#0F1E2E] font-serif truncate mt-0.5">
-                    {currentLanguage === 'hi' ? craft.hindiTitle : craft.title}
+                    {getCraftTitle(craft, currentLanguage)}
                   </h3>
-                  {currentLanguage !== 'en' && (
-                    <p className="text-[11px] font-semibold text-stone-600 truncate">
-                      {craft.regionalTitle}
+                  {currentLanguage !== 'en' && getCraftTitle(craft, currentLanguage) !== craft.title && (
+                    <p className="text-[11px] font-medium text-stone-500 truncate">
+                      {craft.title}
                     </p>
                   )}
                 </div>
@@ -159,7 +160,7 @@ export const StoriesSection: React.FC = () => {
             <div>
               <div className="flex items-center space-x-2">
                 <span className="px-3 py-0.5 rounded-full bg-[#A84A2C] text-white text-[10px] font-bold uppercase tracking-wider">
-                  {activeStoryCraft.category}
+                  {getCraftCategoryLabel(activeStoryCraft.category, currentLanguage)}
                 </span>
                 <span className="text-xs text-stone-500 font-semibold flex items-center gap-1">
                   <MapPin className="w-3.5 h-3.5 text-[#A84A2C]" />
@@ -167,11 +168,11 @@ export const StoriesSection: React.FC = () => {
                 </span>
               </div>
               <h2 className="text-xl sm:text-2xl font-bold font-serif text-[#0F1E2E] mt-2">
-                {currentLanguage === 'hi' ? activeStoryCraft.hindiTitle : activeStoryCraft.title}
+                {getCraftTitle(activeStoryCraft, currentLanguage)}
               </h2>
-              {currentLanguage !== 'en' && (
+              {currentLanguage !== 'en' && getCraftTitle(activeStoryCraft, currentLanguage) !== activeStoryCraft.title && (
                 <p className="text-xs font-semibold text-[#A84A2C] mt-0.5">
-                  {activeStoryCraft.regionalTitle}
+                  {activeStoryCraft.title}
                 </p>
               )}
             </div>

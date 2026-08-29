@@ -85,7 +85,7 @@ export interface ProfileTranslationSchema {
   photoSuccessToast: string;
 }
 
-export const profileTranslations: Record<LanguageCode, ProfileTranslationSchema> = {
+export const profileTranslations: Record<string, ProfileTranslationSchema> = {
   en: {
     languageSelectorLabel: 'Language / భాష / भाषा',
     modalTitle: 'Account Settings & Profile',

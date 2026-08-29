@@ -3,7 +3,6 @@ import {
   getFirestore, 
   doc, 
   getDoc,
-  getDocFromServer, 
   collection, 
   getDocs, 
   setDoc, 
@@ -13,7 +12,8 @@ import {
   query, 
   where,
   orderBy, 
-  limit 
+  limit,
+  getDocFromServer
 } from 'firebase/firestore';
 import { 
   getAuth, 
@@ -21,7 +21,6 @@ import {
   RecaptchaVerifier, 
   onAuthStateChanged, 
   signOut,
-  signInAnonymously,
   ConfirmationResult,
   User
 } from 'firebase/auth';
@@ -38,10 +37,8 @@ declare global {
 // Initialize Firebase App
 const app = !getApps().length ? initializeApp(firebaseConfig) : getApp();
 
-// Initialize Firestore with specific database ID if configured
-export const db = firebaseConfig.firestoreDatabaseId && firebaseConfig.firestoreDatabaseId !== '(default)'
-  ? getFirestore(app, firebaseConfig.firestoreDatabaseId)
-  : getFirestore(app);
+// Initialize Firestore with custom Database ID from config as per Firebase Integration Skill
+export const db = getFirestore(app, firebaseConfig.firestoreDatabaseId);
 
 // Initialize Firebase Authentication
 export const auth = getAuth(app);
@@ -100,7 +97,6 @@ export const initRecaptchaVerifier = (containerId: string = 'recaptcha-container
   
   const container = document.getElementById(containerId);
   if (!container) {
-    console.warn(`reCAPTCHA container #${containerId} not found in DOM`);
     return null;
   }
 
@@ -115,8 +111,8 @@ export const initRecaptchaVerifier = (containerId: string = 'recaptcha-container
 
     window.recaptchaVerifier = new RecaptchaVerifier(auth, containerId, {
       size: 'invisible',
-      callback: (response: any) => {
-        console.log('reCAPTCHA verified:', response);
+      callback: () => {
+        // reCAPTCHA verified callback
       },
       'expired-callback': () => {
         console.warn('reCAPTCHA expired. Please request OTP again.');
@@ -125,46 +121,34 @@ export const initRecaptchaVerifier = (containerId: string = 'recaptcha-container
 
     return window.recaptchaVerifier;
   } catch (error) {
-    console.error('Error initializing RecaptchaVerifier:', error);
+    console.warn('RecaptchaVerifier setup notice:', error);
     return null;
   }
 };
 
-// Initialize Anonymous Session for verified security rules if needed
-export const initAuthSession = async () => {
-  try {
-    if (!auth.currentUser) {
-      await signInAnonymously(auth);
-    }
-  } catch (_error) {
-    // Gracefully handle if anonymous auth is not enabled in console or network is offline
-  }
-};
-
-// Test Connection to Firestore as required by Firebase skill
+// Test Connection to Firestore as per Firebase Skill guidelines
 export async function testConnection() {
   try {
     await getDocFromServer(doc(db, 'test', 'connection'));
-    console.log('✅ Connected to Cloud Firestore successfully.');
-  } catch (error) {
-    if (error instanceof Error && error.message.includes('the client is offline')) {
-      console.warn('Firestore is running in offline-cache mode.');
-    } else {
-      console.log('Firestore connection verified.');
+  } catch (error: any) {
+    if (error instanceof Error && (error.message.includes('the client is offline') || error.message.includes('unavailable'))) {
+      console.info('Firestore client is operating with local cache / offline fallback.');
     }
   }
 }
 
-// Kick off initial validation
-testConnection();
-initAuthSession();
+// Run connection validation safely in background
+if (typeof window !== 'undefined') {
+  setTimeout(() => {
+    testConnection().catch(() => {});
+  }, 1000);
+}
 
 export {
   signInWithPhoneNumber,
   RecaptchaVerifier,
   onAuthStateChanged,
   signOut,
-  signInAnonymously,
   doc,
   getDoc,
   getDocs,

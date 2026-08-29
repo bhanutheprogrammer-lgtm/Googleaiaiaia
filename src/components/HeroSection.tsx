@@ -184,9 +184,9 @@ export const HeroSection: React.FC = () => {
             {/* Quick Vernacular Cultural Discovery Tagline */}
             <div className="flex items-center justify-between mt-3 text-stone-400 text-xs font-sans px-1">
               <div className="flex items-center gap-1.5">
-                <Sparkles className="w-3.5 h-3.5 text-amber-400" />
-                <span className={`text-[11px] ${isDarkMode ? 'text-stone-300' : 'text-stone-600'}`}>
-                  Explore 100% GI-certified authentic crafts direct from master Indian karigars
+                <Sparkles className="w-3.5 h-3.5 text-amber-400 shrink-0" />
+                <span className={`text-[11px] font-sans ${isDarkMode ? 'text-stone-300' : 'text-stone-600'}`}>
+                  {t.app_tagline_guest || 'Direct from India’s Master Artisans • Heritage Crafts'}
                 </span>
               </div>
             </div>

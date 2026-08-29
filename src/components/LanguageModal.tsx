@@ -1,6 +1,6 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState, useMemo } from 'react';
 import { createPortal } from 'react-dom';
-import { X, Check, Globe } from 'lucide-react';
+import { X, Check, Globe, Search } from 'lucide-react';
 import gsap from 'gsap';
 import { useArtisan } from '../context/ArtisanContext';
 import { INDIAN_LANGUAGES } from '../data/mockCrafts';
@@ -19,9 +19,22 @@ export const LanguageModal: React.FC<LanguageModalProps> = ({
   onSelectLanguage,
 }) => {
   const { currentLanguage, setLanguage } = useArtisan();
+  const [searchQuery, setSearchQuery] = useState('');
   const overlayRef = useRef<HTMLDivElement>(null);
   const cardRef = useRef<HTMLDivElement>(null);
   const listRef = useRef<HTMLDivElement>(null);
+
+  const filteredLanguages = useMemo(() => {
+    const q = searchQuery.trim().toLowerCase();
+    if (!q) return INDIAN_LANGUAGES;
+    return INDIAN_LANGUAGES.filter(
+      (l) =>
+        l.label.toLowerCase().includes(q) ||
+        l.nativeName.toLowerCase().includes(q) ||
+        l.region.toLowerCase().includes(q) ||
+        l.code.toLowerCase().includes(q)
+    );
+  }, [searchQuery]);
 
   // Background Scroll Lock & Entrance Animation
   useEffect(() => {
@@ -51,7 +64,7 @@ export const LanguageModal: React.FC<LanguageModalProps> = ({
           gsap.fromTo(
             items,
             { opacity: 0, y: 8 },
-            { opacity: 1, y: 0, duration: 0.2, stagger: 0.02, delay: 0.05, ease: 'power2.out' }
+            { opacity: 1, y: 0, duration: 0.2, stagger: 0.015, delay: 0.05, ease: 'power2.out' }
           );
         }
       });
@@ -113,7 +126,7 @@ export const LanguageModal: React.FC<LanguageModalProps> = ({
     <div
       ref={overlayRef}
       id="language-modal-overlay"
-      className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[99999] flex items-center justify-center p-4"
+      className="fixed inset-0 bg-black/70 backdrop-blur-md z-[99999] flex items-center justify-center p-4"
       onClick={(e) => {
         if (e.target === e.currentTarget) {
           handleCloseWithAnimation();
@@ -127,7 +140,7 @@ export const LanguageModal: React.FC<LanguageModalProps> = ({
         role="dialog"
         aria-modal="true"
         aria-labelledby="language-modal-title"
-        className="w-full max-w-sm bg-[#5C2A12] border-2 border-amber-500/40 rounded-3xl p-5 shadow-2xl max-h-[80vh] flex flex-col overflow-hidden select-none relative z-10"
+        className="w-full max-w-md bg-[#0F1D2C] border-2 border-amber-500/40 rounded-3xl p-5 sm:p-6 shadow-2xl max-h-[85vh] flex flex-col overflow-hidden select-none relative z-10"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
@@ -135,10 +148,10 @@ export const LanguageModal: React.FC<LanguageModalProps> = ({
           <div className="flex items-center gap-2">
             <Globe className="w-4 h-4 text-amber-400 shrink-0" />
             <h2 id="language-modal-title" className="text-xs sm:text-sm font-bold text-amber-200 uppercase tracking-wider font-sans">
-              SELECT LANGUAGE
+              SELECT LANGUAGE (17 LANGUAGES)
             </h2>
             <span className="text-[10px] bg-amber-500/20 text-amber-300 px-2 py-0.5 rounded-full font-mono font-bold border border-amber-500/30">
-              {INDIAN_LANGUAGES.length}
+              17
             </span>
           </div>
 
@@ -153,11 +166,23 @@ export const LanguageModal: React.FC<LanguageModalProps> = ({
           </button>
         </div>
 
+        {/* Quick Search */}
+        <div className="mt-3 relative shrink-0">
+          <Search className="w-3.5 h-3.5 text-amber-400/60 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
+          <input
+            type="text"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            placeholder="Search 17 Indian languages..."
+            className="w-full bg-white/5 border border-white/10 text-white placeholder-slate-400 text-xs rounded-xl pl-8 pr-3 py-2 focus:outline-none focus:border-amber-400/60 focus:bg-white/10 transition"
+          />
+        </div>
+
         {/* Scrollable Languages List */}
         <div
           ref={listRef}
           data-lenis-prevent="true"
-          className="overflow-y-auto space-y-2 pr-1.5 my-3 flex-1 min-h-0 overscroll-contain touch-pan-y"
+          className="overflow-y-auto space-y-1.5 pr-1.5 my-3 flex-1 min-h-0 overscroll-contain touch-pan-y custom-scrollbar"
           style={{
             scrollbarWidth: 'thin',
             scrollbarColor: '#D97706 rgba(255, 255, 255, 0.05)',
@@ -169,7 +194,7 @@ export const LanguageModal: React.FC<LanguageModalProps> = ({
             e.stopPropagation();
           }}
         >
-          {INDIAN_LANGUAGES.map((lang) => {
+          {filteredLanguages.map((lang) => {
             const isSelected = currentLanguage === lang.code;
             return (
               <button
@@ -177,27 +202,34 @@ export const LanguageModal: React.FC<LanguageModalProps> = ({
                 id={`lang-option-${lang.code}`}
                 type="button"
                 onClick={() => handleSelect(lang.code)}
-                className={`lang-item-btn w-full p-3 rounded-2xl flex justify-between items-center cursor-pointer transition-all text-left ${
+                className={`lang-item-btn w-full p-2.5 sm:p-3 rounded-2xl flex justify-between items-center cursor-pointer transition-all text-left ${
                   isSelected
-                    ? 'border border-amber-400 bg-amber-500/10 text-amber-300 font-semibold shadow-inner'
+                    ? 'border border-amber-400 bg-amber-500/15 text-amber-300 font-semibold shadow-inner'
                     : 'border border-transparent hover:bg-white/5 text-slate-200'
                 }`}
               >
                 <div className="flex flex-col pr-2">
-                  <span className={`text-sm font-medium ${isSelected ? 'text-amber-200 font-bold' : 'text-white'}`}>
-                    {lang.nativeName} ({lang.label})
-                  </span>
-                  <span className="text-[11px] text-slate-400 font-sans">
+                  <div className="flex items-center gap-2">
+                    <span className={`text-sm font-medium ${isSelected ? 'text-amber-200 font-bold' : 'text-white'} ${lang.scriptFont || ''}`}>
+                      {lang.nativeName}
+                    </span>
+                    <span className="text-xs text-slate-400 font-sans">
+                      ({lang.label})
+                    </span>
+                  </div>
+                  <span className="text-[10px] text-slate-400 font-sans mt-0.5">
                     {lang.region}
                   </span>
                 </div>
 
                 {isSelected ? (
-                  <div className="w-6 h-6 rounded-full bg-amber-400/20 border border-amber-400/40 flex items-center justify-center shrink-0">
-                    <Check className="w-4 h-4 text-amber-400" />
+                  <div className="w-5 h-5 rounded-full bg-amber-400/20 border border-amber-400/60 flex items-center justify-center shrink-0">
+                    <Check className="w-3.5 h-3.5 text-amber-400" />
                   </div>
                 ) : (
-                  <div className="w-6 h-6 rounded-full border border-white/10 shrink-0 opacity-0 group-hover:opacity-100" />
+                  <span className="text-[10px] uppercase font-mono text-slate-400 px-1.5 py-0.5 rounded bg-white/5">
+                    {lang.code}
+                  </span>
                 )}
               </button>
             );
@@ -207,7 +239,7 @@ export const LanguageModal: React.FC<LanguageModalProps> = ({
         {/* Footer Subtext */}
         <div className="pt-2 border-t border-white/10 text-center shrink-0">
           <p className="text-[10px] text-slate-400 font-sans">
-            AI translations powered by Vernacular Bharat Model
+            AI translations across 17 Indian Languages • Vernacular Bharat
           </p>
         </div>
       </div>
@@ -217,4 +249,5 @@ export const LanguageModal: React.FC<LanguageModalProps> = ({
 };
 
 export default LanguageModal;
+
 

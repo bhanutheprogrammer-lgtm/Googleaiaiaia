@@ -22,7 +22,9 @@ export const BuyerNavbar: React.FC = () => {
   const {
     t,
     activeTab,
-    setActiveTab
+    setActiveTab,
+    crafts,
+    setSelectedCraftForCertificate
   } = useArtisan();
 
   const {
@@ -263,7 +265,7 @@ export const BuyerNavbar: React.FC = () => {
                         }}
                         className="w-full text-left px-3 py-2 rounded-xl text-xs font-medium hover:bg-white/15 hover:text-amber-300 flex items-center gap-2.5 transition-colors cursor-pointer"
                       >
-                        <User className="w-4 h-4 text-amber-400" />
+                        <User className="w-4 h-4 text-amber-400 shrink-0" />
                         <span>Profile & Settings</span>
                       </button>
 
@@ -276,11 +278,36 @@ export const BuyerNavbar: React.FC = () => {
                         }}
                         className="w-full text-left px-3 py-2 rounded-xl text-xs font-medium hover:bg-white/15 hover:text-amber-300 flex items-center gap-2.5 transition-colors cursor-pointer"
                       >
-                        <Heart className="w-4 h-4 text-rose-400" />
+                        <Heart className="w-4 h-4 text-rose-400 shrink-0" />
                         <span>My Pitara ({wishlistIds.length})</span>
                       </button>
 
-                      {/* Item 3: Sign Out */}
+                      {/* Item 3: Certificates */}
+                      <button
+                        id="dropdown-open-certificates-btn"
+                        onClick={() => {
+                          setProfileDropdownOpen(false);
+                          // Determine the craft to open certificate for
+                          const firstPurchasedCert = buyerUser?.purchasedCertificates?.[0];
+                          const targetCraft = firstPurchasedCert 
+                            ? (crafts.find(c => c.id === firstPurchasedCert.craftId) || crafts[0])
+                            : crafts[0];
+                          if (targetCraft) {
+                            setSelectedCraftForCertificate(targetCraft);
+                          }
+                        }}
+                        className="w-full text-left px-3 py-2 rounded-xl text-xs font-medium hover:bg-white/15 hover:text-amber-300 flex items-center justify-between transition-colors cursor-pointer"
+                      >
+                        <div className="flex items-center gap-2.5">
+                          <Award className="w-4 h-4 text-amber-400 shrink-0" />
+                          <span>Certificates</span>
+                        </div>
+                        <span className="text-[10px] font-bold bg-[#D4AF37]/20 text-amber-300 px-1.5 py-0.5 rounded-md border border-[#D4AF37]/40">
+                          {buyerUser?.purchasedCertificates?.length || 1}
+                        </span>
+                      </button>
+
+                      {/* Item 4: Sign Out */}
                       <button
                         id="dropdown-signout-btn"
                         onClick={() => {
@@ -289,7 +316,7 @@ export const BuyerNavbar: React.FC = () => {
                         }}
                         className="w-full text-left px-3 py-2 rounded-xl text-xs font-medium text-rose-300 hover:bg-rose-950/50 hover:text-rose-200 flex items-center gap-2.5 transition-colors cursor-pointer"
                       >
-                        <LogOut className="w-4 h-4 text-rose-400" />
+                        <LogOut className="w-4 h-4 text-rose-400 shrink-0" />
                         <span>Sign Out</span>
                       </button>
                     </div>

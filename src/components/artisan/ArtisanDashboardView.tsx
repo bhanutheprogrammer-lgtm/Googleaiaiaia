@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useRef, useEffect } from 'react';
 import { 
   Sparkles, 
   Package, 
@@ -6,6 +6,7 @@ import {
   Calculator, 
   QrCode
 } from 'lucide-react';
+import gsap from 'gsap';
 import { useArtisan } from '../../context/ArtisanContext';
 import { ArtisanProfile } from '../../types';
 import { AiScanStudio } from '../AiScanStudio';
@@ -29,11 +30,40 @@ export const ArtisanDashboardView: React.FC<ArtisanDashboardViewProps> = ({ arti
     t
   } = useArtisan();
 
+  const tabContainerRef = useRef<HTMLElement>(null);
   const currentArtisan = propArtisan || contextArtisan;
 
   const myCrafts = crafts.filter(
     (c) => c.artisan.id === currentArtisan.id || c.artisan.name === currentArtisan.name
   );
+
+  // GSAP matchMedia and timeline-based smooth cross-fade animation when switching dashboard tabs
+  useEffect(() => {
+    if (!tabContainerRef.current) return;
+    const mm = gsap.matchMedia();
+
+    mm.add('(min-width: 0px)', () => {
+      const tl = gsap.timeline();
+      tl.fromTo(
+        tabContainerRef.current,
+        { 
+          opacity: 0, 
+          y: 16,
+          scale: 0.99
+        },
+        { 
+          opacity: 1, 
+          y: 0, 
+          scale: 1,
+          duration: 0.38, 
+          ease: 'power2.out',
+          clearProps: 'transform'
+        }
+      );
+    });
+
+    return () => mm.revert();
+  }, [activeTab]);
 
   return (
     <div id="artisan-studio-workspace" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6 animate-in fade-in duration-300">
@@ -113,34 +143,34 @@ export const ArtisanDashboardView: React.FC<ArtisanDashboardViewProps> = ({ arti
         </div>
       </div>
 
-      {/* 2. Isolated Tab Workspace Views */}
-      <section id="artisan-active-tab-container">
+      {/* 2. Isolated Tab Workspace Views with GSAP cross-fade */}
+      <section ref={tabContainerRef} id="artisan-active-tab-container">
         {activeTab === 'scan_studio' && (
-          <div className="animate-in fade-in duration-200">
+          <div>
             <AiScanStudio />
           </div>
         )}
 
         {activeTab === 'ledger' && (
-          <div className="animate-in fade-in duration-200">
+          <div>
             <ArtisanCatalogManager />
           </div>
         )}
 
         {activeTab === 'inquiries' && (
-          <div className="animate-in fade-in duration-200">
+          <div>
             <ArtisanInquiriesLedger />
           </div>
         )}
 
         {activeTab === 'fair_pricing' && (
-          <div className="animate-in fade-in duration-200">
+          <div>
             <ArtisanFairPriceCalculator />
           </div>
         )}
 
         {activeTab === 'store_qr' && (
-          <div className="animate-in fade-in duration-200">
+          <div>
             <ArtisanStoreQRFlyer />
           </div>
         )}
