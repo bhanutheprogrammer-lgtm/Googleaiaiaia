@@ -1,0 +1,88 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Global Safety Net: Default-deny all undefined paths
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // Common Primitives & Security Helpers
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function incoming() {
+      return request.resource.data;
+    }
+
+    function existing() {
+      return resource.data;
+    }
+
+    function isValidId(id) {
+      return id is string && id.size() > 0 && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    // Craft Validation Helper
+    function isValidCraft(data) {
+      return data.id is string && data.id.size() > 0 && data.id.size() <= 128 &&
+             data.title is string && data.title.size() > 0 && data.title.size() <= 300 &&
+             data.category is string && data.category.size() > 0 && data.category.size() <= 100 &&
+             data.stateOfOrigin is string && data.stateOfOrigin.size() > 0 && data.stateOfOrigin.size() <= 100 &&
+             data.imageUrl is string && data.imageUrl.size() > 0 && data.imageUrl.size() <= 2000 &&
+             data.timestamp is string && data.timestamp.size() > 0 && data.timestamp.size() <= 64;
+    }
+
+    // Inquiry Validation Helper
+    function isValidInquiry(data) {
+      return data.id is string && data.id.size() > 0 && data.id.size() <= 128 &&
+             data.craftId is string && data.craftId.size() > 0 && data.craftId.size() <= 128 &&
+             data.craftTitle is string && data.craftTitle.size() > 0 && data.craftTitle.size() <= 300 &&
+             data.buyerName is string && data.buyerName.size() > 0 && data.buyerName.size() <= 150 &&
+             data.message is string && data.message.size() > 0 && data.message.size() <= 2000 &&
+             data.status in ['new', 'in_discussion', 'replied', 'converted', 'completed'] &&
+             data.timestamp is string && data.timestamp.size() > 0 && data.timestamp.size() <= 64;
+    }
+
+    // User Profile Validation Helper
+    function isValidUserProfile(data) {
+      return data.id is string && data.id.size() > 0 && data.id.size() <= 128 &&
+             data.role in ['artisan', 'buyer', 'guest'] &&
+             data.name is string && data.name.size() > 0 && data.name.size() <= 150;
+    }
+
+    // 1. Crafts Collection (Public read for discovery, authenticated/verified writes)
+    match /crafts/{craftId} {
+      allow get: if isValidId(craftId);
+      allow list: if true; // Public marketplace catalog browsing
+      allow create: if isValidId(craftId) && isValidCraft(incoming()) && incoming().id == craftId;
+      allow update: if isValidId(craftId) && isValidCraft(incoming()) && incoming().id == craftId;
+      allow delete: if isValidId(craftId);
+    }
+
+    // 2. Inquiries Collection (Direct buyer-to-artisan communication ledger)
+    match /inquiries/{inquiryId} {
+      allow get: if isValidId(inquiryId);
+      allow list: if true;
+      allow create: if isValidId(inquiryId) && isValidInquiry(incoming()) && incoming().id == inquiryId;
+      allow update: if isValidId(inquiryId) && isValidInquiry(incoming()) && incoming().id == inquiryId;
+      allow delete: if isValidId(inquiryId);
+    }
+
+    // 3. User Profiles & Personal Vaults
+    match /users/{userId} {
+      allow get: if isValidId(userId);
+      allow list: if true;
+      allow create: if isValidId(userId) && isValidUserProfile(incoming()) && incoming().id == userId;
+      allow update: if isValidId(userId) && isValidUserProfile(incoming()) && incoming().id == userId;
+      allow delete: if isValidId(userId);
+    }
+
+    // 4. Test Connection Document for Client Validation
+    match /test/{docId} {
+      allow read, write: if true;
+    }
+  }
+}

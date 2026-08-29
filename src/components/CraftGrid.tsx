@@ -233,7 +233,7 @@ const CraftCard: React.FC<CraftCardProps> = ({
   onViewCertificate,
   whatsAppLink,
   t,
-  currentLanguage
+  currentLanguage,
 }) => {
   const { wishlistIds, toggleWishlist } = useAuth();
   const isWishlisted = wishlistIds.includes(craft.id);

@@ -1,10 +1,11 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import LocomotiveScroll from 'locomotive-scroll';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { ArtisanProvider } from './context/ArtisanContext';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { ArtisanProfile, BuyerProfile } from './types';
+import { IntroLoader } from './components/IntroLoader';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -40,9 +41,9 @@ const MainContent: React.FC = () => {
   // 1. ARTISAN / SELLER VIEW: Renders ONLY the Artisan Workshop Studio
   if (userRole === 'artisan') {
     return (
-      <div id="artisan-role-container" className="min-h-screen bg-[#FAF8F5] flex flex-col justify-between w-full overflow-x-hidden m-0 p-0">
-        <div className="w-full overflow-x-hidden flex-1">
-          <ArtisanNavbar />
+      <div id="artisan-role-container" className="min-h-screen bg-[#FAF8F5] flex flex-col justify-between w-full m-0 p-0">
+        <ArtisanNavbar />
+        <div className="w-full flex-1">
           <ArtisanDashboardView artisan={currentUser as ArtisanProfile} />
         </div>
         <Footer />
@@ -53,9 +54,9 @@ const MainContent: React.FC = () => {
   // 2. BUYER VIEW: Renders ONLY the Buyer Marketplace & Wishlist
   if (userRole === 'buyer') {
     return (
-      <div id="buyer-role-container" className="min-h-screen bg-[#FAF8F5] flex flex-col justify-between w-full overflow-x-hidden m-0 p-0">
-        <div className="w-full overflow-x-hidden flex-1">
-          <BuyerNavbar />
+      <div id="buyer-role-container" className="min-h-screen bg-[#FAF8F5] flex flex-col justify-between w-full m-0 p-0">
+        <BuyerNavbar />
+        <div className="w-full flex-1">
           <BuyerMarketplaceView buyer={currentUser as BuyerProfile} />
         </div>
         <Footer />
@@ -65,9 +66,9 @@ const MainContent: React.FC = () => {
 
   // 3. GUEST VIEW: Renders Public Browse Mode with Auth Prompts
   return (
-    <div id="guest-role-container" className="min-h-screen bg-[#FAF8F5] flex flex-col justify-between w-full overflow-x-hidden m-0 p-0">
-      <div className="w-full overflow-x-hidden flex-1">
-        <GuestNavbar onAuthClick={() => openAuthModal('buyer')} />
+    <div id="guest-role-container" className="min-h-screen bg-[#FAF8F5] flex flex-col justify-between w-full m-0 p-0">
+      <GuestNavbar onAuthClick={() => openAuthModal('buyer')} />
+      <div className="w-full flex-1">
         <PublicMarketplaceView onAuthPrompt={(role) => openAuthModal(role || 'buyer')} />
       </div>
       <Footer />
@@ -131,9 +132,20 @@ const MainLayout: React.FC = () => {
 };
 
 export default function App() {
+  const [introFinished, setIntroFinished] = useState(() => {
+    // Check if user already saw the intro in this session
+    return Boolean(sessionStorage.getItem('artlynk_intro_played'));
+  });
+
+  const handleIntroComplete = () => {
+    sessionStorage.setItem('artlynk_intro_played', 'true');
+    setIntroFinished(true);
+  };
+
   return (
     <AuthProvider>
       <ArtisanProvider>
+        {!introFinished && <IntroLoader onComplete={handleIntroComplete} />}
         <MainLayout />
       </ArtisanProvider>
     </AuthProvider>

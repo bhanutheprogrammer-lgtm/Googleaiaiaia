@@ -50,7 +50,25 @@ export const Navbar: React.FC = () => {
   } = useAuth();
 
   const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
   const profileDropdownRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      if (window.scrollY > 15) {
+        setIsScrolled(true);
+      } else {
+        setIsScrolled(false);
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    handleScroll();
+
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+    };
+  }, []);
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent | TouchEvent) {
@@ -81,12 +99,19 @@ export const Navbar: React.FC = () => {
   };
 
   return (
-    <header className="sticky top-0 z-40 w-full bg-[#FAF6EE] bg-opacity-95 backdrop-blur-md border-b border-[#D4AF37]/40 shadow-md transition-all">
+    <header 
+      id="universal-sticky-navbar"
+      className={`sticky top-0 z-50 w-full transition-all duration-300 ${
+        isScrolled 
+          ? 'bg-[#FAF6EE]/98 backdrop-blur-xl border-b border-[#D4AF37]/70 shadow-xl' 
+          : 'bg-[#FAF6EE]/95 backdrop-blur-md border-b border-[#D4AF37]/40 shadow-md'
+      }`}
+    >
       {/* Top Auspicious Gold Border Ribbon */}
-      <div className="h-[2px] w-full bg-linear-to-r from-[#B83227] via-[#D4AF37] to-[#E67E22]" />
+      <div className={`h-[2px] w-full bg-linear-to-r from-[#B83227] via-[#D4AF37] to-[#E67E22] transition-opacity duration-300 ${isScrolled ? 'opacity-100 shadow-[0_0_8px_rgba(212,175,55,0.6)]' : 'opacity-80'}`} />
 
       <div className="w-full max-w-7xl mx-auto px-3 sm:px-4 lg:px-6">
-        <div className="w-full h-16 sm:h-20 flex items-center justify-between gap-1.5 sm:gap-3 box-border overflow-hidden">
+        <div className={`w-full ${isScrolled ? 'h-14 sm:h-16' : 'h-16 sm:h-20'} flex items-center justify-between gap-1.5 sm:gap-3 box-border overflow-hidden transition-all duration-300`}>
           
           {/* Logo & Brand Identity - Editorial Style */}
           <div 

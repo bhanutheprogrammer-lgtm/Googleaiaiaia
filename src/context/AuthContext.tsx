@@ -2,6 +2,7 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
 import confetti from 'canvas-confetti';
 import { UserRole, ArtisanProfile, BuyerProfile, CraftCategory, LanguageCode, PurchasedCertificate, CraftItem } from '../types';
 import { DEFAULT_DEMO_ARTISAN, DEFAULT_DEMO_BUYER } from '../data/mockCrafts';
+import { db, doc, setDoc } from '../firebase';
 
 interface AuthContextType {
   userRole: UserRole;
@@ -118,7 +119,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [isStoreQRModalOpen, setIsStoreQRModalOpen] = useState(false);
   const [isAccountSettingsOpen, setIsAccountSettingsOpen] = useState(false);
 
-  // Sync to LocalStorage
+  // Sync to LocalStorage and Firestore
   useEffect(() => {
     try {
       localStorage.setItem('artisan_link_auth_role_v2', userRole);
@@ -131,6 +132,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     try {
       if (artisanUser) {
         localStorage.setItem('artisan_link_artisan_user_v2', JSON.stringify(artisanUser));
+        setDoc(doc(db, 'users', artisanUser.id), {
+          ...artisanUser,
+          role: 'artisan',
+          updatedAt: new Date().toISOString()
+        }, { merge: true }).catch((err) => console.log('Firestore user sync info:', err));
       }
     } catch (e) {
       console.error(e);
@@ -141,11 +147,18 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     try {
       if (buyerUser) {
         localStorage.setItem('artisan_link_buyer_user_v2', JSON.stringify(buyerUser));
+        setDoc(doc(db, 'users', buyerUser.id), {
+          ...buyerUser,
+          role: 'buyer',
+          wishlistCraftIds: wishlistIds,
+          purchasedCertificates: purchasedCertificates,
+          updatedAt: new Date().toISOString()
+        }, { merge: true }).catch((err) => console.log('Firestore buyer sync info:', err));
       }
     } catch (e) {
       console.error(e);
     }
-  }, [buyerUser]);
+  }, [buyerUser, wishlistIds, purchasedCertificates]);
 
   useEffect(() => {
     try {

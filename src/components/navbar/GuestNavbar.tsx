@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   ShoppingBag, 
   Map, 
@@ -9,6 +9,7 @@ import {
   Menu,
   X
 } from 'lucide-react';
+import { motion, AnimatePresence } from 'motion/react';
 import { useArtisan } from '../../context/ArtisanContext';
 import { useAuth } from '../../context/AuthContext';
 import { LanguageSelector } from '../LanguageSelector';
@@ -27,6 +28,24 @@ export const GuestNavbar: React.FC<GuestNavbarProps> = ({ onAuthClick }) => {
 
   const { openAuthModal } = useAuth();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      if (window.scrollY > 15) {
+        setIsScrolled(true);
+      } else {
+        setIsScrolled(false);
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    handleScroll();
+
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+    };
+  }, []);
 
   const handleOpenAuth = () => {
     setMobileMenuOpen(false);
@@ -50,13 +69,20 @@ export const GuestNavbar: React.FC<GuestNavbarProps> = ({ onAuthClick }) => {
   };
 
   return (
-    <header className="sticky top-0 z-40 w-full bg-[#121c2b]/90 backdrop-blur-md text-white border-b border-white/10 shadow-lg transition-all">
+    <header 
+      id="guest-sticky-navbar"
+      className={`sticky top-0 z-50 w-full transition-all duration-300 ${
+        isScrolled 
+          ? 'bg-[#0B1522]/98 backdrop-blur-xl shadow-2xl border-b border-amber-500/30' 
+          : 'bg-[#121c2b]/95 backdrop-blur-md shadow-lg border-b border-white/10'
+      } text-white`}
+    >
       {/* Top Auspicious Subtle Ribbon */}
-      <div className="h-[2.5px] w-full bg-linear-to-r from-[#A84A2C] via-[#B88E28] to-[#2D6A4F]" />
+      <div className={`h-[2.5px] w-full bg-linear-to-r from-[#A84A2C] via-[#B88E28] to-[#2D6A4F] transition-opacity duration-300 ${isScrolled ? 'opacity-100 shadow-[0_0_12px_rgba(184,142,40,0.6)]' : 'opacity-80'}`} />
 
       <div className="w-full max-w-7xl mx-auto px-3 sm:px-5 lg:px-8">
         {/* MODERN 3-PART SEPARATED NAVBAR (DESKTOP) */}
-        <div className="w-full h-16 sm:h-20 flex items-center justify-between gap-2 sm:gap-4">
+        <div className={`w-full ${isScrolled ? 'h-14 sm:h-16' : 'h-16 sm:h-20'} flex items-center justify-between gap-2 sm:gap-4 transition-all duration-300`}>
           
           {/* ========================================================= */}
           {/* 1. LEFT: Brand Logo + ArtLynk Text (shrink-0) */}
@@ -187,63 +213,86 @@ export const GuestNavbar: React.FC<GuestNavbarProps> = ({ onAuthClick }) => {
         </div>
       </div>
 
-      {/* MOBILE COLLAPSIBLE MENU */}
-      {mobileMenuOpen && (
-        <div 
-          id="guest-mobile-drawer"
-          className="md:hidden border-t border-white/10 bg-[#0C1F30] px-4 py-4 space-y-3 animate-in slide-in-from-top duration-200"
-        >
-          <div className="grid grid-cols-1 gap-1 font-sans text-xs">
-            <button
-              onClick={() => handleNavClick('bazaar')}
-              className={`w-full text-left px-3 py-2.5 rounded-xl flex items-center gap-2.5 cursor-pointer ${
-                activeTab === 'bazaar' ? 'bg-[#A84A2C] text-white font-bold' : 'text-stone-300 hover:bg-white/5'
-              }`}
-            >
-              <ShoppingBag className="w-4 h-4 text-amber-300" />
-              <span>{t.nav_crafts || 'Explore Crafts'}</span>
-            </button>
-
-            <button
-              onClick={() => handleNavClick('stories')}
-              className={`w-full text-left px-3 py-2.5 rounded-xl flex items-center gap-2.5 cursor-pointer ${
-                activeTab === 'stories' ? 'bg-[#A84A2C] text-white font-bold' : 'text-stone-300 hover:bg-white/5'
-              }`}
-            >
-              <BookOpen className="w-4 h-4 text-amber-300" />
-              <span>{t.nav_stories || 'Heritage Stories'}</span>
-            </button>
-
-            <button
-              onClick={() => handleNavClick('craft_map')}
-              className={`w-full text-left px-3 py-2.5 rounded-xl flex items-center gap-2.5 cursor-pointer ${
-                activeTab === 'craft_map' ? 'bg-[#2D6A4F] text-white font-bold' : 'text-stone-300 hover:bg-white/5'
-              }`}
-            >
-              <Map className="w-4 h-4 text-emerald-300" />
-              <span>{t.nav_map || 'GI Map'}</span>
-            </button>
-
-            <button
-              onClick={handleAboutClick}
-              className="w-full text-left px-3 py-2.5 rounded-xl flex items-center gap-2.5 text-stone-300 hover:bg-white/5 cursor-pointer"
-            >
-              <Info className="w-4 h-4 text-stone-400" />
-              <span>About Heritage Mission</span>
-            </button>
-
-            <div className="pt-2 border-t border-white/10">
-              <button
-                onClick={handleOpenAuth}
-                className="w-full py-2.5 rounded-xl bg-linear-to-r from-[#A84A2C] to-[#C05621] text-white font-bold text-xs uppercase tracking-wider flex items-center justify-center gap-2 shadow-md cursor-pointer"
+      {/* MOBILE COLLAPSIBLE MENU WITH SPRING ANIMATION */}
+      <AnimatePresence>
+        {mobileMenuOpen && (
+          <motion.div 
+            id="guest-mobile-drawer"
+            initial={{ opacity: 0, height: 0, y: -10 }}
+            animate={{ opacity: 1, height: 'auto', y: 0 }}
+            exit={{ opacity: 0, height: 0, y: -10 }}
+            transition={{ type: "spring", stiffness: 350, damping: 28 }}
+            className="md:hidden overflow-hidden border-t border-white/10 bg-[#0C1F30] px-4 py-4 space-y-3 shadow-2xl backdrop-blur-xl"
+          >
+            <div className="grid grid-cols-1 gap-1 font-sans text-xs">
+              <motion.button
+                initial={{ opacity: 0, x: -10 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: 0.05 }}
+                onClick={() => handleNavClick('bazaar')}
+                className={`w-full text-left px-3.5 py-2.5 rounded-xl flex items-center gap-2.5 cursor-pointer transition-all ${
+                  activeTab === 'bazaar' ? 'bg-[#A84A2C] text-white font-bold' : 'text-stone-300 hover:bg-white/5'
+                }`}
               >
-                <LogIn className="w-4 h-4" />
-                <span>{t.nav_login || 'Login / Join ArtLynk'}</span>
-              </button>
+                <ShoppingBag className="w-4 h-4 text-amber-300" />
+                <span>{t.nav_crafts || 'Explore Crafts'}</span>
+              </motion.button>
+
+              <motion.button
+                initial={{ opacity: 0, x: -10 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: 0.1 }}
+                onClick={() => handleNavClick('stories')}
+                className={`w-full text-left px-3.5 py-2.5 rounded-xl flex items-center gap-2.5 cursor-pointer transition-all ${
+                  activeTab === 'stories' ? 'bg-[#A84A2C] text-white font-bold' : 'text-stone-300 hover:bg-white/5'
+                }`}
+              >
+                <BookOpen className="w-4 h-4 text-amber-300" />
+                <span>{t.nav_stories || 'Heritage Stories'}</span>
+              </motion.button>
+
+              <motion.button
+                initial={{ opacity: 0, x: -10 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: 0.15 }}
+                onClick={() => handleNavClick('craft_map')}
+                className={`w-full text-left px-3.5 py-2.5 rounded-xl flex items-center gap-2.5 cursor-pointer transition-all ${
+                  activeTab === 'craft_map' ? 'bg-[#2D6A4F] text-white font-bold' : 'text-stone-300 hover:bg-white/5'
+                }`}
+              >
+                <Map className="w-4 h-4 text-emerald-300" />
+                <span>{t.nav_map || 'GI Map'}</span>
+              </motion.button>
+
+              <motion.button
+                initial={{ opacity: 0, x: -10 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: 0.2 }}
+                onClick={handleAboutClick}
+                className="w-full text-left px-3.5 py-2.5 rounded-xl flex items-center gap-2.5 text-stone-300 hover:bg-white/5 cursor-pointer"
+              >
+                <Info className="w-4 h-4 text-stone-400" />
+                <span>About Heritage Mission</span>
+              </motion.button>
+
+              <motion.div 
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.25 }}
+                className="pt-2 border-t border-white/10"
+              >
+                <button
+                  onClick={handleOpenAuth}
+                  className="w-full py-2.5 rounded-xl bg-linear-to-r from-[#A84A2C] to-[#C05621] text-white font-bold text-xs uppercase tracking-wider flex items-center justify-center gap-2 shadow-md cursor-pointer active:scale-98 transition-transform"
+                >
+                  <LogIn className="w-4 h-4" />
+                  <span>{t.nav_login || 'Login / Join ArtLynk'}</span>
+                </button>
+              </motion.div>
             </div>
-          </div>
-        </div>
-      )}
+          </motion.div>
+        )}
+      </AnimatePresence>
     </header>
   );
 };

@@ -4,6 +4,7 @@ import { CraftItem, LanguageCode, InquiryMessage, ArtisanProfile } from '../type
 import { INITIAL_CRAFTS, INITIAL_INQUIRIES, INDIAN_LANGUAGES } from '../data/mockCrafts';
 import { TranslationSchema, getTranslation } from '../locales';
 import { useAuth } from './AuthContext';
+import { db, collection, doc, setDoc, updateDoc, deleteDoc, onSnapshot, getDocs } from '../firebase';
 
 export const CURRENT_ARTISAN_PROFILE: ArtisanProfile = {
   id: 'artisan-ramesh-rao',
@@ -114,7 +115,73 @@ export const ArtisanProvider: React.FC<{ children: React.ReactNode }> = ({ child
   const [selectedState, setSelectedState] = useState<string>('All');
   const [giOnlyFilter, setGiOnlyFilter] = useState(false);
 
-  // Sync to local storage
+  // Firestore Realtime Synchronization for Crafts & Inquiries
+  useEffect(() => {
+    let unsubscribeCrafts: (() => void) | undefined;
+    let unsubscribeInquiries: (() => void) | undefined;
+
+    try {
+      // 1. Subscribe to Crafts Collection in Firestore
+      const craftsCol = collection(db, 'crafts');
+      unsubscribeCrafts = onSnapshot(
+        craftsCol,
+        (snapshot) => {
+          if (!snapshot.empty) {
+            const firestoreCrafts: CraftItem[] = [];
+            snapshot.forEach((docSnap) => {
+              firestoreCrafts.push(docSnap.data() as CraftItem);
+            });
+            // Keep crafts in order of latest
+            setCrafts(firestoreCrafts);
+          } else {
+            // Seed initial crafts if Firestore collection is brand new
+            INITIAL_CRAFTS.forEach((item) => {
+              setDoc(doc(db, 'crafts', item.id), item).catch((err) =>
+                console.log('Craft seed note:', err)
+              );
+            });
+          }
+        },
+        (error) => {
+          console.warn('Firestore crafts snapshot fallback to local state:', error);
+        }
+      );
+
+      // 2. Subscribe to Inquiries Collection in Firestore
+      const inquiriesCol = collection(db, 'inquiries');
+      unsubscribeInquiries = onSnapshot(
+        inquiriesCol,
+        (snapshot) => {
+          if (!snapshot.empty) {
+            const firestoreInquiries: InquiryMessage[] = [];
+            snapshot.forEach((docSnap) => {
+              firestoreInquiries.push(docSnap.data() as InquiryMessage);
+            });
+            setInquiries(firestoreInquiries);
+          } else {
+            // Seed initial inquiries if empty
+            INITIAL_INQUIRIES.forEach((item) => {
+              setDoc(doc(db, 'inquiries', item.id), item).catch((err) =>
+                console.log('Inquiry seed note:', err)
+              );
+            });
+          }
+        },
+        (error) => {
+          console.warn('Firestore inquiries snapshot fallback:', error);
+        }
+      );
+    } catch (e) {
+      console.warn('Firestore subscription initialized with offline fallback:', e);
+    }
+
+    return () => {
+      if (unsubscribeCrafts) unsubscribeCrafts();
+      if (unsubscribeInquiries) unsubscribeInquiries();
+    };
+  }, []);
+
+  // Sync to local storage as fallback
   useEffect(() => {
     try {
       localStorage.setItem('artisan_link_crafts_v2', JSON.stringify(crafts));
@@ -133,31 +200,51 @@ export const ArtisanProvider: React.FC<{ children: React.ReactNode }> = ({ child
 
   const addCraft = (newCraft: CraftItem) => {
     setCrafts((prev) => [newCraft, ...prev]);
+    setDoc(doc(db, 'crafts', newCraft.id), newCraft).catch((err) =>
+      console.log('Firestore add craft write:', err)
+    );
   };
 
   const updateCraft = (id: string, updated: Partial<CraftItem>) => {
     setCrafts((prev) => prev.map((c) => (c.id === id ? { ...c, ...updated } : c)));
+    updateDoc(doc(db, 'crafts', id), updated).catch((err) =>
+      console.log('Firestore update craft write:', err)
+    );
   };
 
   const toggleCraftInStock = (id: string) => {
+    const target = crafts.find((c) => c.id === id);
+    const newStock = target ? (target.inStock === false ? true : false) : true;
     setCrafts((prev) =>
-      prev.map((c) => (c.id === id ? { ...c, inStock: c.inStock === false ? true : false } : c))
+      prev.map((c) => (c.id === id ? { ...c, inStock: newStock } : c))
+    );
+    updateDoc(doc(db, 'crafts', id), { inStock: newStock }).catch((err) =>
+      console.log('Firestore toggle stock write:', err)
     );
   };
 
   const deleteCraft = (id: string) => {
     setCrafts((prev) => prev.filter((c) => c.id !== id));
+    deleteDoc(doc(db, 'crafts', id)).catch((err) =>
+      console.log('Firestore delete craft write:', err)
+    );
   };
 
   const markInquiryReplied = (id: string) => {
     setInquiries((prev) =>
       prev.map((inq) => (inq.id === id ? { ...inq, status: 'replied' } : inq))
     );
+    updateDoc(doc(db, 'inquiries', id), { status: 'replied' }).catch((err) =>
+      console.log('Firestore mark inquiry replied write:', err)
+    );
   };
 
   const updateInquiryStatus = (id: string, status: InquiryMessage['status']) => {
     setInquiries((prev) =>
       prev.map((inq) => (inq.id === id ? { ...inq, status } : inq))
+    );
+    updateDoc(doc(db, 'inquiries', id), { status }).catch((err) =>
+      console.log('Firestore update inquiry status write:', err)
     );
   };
 

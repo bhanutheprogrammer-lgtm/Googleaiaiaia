@@ -9,6 +9,28 @@ dotenv.config();
 const app = express();
 const PORT = 3000;
 
+// Language Name Map for AI prompt guidance
+const LANGUAGE_NAMES: Record<string, string> = {
+  en: "English",
+  hi: "Hindi (हिन्दी)",
+  te: "Telugu (తెలుగు)",
+  ta: "Tamil (தமிழ்)",
+  kn: "Kannada (ಕನ್ನಡ)",
+  ml: "Malayalam (മലയാളം)",
+  mr: "Marathi (मराठी)",
+  gu: "Gujarati (ગુજરાતી)",
+  or: "Odia (ଓଡ଼ିଆ)",
+  bn: "Bengali (বাংলা)",
+  ur: "Urdu (اردو)",
+};
+
+// Robust Gemini execution helper with automatic multi-model fallback on 503/429 demand spikes
+const SUPPORTED_GEMINI_MODELS = [
+  "gemini-3.7-flash",
+  "gemini-flash-latest",
+  "gemini-3.1-flash-lite",
+];
+
 // Body parser
 app.use(express.json({ limit: "25mb" }));
 app.use(express.urlencoded({ extended: true, limit: "25mb" }));
@@ -193,28 +215,6 @@ function generateFallbackCraftData(promptHint: string = "", selectedLanguage: st
     isAuthenticCraft: true
   };
 }
-
-// Language Name Map for AI prompt guidance
-const LANGUAGE_NAMES: Record<string, string> = {
-  en: "English",
-  hi: "Hindi (हिन्दी)",
-  te: "Telugu (తెలుగు)",
-  ta: "Tamil (தமிழ்)",
-  kn: "Kannada (ಕನ್ನಡ)",
-  ml: "Malayalam (മലയാളം)",
-  mr: "Marathi (मराठी)",
-  gu: "Gujarati (ગુજરાતી)",
-  or: "Odia (ଓଡ଼ିଆ)",
-  bn: "Bengali (বাংলা)",
-  ur: "Urdu (اردو)",
-};
-
-// Robust Gemini execution helper with automatic multi-model fallback on 503/429 demand spikes
-const SUPPORTED_GEMINI_MODELS = [
-  "gemini-3.7-flash",
-  "gemini-flash-latest",
-  "gemini-3.1-flash-lite",
-];
 
 async function generateGeminiWithFallback(
   gemini: GoogleGenAI,

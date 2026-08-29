@@ -3,16 +3,16 @@ import {
   Sparkles, 
   Package, 
   MessageSquare, 
-  Map,
-  BookOpen, 
+  Calculator,
+  QrCode,
   ChevronDown, 
   LogOut, 
-  User,
-  ShoppingBag,
-  Menu,
-  X,
-  Info
+  User, 
+  Menu, 
+  X, 
+  Info 
 } from 'lucide-react';
+import { motion, AnimatePresence } from 'motion/react';
 import { useArtisan } from '../../context/ArtisanContext';
 import { useAuth } from '../../context/AuthContext';
 import { LanguageSelector } from '../LanguageSelector';
@@ -34,7 +34,25 @@ export const ArtisanNavbar: React.FC = () => {
 
   const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
   const profileDropdownRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      if (window.scrollY > 15) {
+        setIsScrolled(true);
+      } else {
+        setIsScrolled(false);
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    handleScroll();
+
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+    };
+  }, []);
 
   // Close profile dropdown when clicking outside
   useEffect(() => {
@@ -55,7 +73,7 @@ export const ArtisanNavbar: React.FC = () => {
 
   const artisanName = artisanUser?.name || 'Ustad Rameshwar Rao';
 
-  const handleNavClick = (tab: 'scan_studio' | 'ledger' | 'inquiries' | 'fair_pricing' | 'store_qr' | 'stories' | 'craft_map') => {
+  const handleNavClick = (tab: 'scan_studio' | 'ledger' | 'inquiries' | 'fair_pricing' | 'store_qr') => {
     setActiveTab(tab as any);
     setMobileMenuOpen(false);
   };
@@ -65,19 +83,24 @@ export const ArtisanNavbar: React.FC = () => {
     const element = document.getElementById('heritage-manifesto-footer') || document.querySelector('footer');
     if (element) {
       element.scrollIntoView({ behavior: 'smooth' });
-    } else {
-      setActiveTab('stories');
     }
   };
 
   return (
-    <header className="sticky top-0 z-40 w-full bg-[#121c2b]/90 backdrop-blur-md text-white border-b border-white/10 shadow-lg transition-all">
+    <header 
+      id="artisan-sticky-navbar"
+      className={`sticky top-0 z-50 w-full transition-all duration-300 ${
+        isScrolled 
+          ? 'bg-[#0B1522]/98 backdrop-blur-xl shadow-2xl border-b border-amber-500/30' 
+          : 'bg-[#121c2b]/95 backdrop-blur-md shadow-lg border-b border-white/10'
+      } text-white`}
+    >
       {/* Top Auspicious Subtle Ribbon */}
-      <div className="h-[2.5px] w-full bg-linear-to-r from-[#A84A2C] via-[#B88E28] to-[#2D6A4F]" />
+      <div className={`h-[2.5px] w-full bg-linear-to-r from-[#A84A2C] via-[#B88E28] to-[#2D6A4F] transition-opacity duration-300 ${isScrolled ? 'opacity-100 shadow-[0_0_12px_rgba(184,142,40,0.6)]' : 'opacity-80'}`} />
 
       <div className="w-full max-w-7xl mx-auto px-3 sm:px-5 lg:px-8">
         {/* MODERN 3-PART SEPARATED NAVBAR (DESKTOP) */}
-        <div className="w-full h-16 sm:h-20 flex items-center justify-between gap-2 sm:gap-4">
+        <div className={`w-full ${isScrolled ? 'h-14 sm:h-16' : 'h-16 sm:h-20'} flex items-center justify-between gap-2 sm:gap-4 transition-all duration-300`}>
           
           {/* ========================================================= */}
           {/* 1. LEFT: Brand Logo + ArtLynk Text (shrink-0) */}
@@ -107,7 +130,7 @@ export const ArtisanNavbar: React.FC = () => {
           {/* ========================================================= */}
           <nav 
             id="artisan-desktop-pill-nav"
-            className="hidden md:flex items-center bg-stone-900/80 backdrop-blur-md px-6 py-2 rounded-full border border-white/10 gap-6 text-sm text-stone-200 shadow-inner"
+            className="hidden md:flex items-center bg-stone-900/80 backdrop-blur-md px-6 py-2 rounded-full border border-white/10 gap-5 lg:gap-6 text-sm text-stone-200 shadow-inner"
           >
             {/* AI Scan Studio */}
             <button
@@ -156,32 +179,32 @@ export const ArtisanNavbar: React.FC = () => {
               )}
             </button>
 
-            {/* Heritage Stories */}
+            {/* Fair Pricing */}
             <button
-              id="artisan-nav-stories-btn"
-              onClick={() => handleNavClick('stories')}
+              id="artisan-nav-pricing-btn"
+              onClick={() => handleNavClick('fair_pricing')}
               className={`transition-colors whitespace-nowrap cursor-pointer flex items-center gap-1.5 ${
-                activeTab === 'stories'
+                activeTab === 'fair_pricing'
                   ? 'text-amber-300 font-semibold'
                   : 'text-stone-300 hover:text-white'
               }`}
             >
-              <BookOpen className="w-4 h-4 text-amber-400" />
-              <span>{t.nav_stories || 'Stories'}</span>
+              <Calculator className="w-4 h-4 text-amber-400" />
+              <span>{t.nav_pricing || 'Fair Pricing'}</span>
             </button>
 
-            {/* GI Map */}
+            {/* Store QR */}
             <button
-              id="artisan-nav-map-btn"
-              onClick={() => handleNavClick('craft_map')}
+              id="artisan-nav-qr-btn"
+              onClick={() => handleNavClick('store_qr')}
               className={`transition-colors whitespace-nowrap cursor-pointer flex items-center gap-1.5 ${
-                activeTab === 'craft_map'
+                activeTab === 'store_qr'
                   ? 'text-amber-300 font-semibold'
                   : 'text-stone-300 hover:text-white'
               }`}
             >
-              <Map className="w-4 h-4 text-emerald-400" />
-              <span>{t.nav_map || 'GI Map'}</span>
+              <QrCode className="w-4 h-4 text-purple-400" />
+              <span>{t.nav_qr || 'Store QR'}</span>
             </button>
 
             {/* About */}
@@ -226,58 +249,64 @@ export const ArtisanNavbar: React.FC = () => {
                 />
               </button>
 
-              {/* USER PROFILE DROPDOWN MENU */}
-              {profileDropdownOpen && (
-                <div 
-                  id="artisan-profile-dropdown-menu"
-                  className="absolute right-0 top-full mt-2 w-48 bg-[#0c1f30] border border-amber-500/30 rounded-2xl p-2 shadow-2xl z-50 animate-in fade-in zoom-in-95 duration-150 text-stone-200"
-                >
-                  {/* Artisan Mini Summary */}
-                  <div className="px-3 py-2 border-b border-white/10">
-                    <p className="text-xs font-bold text-amber-200 truncate font-serif">
-                      {artisanName}
-                    </p>
-                    <p className="text-[10px] text-amber-300/80 font-sans">
-                      🪔 {artisanUser?.masterTitle || 'Master Artisan'}
-                    </p>
-                  </div>
+              {/* USER PROFILE DROPDOWN MENU WITH MOTION ANIMATION */}
+              <AnimatePresence>
+                {profileDropdownOpen && (
+                  <motion.div 
+                    id="artisan-profile-dropdown-menu"
+                    initial={{ opacity: 0, scale: 0.92, y: -8 }}
+                    animate={{ opacity: 1, scale: 1, y: 0 }}
+                    exit={{ opacity: 0, scale: 0.94, y: -6 }}
+                    transition={{ type: "spring", stiffness: 450, damping: 30 }}
+                    className="absolute right-0 top-full mt-2 w-52 bg-[#0c1f30] border border-amber-500/30 rounded-2xl p-2 shadow-2xl z-50 text-stone-200 origin-top-right backdrop-blur-xl"
+                  >
+                    {/* Artisan Mini Summary */}
+                    <div className="px-3 py-2 border-b border-white/10">
+                      <p className="text-xs font-bold text-amber-200 truncate font-serif">
+                        {artisanName}
+                      </p>
+                      <p className="text-[10px] text-amber-300/80 font-sans">
+                        🪔 {artisanUser?.masterTitle || 'Master Artisan'}
+                      </p>
+                    </div>
 
-                  <div className="py-1 space-y-0.5">
-                    {/* Item 1: Profile ("Account Settings & Profile") */}
-                    <button
-                      id="artisan-dropdown-open-profile-btn"
-                      onClick={() => {
-                        setProfileDropdownOpen(false);
-                        openAccountSettings();
-                      }}
-                      className="w-full text-left px-3 py-2 rounded-xl text-xs font-medium hover:bg-white/10 hover:text-amber-300 flex items-center gap-2.5 transition-colors cursor-pointer"
-                    >
-                      <User className="w-4 h-4 text-amber-400" />
-                      <span>Profile</span>
-                    </button>
+                    <div className="py-1 space-y-0.5">
+                      {/* Item 1: Profile ("Account Settings & Profile") */}
+                      <button
+                        id="artisan-dropdown-open-profile-btn"
+                        onClick={() => {
+                          setProfileDropdownOpen(false);
+                          openAccountSettings();
+                        }}
+                        className="w-full text-left px-3 py-2 rounded-xl text-xs font-medium hover:bg-white/10 hover:text-amber-300 flex items-center gap-2.5 transition-colors cursor-pointer"
+                      >
+                        <User className="w-4 h-4 text-amber-400" />
+                        <span>Profile & Settings</span>
+                      </button>
 
-                    {/* Item 2: Sign Out */}
-                    <button
-                      id="artisan-dropdown-signout-btn"
-                      onClick={() => {
-                        setProfileDropdownOpen(false);
-                        logout();
-                      }}
-                      className="w-full text-left px-3 py-2 rounded-xl text-xs font-medium text-rose-300 hover:bg-rose-950/40 hover:text-rose-200 flex items-center gap-2.5 transition-colors cursor-pointer"
-                    >
-                      <LogOut className="w-4 h-4 text-rose-400" />
-                      <span>Sign Out</span>
-                    </button>
-                  </div>
-                </div>
-              )}
+                      {/* Item 2: Sign Out */}
+                      <button
+                        id="artisan-dropdown-signout-btn"
+                        onClick={() => {
+                          setProfileDropdownOpen(false);
+                          logout();
+                        }}
+                        className="w-full text-left px-3 py-2 rounded-xl text-xs font-medium text-rose-300 hover:bg-rose-950/40 hover:text-rose-200 flex items-center gap-2.5 transition-colors cursor-pointer"
+                      >
+                        <LogOut className="w-4 h-4 text-rose-400" />
+                        <span>Sign Out</span>
+                      </button>
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
             </div>
 
             {/* Mobile Hamburger Toggle Button */}
             <button
               id="artisan-mobile-menu-toggle"
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="p-2 rounded-xl text-stone-300 hover:text-white bg-white/5 md:hidden border border-white/10 cursor-pointer"
+              className="p-2 rounded-xl text-stone-300 hover:text-white bg-white/5 md:hidden border border-white/10 cursor-pointer active:scale-95 transition-transform"
               aria-label="Toggle navigation"
             >
               {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
@@ -288,106 +317,138 @@ export const ArtisanNavbar: React.FC = () => {
         </div>
       </div>
 
-      {/* MOBILE COLLAPSIBLE MENU */}
-      {mobileMenuOpen && (
-        <div 
-          id="artisan-mobile-drawer"
-          className="md:hidden border-t border-white/10 bg-[#0C1F30] px-4 py-4 space-y-3 animate-in slide-in-from-top duration-200"
-        >
-          <div className="flex items-center gap-3 pb-3 border-b border-white/10">
-            <img
-              src={artisanUser?.photo || 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=300&q=80'}
-              alt={artisanName}
-              className="w-10 h-10 rounded-full object-cover border border-amber-400/60"
-            />
-            <div>
-              <p className="text-sm font-bold text-amber-200 font-serif">{artisanName}</p>
-              <p className="text-xs text-amber-300">🪔 {artisanUser?.masterTitle || 'Master Artisan'}</p>
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 gap-1 pt-1 font-sans text-xs">
-            <button
-              onClick={() => handleNavClick('scan_studio')}
-              className={`w-full text-left px-3 py-2.5 rounded-xl flex items-center gap-2.5 cursor-pointer ${
-                activeTab === 'scan_studio' ? 'bg-[#A84A2C] text-white font-bold' : 'text-stone-300 hover:bg-white/5'
-              }`}
+      {/* MOBILE COLLAPSIBLE MENU WITH RICH SPRING ANIMATION */}
+      <AnimatePresence>
+        {mobileMenuOpen && (
+          <motion.div 
+            id="artisan-mobile-drawer"
+            initial={{ opacity: 0, height: 0, y: -10 }}
+            animate={{ opacity: 1, height: 'auto', y: 0 }}
+            exit={{ opacity: 0, height: 0, y: -10 }}
+            transition={{ type: "spring", stiffness: 350, damping: 28 }}
+            className="md:hidden overflow-hidden border-t border-white/10 bg-[#0C1F30] px-4 py-4 space-y-3 shadow-2xl backdrop-blur-xl"
+          >
+            <motion.div 
+              initial={{ opacity: 0, x: -10 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.05 }}
+              className="flex items-center gap-3 pb-3 border-b border-white/10"
             >
-              <Sparkles className="w-4 h-4 text-amber-300" />
-              <span>{t.nav_scan || 'AI Scan Studio'}</span>
-            </button>
-
-            <button
-              onClick={() => handleNavClick('ledger')}
-              className={`w-full text-left px-3 py-2.5 rounded-xl flex items-center gap-2.5 cursor-pointer ${
-                activeTab === 'ledger' ? 'bg-[#B88E28] text-stone-950 font-bold' : 'text-stone-300 hover:bg-white/5'
-              }`}
-            >
-              <Package className="w-4 h-4 text-amber-300" />
-              <span>{t.nav_catalog || 'My Catalog'}</span>
-            </button>
-
-            <button
-              onClick={() => handleNavClick('inquiries')}
-              className={`w-full text-left px-3 py-2.5 rounded-xl flex items-center justify-between cursor-pointer ${
-                activeTab === 'inquiries' ? 'bg-[#2D6A4F] text-white font-bold' : 'text-stone-300 hover:bg-white/5'
-              }`}
-            >
-              <div className="flex items-center gap-2.5">
-                <MessageSquare className="w-4 h-4 text-emerald-300" />
-                <span>{t.nav_inquiries || 'Buyer Leads'}</span>
+              <img
+                src={artisanUser?.photo || 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=300&q=80'}
+                alt={artisanName}
+                className="w-10 h-10 rounded-full object-cover border border-amber-400/60"
+              />
+              <div>
+                <p className="text-sm font-bold text-amber-200 font-serif">{artisanName}</p>
+                <p className="text-xs text-amber-300">🪔 {artisanUser?.masterTitle || 'Master Artisan'}</p>
               </div>
-              {unreadInquiriesCount > 0 && (
-                <span className="px-2 py-0.5 rounded-full bg-emerald-500 text-white text-[10px] font-bold">
-                  {unreadInquiriesCount}
-                </span>
-              )}
-            </button>
+            </motion.div>
 
-            <button
-              onClick={() => handleNavClick('stories')}
-              className={`w-full text-left px-3 py-2.5 rounded-xl flex items-center gap-2.5 cursor-pointer ${
-                activeTab === 'stories' ? 'bg-[#A84A2C] text-white font-bold' : 'text-stone-300 hover:bg-white/5'
-              }`}
-            >
-              <BookOpen className="w-4 h-4 text-amber-300" />
-              <span>{t.nav_stories || 'Heritage Stories'}</span>
-            </button>
+            <div className="grid grid-cols-1 gap-1 pt-1 font-sans text-xs">
+              <motion.button
+                initial={{ opacity: 0, x: -12 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: 0.08 }}
+                onClick={() => handleNavClick('scan_studio')}
+                className={`w-full text-left px-3.5 py-2.5 rounded-xl flex items-center gap-2.5 cursor-pointer transition-all ${
+                  activeTab === 'scan_studio' ? 'bg-[#A84A2C] text-white font-bold shadow-sm' : 'text-stone-300 hover:bg-white/5'
+                }`}
+              >
+                <Sparkles className="w-4 h-4 text-amber-300" />
+                <span>{t.nav_scan || 'AI Scan Studio'}</span>
+              </motion.button>
 
-            <button
-              onClick={() => handleNavClick('craft_map')}
-              className={`w-full text-left px-3 py-2.5 rounded-xl flex items-center gap-2.5 cursor-pointer ${
-                activeTab === 'craft_map' ? 'bg-[#2D6A4F] text-white font-bold' : 'text-stone-300 hover:bg-white/5'
-              }`}
-            >
-              <Map className="w-4 h-4 text-emerald-300" />
-              <span>{t.nav_map || 'GI Map'}</span>
-            </button>
+              <motion.button
+                initial={{ opacity: 0, x: -12 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: 0.12 }}
+                onClick={() => handleNavClick('ledger')}
+                className={`w-full text-left px-3.5 py-2.5 rounded-xl flex items-center gap-2.5 cursor-pointer transition-all ${
+                  activeTab === 'ledger' ? 'bg-[#B88E28] text-stone-950 font-bold shadow-sm' : 'text-stone-300 hover:bg-white/5'
+                }`}
+              >
+                <Package className="w-4 h-4 text-amber-300" />
+                <span>{t.nav_catalog || 'My Catalog'}</span>
+              </motion.button>
 
-            <button
-              onClick={() => {
-                setMobileMenuOpen(false);
-                openAccountSettings();
-              }}
-              className="w-full text-left px-3 py-2.5 rounded-xl flex items-center gap-2.5 text-amber-300 hover:bg-white/5 cursor-pointer"
-            >
-              <User className="w-4 h-4" />
-              <span>Account Settings & Profile</span>
-            </button>
+              <motion.button
+                initial={{ opacity: 0, x: -12 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: 0.16 }}
+                onClick={() => handleNavClick('inquiries')}
+                className={`w-full text-left px-3.5 py-2.5 rounded-xl flex items-center justify-between cursor-pointer transition-all ${
+                  activeTab === 'inquiries' ? 'bg-[#2D6A4F] text-white font-bold shadow-sm' : 'text-stone-300 hover:bg-white/5'
+                }`}
+              >
+                <div className="flex items-center gap-2.5">
+                  <MessageSquare className="w-4 h-4 text-emerald-300" />
+                  <span>{t.nav_inquiries || 'Buyer Leads'}</span>
+                </div>
+                {unreadInquiriesCount > 0 && (
+                  <span className="px-2 py-0.5 rounded-full bg-emerald-500 text-white text-[10px] font-bold">
+                    {unreadInquiriesCount}
+                  </span>
+                )}
+              </motion.button>
 
-            <button
-              onClick={() => {
-                setMobileMenuOpen(false);
-                logout();
-              }}
-              className="w-full text-left px-3 py-2.5 rounded-xl flex items-center gap-2.5 text-rose-300 hover:bg-rose-950/30 cursor-pointer"
-            >
-              <LogOut className="w-4 h-4" />
-              <span>Sign Out</span>
-            </button>
-          </div>
-        </div>
-      )}
+              <motion.button
+                initial={{ opacity: 0, x: -12 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: 0.2 }}
+                onClick={() => handleNavClick('fair_pricing')}
+                className={`w-full text-left px-3.5 py-2.5 rounded-xl flex items-center gap-2.5 cursor-pointer transition-all ${
+                  activeTab === 'fair_pricing' ? 'bg-[#B88E28] text-stone-950 font-bold shadow-sm' : 'text-stone-300 hover:bg-white/5'
+                }`}
+              >
+                <Calculator className="w-4 h-4 text-amber-300" />
+                <span>{t.nav_pricing || 'Fair Pricing'}</span>
+              </motion.button>
+
+              <motion.button
+                initial={{ opacity: 0, x: -12 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: 0.24 }}
+                onClick={() => handleNavClick('store_qr')}
+                className={`w-full text-left px-3.5 py-2.5 rounded-xl flex items-center gap-2.5 cursor-pointer transition-all ${
+                  activeTab === 'store_qr' ? 'bg-purple-900 text-white font-bold shadow-sm' : 'text-stone-300 hover:bg-white/5'
+                }`}
+              >
+                <QrCode className="w-4 h-4 text-purple-300" />
+                <span>{t.nav_qr || 'Store QR'}</span>
+              </motion.button>
+
+              <motion.button
+                initial={{ opacity: 0, x: -12 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: 0.28 }}
+                onClick={() => {
+                  setMobileMenuOpen(false);
+                  openAccountSettings();
+                }}
+                className="w-full text-left px-3.5 py-2.5 rounded-xl flex items-center gap-2.5 text-amber-300 hover:bg-white/5 cursor-pointer"
+              >
+                <User className="w-4 h-4" />
+                <span>Account Settings & Profile</span>
+              </motion.button>
+
+              <motion.button
+                initial={{ opacity: 0, x: -12 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: 0.32 }}
+                onClick={() => {
+                  setMobileMenuOpen(false);
+                  logout();
+                }}
+                className="w-full text-left px-3.5 py-2.5 rounded-xl flex items-center gap-2.5 text-rose-300 hover:bg-rose-950/30 cursor-pointer"
+              >
+                <LogOut className="w-4 h-4" />
+                <span>Sign Out</span>
+              </motion.button>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </header>
   );
 };

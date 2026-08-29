@@ -1,8 +1,10 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useMemo } from 'react';
 import gsap from 'gsap';
+import { motion } from 'motion/react';
 import { 
   Search, 
-  ArrowRight
+  ArrowRight,
+  Sparkles
 } from 'lucide-react';
 import { useArtisan } from '../context/ArtisanContext';
 
@@ -12,11 +14,10 @@ export const HeroSection: React.FC = () => {
     searchQuery, 
     setSearchQuery, 
     selectedCategory, 
-    setSelectedCategory
+    setSelectedCategory,
   } = useArtisan();
 
   const heroRef = useRef<HTMLDivElement>(null);
-  const headlineRef = useRef<HTMLHeadingElement>(null);
   const subheadRef = useRef<HTMLParagraphElement>(null);
   const badgeRef = useRef<HTMLDivElement>(null);
 
@@ -34,27 +35,34 @@ export const HeroSection: React.FC = () => {
         );
       }
 
-      if (headlineRef.current) {
-        tl.fromTo(
-          headlineRef.current,
-          { y: 30, opacity: 0 },
-          { y: 0, opacity: 1, duration: 0.8 },
-          '-=0.4'
-        );
-      }
-
       if (subheadRef.current) {
         tl.fromTo(
           subheadRef.current,
           { y: 20, opacity: 0 },
           { y: 0, opacity: 1, duration: 0.7 },
-          '-=0.5'
+          '-=0.3'
         );
       }
     }, heroRef);
 
     return () => ctx.revert();
   }, []);
+
+  // Split headline into individual words for React Bits BlurText + ShinyText animation
+  const headlineWords = useMemo(() => {
+    const words: { word: string; isHighlight: boolean }[] = [];
+    
+    const title1 = (t.hero_title_1 || 'Authentic').trim().split(/\s+/).filter(Boolean);
+    title1.forEach(w => words.push({ word: w, isHighlight: false }));
+    
+    const highlight = (t.hero_title_highlight || 'Heritage').trim().split(/\s+/).filter(Boolean);
+    highlight.forEach(w => words.push({ word: w, isHighlight: true }));
+    
+    const title2 = (t.hero_title_2 || 'Crafts.').trim().split(/\s+/).filter(Boolean);
+    title2.forEach(w => words.push({ word: w, isHighlight: false }));
+    
+    return words;
+  }, [t.hero_title_1, t.hero_title_highlight, t.hero_title_2]);
 
   const categories = [
     { name: 'All', label: t.cat_all },
@@ -90,11 +98,30 @@ export const HeroSection: React.FC = () => {
             <span className="w-6 sm:w-8 h-[1.5px] bg-[#a0522d] inline-block opacity-80"></span>
           </div>
 
+          {/* BlurText & ShinyText Animated Main Headline */}
           <h1 
-            ref={headlineRef}
-            className="text-2xl sm:text-4xl md:text-5xl font-serif font-bold text-stone-900 leading-tight my-2"
+            id="hero-main-headline"
+            className="text-2xl sm:text-4xl md:text-5xl font-serif font-bold text-stone-900 leading-tight my-2 flex flex-wrap items-center justify-center gap-x-2 sm:gap-x-3"
           >
-            {t.hero_title_1} <span className="text-[#a0522d] italic font-normal">{t.hero_title_highlight}</span> {t.hero_title_2}
+            {headlineWords.map((item, index) => (
+              <motion.span
+                key={`${item.word}-${index}`}
+                initial={{ opacity: 0, filter: 'blur(12px)', y: 12 }}
+                animate={{ opacity: 1, filter: 'blur(0px)', y: 0 }}
+                transition={{
+                  duration: 0.6,
+                  delay: index * 0.1,
+                  ease: [0.25, 0.4, 0.25, 1],
+                }}
+                className={`inline-block ${
+                  item.isHighlight
+                    ? 'bg-[linear-gradient(110deg,#a0522d,45%,#fcd34d,55%,#a0522d)] bg-[length:200%_100%] animate-shimmer bg-clip-text text-transparent italic font-normal'
+                    : 'text-stone-900'
+                }`}
+              >
+                {item.word}
+              </motion.span>
+            ))}
           </h1>
 
           <p 
@@ -126,17 +153,28 @@ export const HeroSection: React.FC = () => {
                   {t.hero_clear}
                 </button>
               )}
+
               <button
                 id="search-explore-btn"
                 onClick={() => {
                   const bazaarElem = document.getElementById('marketplace-section');
                   bazaarElem?.scrollIntoView({ behavior: 'smooth' });
                 }}
-                className="hidden sm:flex items-center space-x-1.5 px-5 py-2.5 rounded-xl bg-[#0F1E2E] hover:bg-[#A84A2C] text-white text-xs font-sans uppercase tracking-widest font-bold transition-all shadow-xs cursor-pointer shrink-0"
+                className="flex items-center space-x-1.5 px-5 py-2.5 rounded-xl bg-[#0F1E2E] hover:bg-[#A84A2C] text-white text-xs font-sans uppercase tracking-widest font-bold transition-all shadow-xs cursor-pointer shrink-0"
               >
                 <span>{t.hero_explore}</span>
                 <ArrowRight className="w-3.5 h-3.5" />
               </button>
+            </div>
+
+            {/* Quick Vernacular Cultural Discovery Tagline */}
+            <div className="flex items-center justify-between mt-3 text-stone-500 text-xs font-sans px-1">
+              <div className="flex items-center gap-1.5">
+                <Sparkles className="w-3.5 h-3.5 text-amber-600" />
+                <span className="text-[11px] text-stone-600">
+                  Explore 100% GI-certified authentic crafts direct from master Indian karigars
+                </span>
+              </div>
             </div>
 
             {/* Category Chips - Editorial Styling */}

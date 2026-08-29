@@ -1,0 +1,96 @@
+{
+  "entities": {
+    "Craft": {
+      "title": "Craft",
+      "description": "Handmade artisan craft catalog item with GI details, materials, and fair pricing estimations.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "description": "Unique identifier for the craft item" },
+        "title": { "type": "string", "description": "English craft title" },
+        "hindiTitle": { "type": "string", "description": "Hindi craft title" },
+        "regionalTitle": { "type": "string", "description": "Regional language craft title" },
+        "regionalLanguage": { "type": "string", "description": "Language code of the artisan region" },
+        "craftLineage": { "type": "string", "description": "Artisan lineage and heritage tradition" },
+        "category": { "type": "string", "description": "Category of craft like Handloom, Pottery, etc." },
+        "stateOfOrigin": { "type": "string", "description": "Indian state of origin" },
+        "materialsDetected": { "type": "array", "description": "List of authentic materials detected" },
+        "heritageStory": { "type": "string", "description": "English heritage narrative" },
+        "hindiStory": { "type": "string", "description": "Hindi heritage narrative" },
+        "regionalStory": { "type": "string", "description": "Regional heritage narrative" },
+        "suggestedTags": { "type": "array", "description": "Tags for search and categorization" },
+        "estimatedCraftingDays": { "type": "number", "description": "Days required to craft" },
+        "pricingEstimation": { "type": "object", "description": "Fair Karigar pricing breakdown" },
+        "careInstructions": { "type": "string", "description": "Craft maintenance and care guide" },
+        "artisan": { "type": "object", "description": "Artisan profile snapshot" },
+        "imageUrl": { "type": "string", "description": "High resolution photo URL" },
+        "certificateId": { "type": "string", "description": "GI or verification certificate hash" },
+        "timestamp": { "type": "string", "description": "Creation ISO timestamp" },
+        "rating": { "type": "number", "description": "Community rating score" },
+        "viewsCount": { "type": "number", "description": "Catalog view counter" },
+        "inquiriesCount": { "type": "number", "description": "Count of buyer inquiries" },
+        "isGiTagged": { "type": "boolean", "description": "Whether craft has GI tag certification" },
+        "isHandmadeSealVerified": { "type": "boolean", "description": "Handmade verification seal" },
+        "inStock": { "type": "boolean", "description": "Inventory availability status" }
+      },
+      "required": ["id", "title", "category", "stateOfOrigin", "imageUrl", "timestamp"]
+    },
+    "Inquiry": {
+      "title": "Inquiry",
+      "description": "Direct inquiry message from a buyer to an artisan.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "description": "Inquiry ID" },
+        "craftId": { "type": "string", "description": "Referenced craft item ID" },
+        "craftTitle": { "type": "string", "description": "Title of craft being inquired about" },
+        "buyerName": { "type": "string", "description": "Name of inquiring buyer" },
+        "buyerLocation": { "type": "string", "description": "Location or state of the buyer" },
+        "buyerPhone": { "type": "string", "description": "Contact phone or WhatsApp number" },
+        "message": { "type": "string", "description": "Original message text" },
+        "buyerMessage": { "type": "string", "description": "Buyer query narrative" },
+        "translatedMessage": { "type": "string", "description": "AI translated message in artisan regional tongue" },
+        "timestamp": { "type": "string", "description": "Inquiry submission timestamp" },
+        "status": { "type": "string", "enum": ["new", "in_discussion", "replied", "converted", "completed"], "description": "Current workflow state" },
+        "whatsappLink": { "type": "string", "description": "Direct WhatsApp action URL" }
+      },
+      "required": ["id", "craftId", "craftTitle", "buyerName", "message", "timestamp", "status"]
+    },
+    "UserProfile": {
+      "title": "UserProfile",
+      "description": "Persistent profile data for registered artisans and buyers.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "description": "User UID" },
+        "role": { "type": "string", "enum": ["artisan", "buyer", "guest"], "description": "User platform role" },
+        "name": { "type": "string", "description": "Full name" },
+        "phone": { "type": "string", "description": "Phone number" },
+        "email": { "type": "string", "description": "Email address for buyers" },
+        "state": { "type": "string", "description": "Operating or delivery state" },
+        "village": { "type": "string", "description": "Artisan village" },
+        "district": { "type": "string", "description": "Artisan district" },
+        "craftSpecialty": { "type": "string", "description": "Primary craft domain" },
+        "primaryLanguage": { "type": "string", "description": "Primary communication language" },
+        "giCertified": { "type": "boolean", "description": "GI certification status" },
+        "wishlistCraftIds": { "type": "array", "description": "Array of saved craft IDs for buyers" },
+        "purchasedCertificates": { "type": "array", "description": "Acquired digital heritage certificates" },
+        "patronPoints": { "type": "number", "description": "Buyer loyalty points" },
+        "directWagesSupportedINR": { "type": "number", "description": "Total wages paid to karigars" },
+        "updatedAt": { "type": "string", "description": "Last profile update timestamp" }
+      },
+      "required": ["id", "role", "name"]
+    }
+  },
+  "firestore": {
+    "/crafts/{craftId}": {
+      "schema": "Craft",
+      "description": "Public catalog of Indian handmade crafts"
+    },
+    "/inquiries/{inquiryId}": {
+      "schema": "Inquiry",
+      "description": "Buyer to artisan craft inquiries and negotiation ledger"
+    },
+    "/users/{userId}": {
+      "schema": "UserProfile",
+      "description": "User profiles, roles, wishlists, and certificate vaults"
+    }
+  }
+}
