@@ -6,15 +6,12 @@ interface IntroLoaderProps {
   onComplete?: () => void;
 }
 
-type LoaderStage = 'spinning' | 'typing' | 'brand' | 'finished';
+type LoaderStage = 'spinning' | 'brand' | 'finished';
 
 export const IntroLoader: React.FC<IntroLoaderProps> = ({ onComplete }) => {
   const [stage, setStage] = useState<LoaderStage>('spinning');
-  const [typedText, setTypedText] = useState('');
   const [isFadingOut, setIsFadingOut] = useState(false);
   const [isUnmounted, setIsUnmounted] = useState(false);
-
-  const fullSubtitle = 'The Heritage of India';
 
   // Circular Text content
   const circularString = '• LOADING • ARTISANAL CRAFTS • BHARAT ';
@@ -29,56 +26,34 @@ export const IntroLoader: React.FC<IntroLoaderProps> = ({ onComplete }) => {
     }));
   }, [circularString]);
 
-  // Master Timeline Sequence
+  // Master Timeline Sequence:
+  // Stage 1: 0s - 5s (Spinning Circular Text & Heritage Emblem)
+  // Stage 2: 5s - 8s (Grand Brand Reveal "ArtLynk" & Tagline)
+  // Stage 3: 8s - 10s (Smooth Fade Out & Main App Reveal)
   useEffect(() => {
-    // 0s - 5s: Stage 1 Spinning Circular Text
-    // 5s: Transition to Stage 2 (Typing)
-    const stage2Timer = setTimeout(() => {
-      setStage('typing');
+    // Stage 1 -> Brand Reveal: triggers at 5s
+    const brandTimer = setTimeout(() => {
+      setStage('brand');
     }, 5000);
 
-    // 7s: Transition to Stage 2 Brand Reveal
-    const stage3Timer = setTimeout(() => {
-      setStage('brand');
-    }, 7000);
-
-    // 8.2s: Initiate Smooth Vanish
+    // Brand Reveal -> Smooth Fade Out: triggers at 8s
     const finishTimer = setTimeout(() => {
       setIsFadingOut(true);
       setStage('finished');
-    }, 8400);
+    }, 8000);
 
-    // 9.4s: Complete Unmount
+    // Complete Unmount & Reveal Main App: triggers at 10s
     const unmountTimer = setTimeout(() => {
       setIsUnmounted(true);
       if (onComplete) onComplete();
-    }, 9600);
+    }, 10000);
 
     return () => {
-      clearTimeout(stage2Timer);
-      clearTimeout(stage3Timer);
+      clearTimeout(brandTimer);
       clearTimeout(finishTimer);
       clearTimeout(unmountTimer);
     };
   }, [onComplete]);
-
-  // Typewriter effect when entering 'typing' stage
-  useEffect(() => {
-    if (stage === 'typing' || stage === 'brand' || stage === 'finished') {
-      let currentIndex = 0;
-      setTypedText('');
-      const typingInterval = setInterval(() => {
-        if (currentIndex < fullSubtitle.length) {
-          setTypedText(fullSubtitle.slice(0, currentIndex + 1));
-          currentIndex++;
-        } else {
-          clearInterval(typingInterval);
-        }
-      }, 70); // 70ms per char ~ 1.5s total typing
-
-      return () => clearInterval(typingInterval);
-    }
-  }, [stage]);
 
   // Skip handler
   const handleSkip = () => {
@@ -87,7 +62,7 @@ export const IntroLoader: React.FC<IntroLoaderProps> = ({ onComplete }) => {
     setTimeout(() => {
       setIsUnmounted(true);
       if (onComplete) onComplete();
-    }, 600);
+    }, 500);
   };
 
   if (isUnmounted) return null;
@@ -95,7 +70,7 @@ export const IntroLoader: React.FC<IntroLoaderProps> = ({ onComplete }) => {
   return (
     <div
       id="intro-splash-loader"
-      className={`fixed inset-0 z-[9999] bg-[#071422] flex flex-col items-center justify-center text-center select-none overflow-hidden transition-all duration-1000 ease-out ${
+      className={`fixed inset-0 z-[9999] bg-[#071422] flex flex-col items-center justify-center text-center select-none overflow-hidden transition-all duration-[1500ms] ease-out ${
         isFadingOut ? 'opacity-0 pointer-events-none scale-105' : 'opacity-100'
       }`}
     >
@@ -182,9 +157,9 @@ export const IntroLoader: React.FC<IntroLoaderProps> = ({ onComplete }) => {
           )}
 
           {/* ========================================================================= */}
-          {/* STAGE 2: SEQUENTIAL TYPEWRITER & BRAND REVEAL (5s – 8s) */}
+          {/* STAGE 2: BRAND REVEAL "ArtLynk" (5s – 8s) */}
           {/* ========================================================================= */}
-          {(stage === 'typing' || stage === 'brand' || stage === 'finished') && (
+          {(stage === 'brand' || stage === 'finished') && (
             <motion.div
               key="stage-brand-reveal"
               initial={{ opacity: 0, y: 15 }}
@@ -199,42 +174,30 @@ export const IntroLoader: React.FC<IntroLoaderProps> = ({ onComplete }) => {
                 <span className="w-8 sm:w-16 h-[1px] bg-gradient-to-l from-transparent to-amber-500/60" />
               </div>
 
-              {/* Subtitle Typewriter Effect */}
-              <div className="h-8 flex items-center justify-center">
-                <p className="font-serif text-base sm:text-xl md:text-2xl text-amber-200/85 tracking-[0.25em] uppercase font-light drop-shadow-xs">
-                  {typedText}
-                  <span className="border-r-2 border-amber-400 animate-pulse ml-1 inline-block h-4 sm:h-5 align-middle" />
-                </p>
-              </div>
-
               {/* Brand Reveal: "ArtLynk" */}
               <div className="min-h-[80px] sm:min-h-[100px] flex items-center justify-center">
-                <AnimatePresence>
-                  {(stage === 'brand' || stage === 'finished') && (
-                    <motion.div
-                      initial={{ opacity: 0, scale: 0.85, y: 10, filter: 'blur(10px)' }}
-                      animate={{ opacity: 1, scale: 1, y: 0, filter: 'blur(0px)' }}
-                      transition={{
-                        duration: 0.9,
-                        ease: [0.16, 1, 0.3, 1],
-                      }}
-                      className="flex flex-col items-center"
-                    >
-                      <h1 className="font-serif text-5xl sm:text-7xl md:text-8xl font-black tracking-tight bg-gradient-to-r from-amber-100 via-amber-300 to-yellow-500 bg-clip-text text-transparent drop-shadow-[0_0_35px_rgba(245,158,11,0.45)]">
-                        ArtLynk
-                      </h1>
-                      
-                      <motion.p
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        transition={{ delay: 0.3, duration: 0.6 }}
-                        className="mt-2 text-xs sm:text-sm font-sans tracking-[0.3em] uppercase text-amber-400/70 font-semibold"
-                      >
-                        GI Certified • Direct From Master Karigars
-                      </motion.p>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.85, y: 10, filter: 'blur(10px)' }}
+                  animate={{ opacity: 1, scale: 1, y: 0, filter: 'blur(0px)' }}
+                  transition={{
+                    duration: 0.9,
+                    ease: [0.16, 1, 0.3, 1],
+                  }}
+                  className="flex flex-col items-center"
+                >
+                  <h1 className="font-serif text-5xl sm:text-7xl md:text-8xl font-black tracking-tight bg-gradient-to-r from-amber-100 via-amber-300 to-yellow-500 bg-clip-text text-transparent drop-shadow-[0_0_35px_rgba(245,158,11,0.45)]">
+                    ArtLynk
+                  </h1>
+                  
+                  <motion.p
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ delay: 0.3, duration: 0.6 }}
+                    className="mt-2 text-xs sm:text-sm font-sans tracking-[0.3em] uppercase text-amber-400/70 font-semibold"
+                  >
+                    GI Certified • Direct From Master Karigars
+                  </motion.p>
+                </motion.div>
               </div>
 
               {/* Bottom Ornamental Heritage Line */}

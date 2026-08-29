@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { createPortal } from 'react-dom';
 import { 
   X, 
   User, 
@@ -437,11 +438,13 @@ export const AccountSettingsModal: React.FC = () => {
     ? (artisanForm.photo || DEFAULT_DEMO_ARTISAN.photo) 
     : (buyerForm.photo || DEFAULT_DEMO_BUYER.photo);
 
-  return (
+  if (typeof document === 'undefined') return null;
+
+  return createPortal(
     <div 
       ref={overlayRef}
       id="account-settings-modal-overlay"
-      className="fixed inset-0 bg-black/70 backdrop-blur-md z-50 flex items-center justify-center p-4"
+      className="fixed inset-0 bg-black/70 backdrop-blur-md z-[99999] flex items-center justify-center p-4"
       onClick={(e) => {
         if (e.target === e.currentTarget) handleClose();
       }}
@@ -1264,6 +1267,7 @@ export const AccountSettingsModal: React.FC = () => {
         </form>
 
       </div>
-    </div>
+    </div>,
+    document.body
   );
 };

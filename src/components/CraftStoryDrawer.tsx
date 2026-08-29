@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useRef } from 'react';
+import { createPortal } from 'react-dom';
 import { 
   X, 
   MapPin, 
@@ -169,16 +170,19 @@ export const CraftStoryDrawer: React.FC = () => {
 
   const regionalMeta = INDIAN_LANGUAGES.find((l) => l.code === craft.regionalLanguage) || INDIAN_LANGUAGES[0];
 
+  if (!selectedCraftForStory || typeof document === 'undefined') return null;
+
   return (
     <>
-      <div 
-        ref={overlayRef}
-        id="craft-story-modal-overlay"
-        className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/80 backdrop-blur-md overflow-y-auto"
-        onClick={(e) => {
-          if (e.target === e.currentTarget) handleClose();
-        }}
-      >
+      {createPortal(
+        <div 
+          ref={overlayRef}
+          id="craft-story-modal-overlay"
+          className="fixed inset-0 z-[99999] flex items-center justify-center p-3 sm:p-4 bg-black/80 backdrop-blur-md overflow-y-auto"
+          onClick={(e) => {
+            if (e.target === e.currentTarget) handleClose();
+          }}
+        >
         <div 
           ref={cardRef}
           id="craft-story-modal-card"
@@ -502,7 +506,9 @@ export const CraftStoryDrawer: React.FC = () => {
           </div>
 
         </div>
-      </div>
+      </div>,
+      document.body
+    )}
 
       {/* Multilingual Selection Dialog for Product Modal */}
       <LanguageModal

@@ -1,4 +1,5 @@
 import React, { useEffect, useRef } from 'react';
+import { createPortal } from 'react-dom';
 import { X, Check, Globe } from 'lucide-react';
 import gsap from 'gsap';
 import { useArtisan } from '../context/ArtisanContext';
@@ -14,120 +15,89 @@ interface LanguageModalProps {
 export const LanguageModal: React.FC<LanguageModalProps> = ({
   isOpen,
   onClose,
-  onSelectLanguage
+  onSelectLanguage,
 }) => {
   const { currentLanguage, setLanguage } = useArtisan();
   const overlayRef = useRef<HTMLDivElement>(null);
   const cardRef = useRef<HTMLDivElement>(null);
   const listRef = useRef<HTMLDivElement>(null);
 
-  // GSAP Entrance Animation & Background Scroll Lock
+  // Background Scroll Lock & Entrance Animation
   useEffect(() => {
-    if (isOpen) {
-      document.body.classList.add('overflow-hidden');
-      document.documentElement.classList.add('overflow-hidden');
-      const lenis = (window as any).lenis;
-      if (lenis && typeof lenis.stop === 'function') {
-        lenis.stop();
-      }
+    if (!isOpen) return;
 
-      if (cardRef.current && overlayRef.current) {
-        const ctx = gsap.context(() => {
-          // Overlay fade
+    document.body.classList.add('overflow-hidden');
+    document.documentElement.classList.add('overflow-hidden');
+    const lenis = (window as any).lenis;
+    if (lenis && typeof lenis.stop === 'function') {
+      lenis.stop();
+    }
+
+    if (cardRef.current && overlayRef.current) {
+      const ctx = gsap.context(() => {
+        // Overlay fade in
+        gsap.fromTo(
+          overlayRef.current,
+          { opacity: 0 },
+          { opacity: 1, duration: 0.25, ease: 'power2.out' }
+        );
+
+        // Modal Card Spring Scale-In (Centered)
+        gsap.fromTo(
+          cardRef.current,
+          { scale: 0.92, opacity: 0, y: 12 },
+          { scale: 1, opacity: 1, y: 0, duration: 0.3, ease: 'power3.out' }
+        );
+
+        // Staggered list items
+        if (listRef.current) {
+          const items = listRef.current.querySelectorAll('.lang-item-btn');
           gsap.fromTo(
-            overlayRef.current,
-            { opacity: 0 },
-            { opacity: 1, duration: 0.3, ease: 'power2.out' }
+            items,
+            { opacity: 0, y: 8 },
+            { opacity: 1, y: 0, duration: 0.2, stagger: 0.02, delay: 0.05, ease: 'power2.out' }
           );
+        }
+      });
 
-          // Card spring entrance with 3D perspective
-          gsap.fromTo(
-            cardRef.current,
-            { 
-              scale: 0.8, 
-              y: 40, 
-              opacity: 0, 
-              rotationX: 10,
-              transformPerspective: 1000 
-            },
-            { 
-              scale: 1, 
-              y: 0, 
-              opacity: 1, 
-              rotationX: 0,
-              duration: 0.45, 
-              ease: 'back.out(1.6)' 
-            }
-          );
-
-          // Staggered language buttons entrance
-          if (listRef.current) {
-            const items = listRef.current.querySelectorAll('.lang-item-btn');
-            gsap.fromTo(
-              items,
-              { opacity: 0, y: 15, scale: 0.95 },
-              { 
-                opacity: 1, 
-                y: 0, 
-                scale: 1, 
-                duration: 0.3, 
-                stagger: 0.03, 
-                delay: 0.1, 
-                ease: 'power2.out' 
-              }
-            );
-          }
-        });
-
-        return () => ctx.revert();
-      }
-    } else {
-      document.body.classList.remove('overflow-hidden');
-      document.documentElement.classList.remove('overflow-hidden');
-      const lenis = (window as any).lenis;
-      if (lenis && typeof lenis.start === 'function') {
-        lenis.start();
-      }
+      return () => ctx.revert();
     }
 
     return () => {
       document.body.classList.remove('overflow-hidden');
       document.documentElement.classList.remove('overflow-hidden');
-      const lenis = (window as any).lenis;
       if (lenis && typeof lenis.start === 'function') {
         lenis.start();
       }
     };
   }, [isOpen]);
 
-  // Close on Escape key press
+  // Close on Escape Key
   useEffect(() => {
+    if (!isOpen) return;
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape' && isOpen) {
+      if (e.key === 'Escape') {
         handleCloseWithAnimation();
       }
     };
-
-    if (isOpen) {
-      window.addEventListener('keydown', handleKeyDown);
-    }
+    window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [isOpen]);
 
-  if (!isOpen) return null;
+  if (!isOpen || typeof document === 'undefined') return null;
 
   const handleCloseWithAnimation = () => {
     if (cardRef.current && overlayRef.current) {
       gsap.to(cardRef.current, {
-        scale: 0.85,
-        y: 20,
+        scale: 0.92,
         opacity: 0,
-        duration: 0.25,
+        y: 8,
+        duration: 0.2,
         ease: 'power2.in',
       });
       gsap.to(overlayRef.current, {
         opacity: 0,
-        duration: 0.25,
+        duration: 0.2,
         ease: 'power2.in',
         onComplete: onClose,
       });
@@ -144,11 +114,11 @@ export const LanguageModal: React.FC<LanguageModalProps> = ({
     handleCloseWithAnimation();
   };
 
-  return (
+  return createPortal(
     <div
       ref={overlayRef}
       id="language-modal-overlay"
-      className="fixed inset-0 bg-black/70 backdrop-blur-md z-[70] flex items-center justify-center p-4"
+      className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[99999] flex items-center justify-center p-4"
       onClick={(e) => {
         if (e.target === e.currentTarget) {
           handleCloseWithAnimation();
@@ -162,7 +132,7 @@ export const LanguageModal: React.FC<LanguageModalProps> = ({
         role="dialog"
         aria-modal="true"
         aria-labelledby="language-modal-title"
-        className="w-full max-w-sm bg-[#0c1f30] border border-amber-500/30 rounded-3xl p-5 shadow-2xl max-h-[85vh] flex flex-col overflow-hidden select-none"
+        className="w-full max-w-sm bg-[#0c1f30] border border-amber-500/30 rounded-3xl p-5 shadow-2xl max-h-[80vh] flex flex-col overflow-hidden select-none relative z-10"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
@@ -170,7 +140,7 @@ export const LanguageModal: React.FC<LanguageModalProps> = ({
           <div className="flex items-center gap-2">
             <Globe className="w-4 h-4 text-amber-400 shrink-0" />
             <h2 id="language-modal-title" className="text-xs sm:text-sm font-bold text-amber-200 uppercase tracking-wider font-sans">
-              SELECT LANGUAGE (11 LANGUAGES)
+              SELECT LANGUAGE
             </h2>
             <span className="text-[10px] bg-amber-500/20 text-amber-300 px-2 py-0.5 rounded-full font-mono font-bold border border-amber-500/30">
               {INDIAN_LANGUAGES.length}
@@ -189,7 +159,7 @@ export const LanguageModal: React.FC<LanguageModalProps> = ({
         </div>
 
         {/* Scrollable Languages List */}
-        <div 
+        <div
           ref={listRef}
           data-lenis-prevent="true"
           className="overflow-y-auto space-y-2 pr-1.5 my-3 flex-1 min-h-0 overscroll-contain touch-pan-y"
@@ -243,8 +213,10 @@ export const LanguageModal: React.FC<LanguageModalProps> = ({
           </p>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 };
 
 export default LanguageModal;
+

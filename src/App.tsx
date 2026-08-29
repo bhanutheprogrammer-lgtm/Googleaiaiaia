@@ -132,13 +132,9 @@ const MainLayout: React.FC = () => {
 };
 
 export default function App() {
-  const [introFinished, setIntroFinished] = useState(() => {
-    // Check if user already saw the intro in this session
-    return Boolean(sessionStorage.getItem('artlynk_intro_played'));
-  });
+  const [introFinished, setIntroFinished] = useState(false);
 
   const handleIntroComplete = () => {
-    sessionStorage.setItem('artlynk_intro_played', 'true');
     setIntroFinished(true);
   };
 

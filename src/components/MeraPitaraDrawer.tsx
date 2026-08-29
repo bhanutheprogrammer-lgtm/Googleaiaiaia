@@ -1,4 +1,5 @@
 import React, { useEffect, useRef } from 'react';
+import { createPortal } from 'react-dom';
 import { 
   X, 
   Trash2, 
@@ -90,17 +91,17 @@ export const MeraPitaraDrawer: React.FC = () => {
     }
   };
 
-  if (!isPitaraDrawerOpen) return null;
+  if (!isPitaraDrawerOpen || typeof document === 'undefined') return null;
 
   const wishlistedCrafts = crafts.filter((c) => wishlistIds.includes(c.id));
   const totalAmountINR = wishlistedCrafts.reduce((sum, c) => sum + c.pricingEstimation.recommendedRetailPriceINR, 0);
   const totalArtisanWageINR = wishlistedCrafts.reduce((sum, c) => sum + c.pricingEstimation.fairKarigarWageINR, 0);
 
-  return (
+  return createPortal(
     <div 
       ref={overlayRef}
       id="pitara-drawer-overlay"
-      className="fixed inset-0 z-50 flex justify-end bg-black/80 backdrop-blur-md"
+      className="fixed inset-0 z-[99999] flex justify-end bg-black/80 backdrop-blur-md"
       onClick={(e) => {
         if (e.target === e.currentTarget) handleClose();
       }}
@@ -279,7 +280,8 @@ export const MeraPitaraDrawer: React.FC = () => {
         )}
 
       </div>
-    </div>
+    </div>,
+    document.body
   );
 };
 

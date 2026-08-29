@@ -1,4 +1,5 @@
 import React, { useEffect, useRef } from 'react';
+import { createPortal } from 'react-dom';
 import { 
   X, 
   Printer, 
@@ -6,9 +7,9 @@ import {
   Award, 
   Flame, 
   CheckCircle, 
-  QrCode,
-  Share2,
-  Sparkles
+  QrCode, 
+  Share2, 
+  Sparkles 
 } from 'lucide-react';
 import gsap from 'gsap';
 import { useArtisan } from '../context/ArtisanContext';
@@ -126,11 +127,13 @@ export const GICertificateModal: React.FC = () => {
     window.print();
   };
 
-  return (
+  if (!selectedCraftForCertificate || typeof document === 'undefined') return null;
+
+  return createPortal(
     <div 
       ref={overlayRef}
       id="gi-certificate-modal-overlay"
-      className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/80 backdrop-blur-md overflow-y-auto"
+      className="fixed inset-0 z-[99999] flex items-center justify-center p-3 sm:p-4 bg-black/80 backdrop-blur-md overflow-y-auto"
       onClick={(e) => {
         if (e.target === e.currentTarget) handleClose();
       }}
@@ -308,7 +311,8 @@ export const GICertificateModal: React.FC = () => {
         </div>
 
       </div>
-    </div>
+    </div>,
+    document.body
   );
 };
 
