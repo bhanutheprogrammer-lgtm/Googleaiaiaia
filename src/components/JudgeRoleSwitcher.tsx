@@ -4,23 +4,22 @@ import { useArtisan } from '../context/ArtisanContext';
 import { Sparkles } from 'lucide-react';
 
 export const JudgeRoleSwitcher: React.FC = () => {
-  const { userRole, switchRole, logout } = useAuth();
-  const { setActiveTab, triggerMarigoldConfetti, t } = useArtisan();
+  const { userRole, openAuthModal, logout } = useAuth();
+  const { triggerMarigoldConfetti, t } = useArtisan();
 
   const handleSwitchView = (targetRole: 'artisan' | 'buyer' | 'guest') => {
     if (targetRole === 'guest') {
       logout();
-      setActiveTab('bazaar');
       return;
     }
 
-    if (targetRole === 'artisan') {
-      setActiveTab('scan_studio');
-      switchRole('artisan');
-    } else if (targetRole === 'buyer') {
-      setActiveTab('bazaar');
-      switchRole('buyer');
+    if (targetRole === userRole) {
+      triggerMarigoldConfetti();
+      return;
     }
+
+    // Prompt for basic authentication before switching persona (as per requirement)
+    openAuthModal(targetRole, 'login');
     triggerMarigoldConfetti();
   };
 

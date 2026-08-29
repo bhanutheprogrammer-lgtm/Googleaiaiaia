@@ -433,9 +433,12 @@ export const Navbar: React.FC = () => {
 
                       <button
                         onClick={() => {
-                          switchRole('artisan');
-                          setActiveTab('scan_studio');
                           setProfileDropdownOpen(false);
+                          if (userRole !== 'artisan') {
+                            openAuthModal('artisan', 'login');
+                          } else {
+                            setActiveTab('scan_studio');
+                          }
                         }}
                         className={`w-full text-left px-3 py-2 rounded-xl text-xs font-serif flex items-center justify-between transition-colors cursor-pointer ${
                           userRole === 'artisan'
@@ -452,9 +455,12 @@ export const Navbar: React.FC = () => {
 
                       <button
                         onClick={() => {
-                          switchRole('buyer');
-                          setActiveTab('bazaar');
                           setProfileDropdownOpen(false);
+                          if (userRole !== 'buyer') {
+                            openAuthModal('buyer', 'login');
+                          } else {
+                            setActiveTab('bazaar');
+                          }
                         }}
                         className={`w-full text-left px-3 py-2 rounded-xl text-xs font-serif flex items-center justify-between transition-colors cursor-pointer ${
                           userRole === 'buyer'

@@ -514,7 +514,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         };
 
         setBuyerUser(buyerData);
-        setUserRole('buyer');
 
         // Persist to Cloud Firestore
         try {
@@ -532,6 +531,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       setIsAuthLoading(false);
       setIsAuthModalOpen(false);
       triggerCelebration();
+      triggerPersonaSwitch(chosenRole);
       return { success: true };
     } catch (error: any) {
       console.warn('Verify OTP notice:', error);
@@ -655,6 +655,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
     setIsAuthModalOpen(false);
     triggerCelebration();
+    triggerPersonaSwitch(role);
     return true;
   };
 
@@ -693,7 +694,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     };
 
     setArtisanUser(newProfile);
-    setUserRole('artisan');
     setIsAuthModalOpen(false);
 
     // Persist to Firestore
@@ -706,6 +706,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }, { merge: true }).catch((err) => handleFirestoreError(err, OperationType.WRITE, `users/${newId}`));
 
     triggerCelebration();
+    triggerPersonaSwitch('artisan');
   };
 
   const signupBuyer = (data: {
@@ -737,7 +738,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     };
 
     setBuyerUser(newBuyer);
-    setUserRole('buyer');
     setIsAuthModalOpen(false);
 
     // Persist to Firestore
@@ -750,6 +750,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }, { merge: true }).catch((err) => handleFirestoreError(err, OperationType.WRITE, `users/${newId}`));
 
     triggerCelebration();
+    triggerPersonaSwitch('buyer');
   };
 
   const logout = async () => {

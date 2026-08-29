@@ -132,6 +132,7 @@ export const AccountSettingsModal: React.FC = () => {
     buyerUser,
     updateArtisanProfile,
     updateBuyerProfile,
+    openAuthModal,
     switchRole,
     resetToDefaults,
     logout
@@ -1135,8 +1136,11 @@ export const AccountSettingsModal: React.FC = () => {
                       type="button"
                       onClick={() => {
                         closeAccountSettings();
-                        switchRole('artisan');
-                        setActiveTab('scan_studio');
+                        if (userRole !== 'artisan') {
+                          openAuthModal('artisan', 'login');
+                        } else {
+                          setActiveTab('scan_studio');
+                        }
                       }}
                       className={`p-3.5 rounded-xl border text-left flex items-center justify-between transition-all cursor-pointer ${
                         userRole === 'artisan'
@@ -1160,8 +1164,11 @@ export const AccountSettingsModal: React.FC = () => {
                       type="button"
                       onClick={() => {
                         closeAccountSettings();
-                        switchRole('buyer');
-                        setActiveTab('bazaar');
+                        if (userRole !== 'buyer') {
+                          openAuthModal('buyer', 'login');
+                        } else {
+                          setActiveTab('bazaar');
+                        }
                       }}
                       className={`p-3.5 rounded-xl border text-left flex items-center justify-between transition-all cursor-pointer ${
                         userRole === 'buyer'
