@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Sparkles } from 'lucide-react';
+import { ArtLynkLogo } from './ArtLynkLogo';
 
 interface IntroLoaderProps {
   onComplete?: () => void;
@@ -122,7 +123,7 @@ export const IntroLoader: React.FC<IntroLoaderProps> = ({ onComplete }) => {
                 <div className="absolute w-36 h-36 sm:w-44 sm:h-44 rounded-full border border-amber-500/20 animate-pulse" />
                 <div className="absolute w-44 h-44 sm:w-54 sm:h-54 rounded-full border border-dashed border-amber-500/15 animate-[spin_24s_linear_infinite_reverse]" />
 
-                {/* Center Glowing Heritage Emblem / Diya Flame */}
+                {/* Center Glowing Heritage Emblem / Stylized Terracotta Arch Motif */}
                 <motion.div
                   initial={{ scale: 0.7, opacity: 0 }}
                   animate={{ scale: [1, 1.06, 1], opacity: 1 }}
@@ -130,15 +131,15 @@ export const IntroLoader: React.FC<IntroLoaderProps> = ({ onComplete }) => {
                     scale: { repeat: Infinity, duration: 3, ease: 'easeInOut' },
                     opacity: { duration: 0.6 }
                   }}
-                  className="relative z-10 flex flex-col items-center justify-center w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-[#0A1A2F]/90 border border-amber-500/40 shadow-[0_0_35px_rgba(245,158,11,0.35)] backdrop-blur-md"
+                  className="relative z-10 flex flex-col items-center justify-center w-22 h-22 sm:w-26 sm:h-26 rounded-full bg-[#0A1A2F]/95 border border-amber-500/50 shadow-[0_0_40px_rgba(224,107,38,0.45)] backdrop-blur-md p-2"
                 >
-                  <div className="relative">
-                    {/* Glowing Diya / Heritage Seal Icon */}
-                    <Sparkles className="w-8 h-8 sm:w-9 sm:h-9 text-amber-400 drop-shadow-[0_0_12px_rgba(251,191,36,0.8)] animate-pulse" />
-                    <span className="absolute -inset-1 bg-amber-400/20 blur-md rounded-full -z-10" />
+                  <div className="relative flex items-center justify-center">
+                    {/* Glowing Terracotta Arch Logo */}
+                    <ArtLynkLogo size={42} glow className="shrink-0" />
+                    <span className="absolute -inset-2 bg-amber-500/20 blur-lg rounded-full -z-10 animate-pulse" />
                   </div>
-                  <span className="mt-1 text-[9px] sm:text-[10px] font-serif tracking-widest text-amber-200/90 font-bold uppercase">
-                    KALA
+                  <span className="mt-1 text-[8.5px] sm:text-[9.5px] font-serif tracking-[0.22em] text-amber-200 font-bold uppercase">
+                    ARTLYNK
                   </span>
                 </motion.div>
               </div>
@@ -185,6 +186,15 @@ export const IntroLoader: React.FC<IntroLoaderProps> = ({ onComplete }) => {
                   }}
                   className="flex flex-col items-center"
                 >
+                  <motion.div
+                    initial={{ scale: 0.6, opacity: 0 }}
+                    animate={{ scale: 1, opacity: 1 }}
+                    transition={{ delay: 0.15, duration: 0.6 }}
+                    className="mb-3"
+                  >
+                    <ArtLynkLogo size={56} glow className="drop-shadow-[0_0_24px_rgba(224,107,38,0.65)]" />
+                  </motion.div>
+
                   <h1 className="font-serif text-5xl sm:text-7xl md:text-8xl font-black tracking-tight bg-gradient-to-r from-amber-100 via-amber-300 to-yellow-500 bg-clip-text text-transparent drop-shadow-[0_0_35px_rgba(245,158,11,0.45)]">
                     ArtLynk
                   </h1>

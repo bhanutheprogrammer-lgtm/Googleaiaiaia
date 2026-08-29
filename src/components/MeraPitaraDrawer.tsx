@@ -14,6 +14,8 @@ import {
 import gsap from 'gsap';
 import { useAuth } from '../context/AuthContext';
 import { useArtisan } from '../context/ArtisanContext';
+import { SocialShareButton } from './SocialShareButton';
+import { lockScroll, unlockScroll } from '../lib/scrollLock';
 
 export const MeraPitaraDrawer: React.FC = () => {
   const {
@@ -33,11 +35,7 @@ export const MeraPitaraDrawer: React.FC = () => {
   // Background Scroll Locking, Lenis Prevention & GSAP Animation
   useEffect(() => {
     if (isPitaraDrawerOpen) {
-      document.body.classList.add('overflow-hidden');
-      const lenis = (window as any).lenis;
-      if (lenis && typeof lenis.stop === 'function') {
-        lenis.stop();
-      }
+      lockScroll();
 
       if (drawerRef.current && overlayRef.current) {
         const ctx = gsap.context(() => {
@@ -57,19 +55,11 @@ export const MeraPitaraDrawer: React.FC = () => {
         return () => ctx.revert();
       }
     } else {
-      document.body.classList.remove('overflow-hidden');
-      const lenis = (window as any).lenis;
-      if (lenis && typeof lenis.start === 'function') {
-        lenis.start();
-      }
+      unlockScroll();
     }
 
     return () => {
-      document.body.classList.remove('overflow-hidden');
-      const lenis = (window as any).lenis;
-      if (lenis && typeof lenis.start === 'function') {
-        lenis.start();
-      }
+      unlockScroll();
     };
   }, [isPitaraDrawerOpen]);
 
@@ -223,7 +213,7 @@ export const MeraPitaraDrawer: React.FC = () => {
                     </div>
 
                     {/* Actions */}
-                    <div className="flex items-center gap-2 mt-2 pt-2 border-t border-white/10">
+                    <div className="flex items-center gap-1.5 mt-2 pt-2 border-t border-white/10">
                       <a
                         href={waLink}
                         target="_blank"
@@ -244,8 +234,15 @@ export const MeraPitaraDrawer: React.FC = () => {
                         title="Acquire & generate Certificate in Vault"
                       >
                         <Award className="w-3 h-3 text-amber-300" />
-                        <span>Acquire & Vault</span>
+                        <span>Acquire</span>
                       </button>
+
+                      <SocialShareButton
+                        craft={craft}
+                        variant="dark"
+                        size="sm"
+                        className="py-1.5 px-2 bg-white/10 hover:bg-white/20 border border-amber-500/30 text-slate-200 hover:text-white rounded-lg text-[10px]"
+                      />
                     </div>
                   </div>
                 </div>

@@ -11,7 +11,7 @@ import {
 } from 'lucide-react';
 import { useArtisan } from '../context/ArtisanContext';
 import { INDIAN_LANGUAGES } from '../data/mockCrafts';
-import { ArtisanLinkLogo } from './ArtisanLinkLogo';
+import { ArtLynkLogo } from './ArtLynkLogo';
 
 export const Footer: React.FC = () => {
   const { setLanguage, setActiveTab, t, currentLanguage } = useArtisan();
@@ -28,7 +28,9 @@ export const Footer: React.FC = () => {
           
           <div className="md:col-span-5 space-y-4">
             <div className="flex items-center gap-3">
-              <ArtisanLinkLogo size={48} />
+              <div className="w-12 h-12 rounded-2xl bg-stone-950/60 border border-amber-500/40 p-2 flex items-center justify-center shadow-md">
+                <ArtLynkLogo size={36} glow className="shrink-0" />
+              </div>
               <div className="flex flex-col">
                 <span className="text-2xl font-black tracking-tight font-serif text-[#FAF6EE]">
                   {t.app_name || 'ArtLynk'}

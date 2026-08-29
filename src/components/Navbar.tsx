@@ -23,7 +23,7 @@ import {
 import { useArtisan } from '../context/ArtisanContext';
 import { useAuth } from '../context/AuthContext';
 import { LanguageSelector } from './LanguageSelector';
-import { ArtisanLinkLogo } from './ArtisanLinkLogo';
+import { ArtLynkLogo } from './ArtLynkLogo';
 import { ThemeToggle } from './ThemeToggle';
 import { LanguageCode, UserRole } from '../types';
 
@@ -120,7 +120,9 @@ export const Navbar: React.FC = () => {
             onClick={handleLogoClick}
             className="flex items-center gap-1.5 sm:gap-2 cursor-pointer group select-none shrink-0 min-w-0"
           >
-            <ArtisanLinkLogo size={36} className="shrink-0" />
+            <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl overflow-hidden shrink-0 flex items-center justify-center bg-stone-900/10 border border-amber-600/30 p-1 group-hover:border-amber-600/60 transition-colors">
+              <ArtLynkLogo size={28} className="shrink-0 group-hover:scale-105 transition-transform" />
+            </div>
 
             <div className="flex flex-col min-w-0">
               <div className="flex items-center gap-1 sm:gap-2">

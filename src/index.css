@@ -43,6 +43,12 @@
     font-feature-settings: "cv02", "cv03", "cv04", "cv11";
   }
 
+  html.overflow-hidden,
+  body.overflow-hidden {
+    overflow: hidden !important;
+    overscroll-behavior: none !important;
+  }
+
   #root {
     overflow-x: hidden;
     max-width: 100vw;

@@ -16,6 +16,7 @@ import {
 import gsap from 'gsap';
 import { useAuth } from '../context/AuthContext';
 import { useArtisan } from '../context/ArtisanContext';
+import { lockScroll, unlockScroll } from '../lib/scrollLock';
 
 export const ArtisanStoreQRModal: React.FC = () => {
   const { isStoreQRModalOpen, setIsStoreQRModalOpen, artisanUser } = useAuth();
@@ -29,11 +30,7 @@ export const ArtisanStoreQRModal: React.FC = () => {
   // Background Scroll Locking & GSAP Animation
   useEffect(() => {
     if (isStoreQRModalOpen) {
-      document.body.classList.add('overflow-hidden');
-      const lenis = (window as any).lenis;
-      if (lenis && typeof lenis.stop === 'function') {
-        lenis.stop();
-      }
+      lockScroll();
 
       if (cardRef.current && overlayRef.current) {
         const ctx = gsap.context(() => {
@@ -74,19 +71,11 @@ export const ArtisanStoreQRModal: React.FC = () => {
         return () => ctx.revert();
       }
     } else {
-      document.body.classList.remove('overflow-hidden');
-      const lenis = (window as any).lenis;
-      if (lenis && typeof lenis.start === 'function') {
-        lenis.start();
-      }
+      unlockScroll();
     }
 
     return () => {
-      document.body.classList.remove('overflow-hidden');
-      const lenis = (window as any).lenis;
-      if (lenis && typeof lenis.start === 'function') {
-        lenis.start();
-      }
+      unlockScroll();
     };
   }, [isStoreQRModalOpen]);
 

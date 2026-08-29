@@ -19,9 +19,13 @@ import {
 } from 'lucide-react';
 import gsap from 'gsap';
 import { useArtisan } from '../context/ArtisanContext';
+import { useAuth } from '../context/AuthContext';
 import { CraftItem, LanguageCode } from '../types';
 import { INDIAN_LANGUAGES } from '../data/mockCrafts';
 import { LanguageModal } from './LanguageModal';
+import { FavoriteHeartButton } from './FavoriteHeartButton';
+import { SocialShareButton } from './SocialShareButton';
+import { lockScroll, unlockScroll } from '../lib/scrollLock';
 
 export const CraftStoryDrawer: React.FC = () => {
   const {
@@ -32,6 +36,7 @@ export const CraftStoryDrawer: React.FC = () => {
     currentLanguage,
     t
   } = useArtisan();
+  const { wishlistIds, toggleWishlist } = useAuth();
 
   const [activeStoryLang, setActiveStoryLang] = useState<'regional' | 'hindi' | 'english'>('regional');
   const [isPlayingAudio, setIsPlayingAudio] = useState(false);
@@ -44,11 +49,7 @@ export const CraftStoryDrawer: React.FC = () => {
   // Background Scroll Locking, Lenis Prevention & GSAP animation
   useEffect(() => {
     if (selectedCraftForStory) {
-      document.body.classList.add('overflow-hidden');
-      const lenis = (window as any).lenis;
-      if (lenis && typeof lenis.stop === 'function') {
-        lenis.stop();
-      }
+      lockScroll();
 
       if (cardRef.current && overlayRef.current) {
         const ctx = gsap.context(() => {
@@ -81,19 +82,11 @@ export const CraftStoryDrawer: React.FC = () => {
         return () => ctx.revert();
       }
     } else {
-      document.body.classList.remove('overflow-hidden');
-      const lenis = (window as any).lenis;
-      if (lenis && typeof lenis.start === 'function') {
-        lenis.start();
-      }
+      unlockScroll();
     }
 
     return () => {
-      document.body.classList.remove('overflow-hidden');
-      const lenis = (window as any).lenis;
-      if (lenis && typeof lenis.start === 'function') {
-        lenis.start();
-      }
+      unlockScroll();
     };
   }, [selectedCraftForStory]);
 
@@ -209,8 +202,17 @@ export const CraftStoryDrawer: React.FC = () => {
               </span>
             </div>
 
-            {/* Header Actions: [ 🌐 Language Icon ] [ 🔗 Share Icon ] [ ✕ Close Icon ] */}
+            {/* Header Actions: [ ❤️ Favorite ] [ 🌐 Language Icon ] [ 🔗 Share Icon ] [ ✕ Close Icon ] */}
             <div className="flex items-center space-x-2">
+              {/* Favorite Button with Framer Motion */}
+              <FavoriteHeartButton
+                isFavorited={wishlistIds.includes(craft.id)}
+                onToggle={() => toggleWishlist(craft.id)}
+                size="sm"
+                className="bg-white/10 hover:bg-white/20 text-slate-200 border-none"
+                showTooltip
+              />
+
               {/* Language Selection Button */}
               <button
                 id="drawer-language-btn"
@@ -223,17 +225,13 @@ export const CraftStoryDrawer: React.FC = () => {
                 <Globe className="w-4 h-4 text-amber-300" />
               </button>
 
-              {/* Share Button */}
-              <button
-                id="drawer-share-btn"
-                type="button"
-                onClick={handleCopyShare}
-                className="p-2 rounded-full bg-white/10 hover:bg-white/20 text-slate-200 hover:text-white transition-all duration-150 cursor-pointer flex items-center justify-center"
-                title="Share Craft"
-                aria-label="Share Craft"
-              >
-                {copiedLink ? <Check className="w-4 h-4 text-[#27AE60]" /> : <Share2 className="w-4 h-4" />}
-              </button>
+              {/* Social Share Button */}
+              <SocialShareButton
+                craft={craft}
+                variant="dark"
+                size="sm"
+                className="bg-white/10 hover:bg-white/20 text-slate-200 hover:text-white border-none rounded-full p-2"
+              />
 
               {/* Close Button */}
               <button

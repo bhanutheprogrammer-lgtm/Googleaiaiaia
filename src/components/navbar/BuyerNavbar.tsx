@@ -15,7 +15,7 @@ import { motion, AnimatePresence } from 'motion/react';
 import { useArtisan } from '../../context/ArtisanContext';
 import { useAuth } from '../../context/AuthContext';
 import { LanguageSelector } from '../LanguageSelector';
-import { ArtisanLinkLogo } from '../ArtisanLinkLogo';
+import { ArtLynkLogo } from '../ArtLynkLogo';
 import { ThemeToggle } from '../ThemeToggle';
 
 export const BuyerNavbar: React.FC = () => {
@@ -106,10 +106,10 @@ export const BuyerNavbar: React.FC = () => {
           <div 
             id="buyer-brand-logo"
             onClick={() => handleNavClick('bazaar')}
-            className="flex items-center gap-1.5 sm:gap-2 cursor-pointer select-none group shrink-0 min-w-0"
+            className="flex items-center gap-2 cursor-pointer select-none group shrink-0 min-w-0"
           >
-            <div className="w-8 h-8 rounded-xl overflow-hidden shrink-0 flex items-center justify-center bg-stone-900 border border-white/10">
-              <ArtisanLinkLogo size={32} className="w-8 h-8 rounded-xl shrink-0 group-hover:scale-105 transition-transform" />
+            <div className="w-8 h-8 rounded-xl overflow-hidden shrink-0 flex items-center justify-center bg-stone-900/80 border border-amber-500/30 p-1 group-hover:border-amber-400/60 transition-colors">
+              <ArtLynkLogo size={24} className="w-6 h-6 shrink-0 group-hover:scale-110 transition-transform" />
             </div>
 
             <div className="flex flex-col min-w-0">

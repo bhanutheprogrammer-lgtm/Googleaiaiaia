@@ -12,6 +12,7 @@ import {
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { useArtisan } from '../../context/ArtisanContext';
+import { ArtLynkLogo } from '../ArtLynkLogo';
 
 export const BuyerCertificateVault: React.FC = () => {
   const { buyerUser } = useAuth();
@@ -56,11 +57,16 @@ export const BuyerCertificateVault: React.FC = () => {
               key={cert.certificateId}
               className="bg-[#FAF6EE] border-2 border-[#D4AF37] rounded-3xl p-6 shadow-xl space-y-4 relative overflow-hidden flex flex-col justify-between hover:shadow-2xl transition-all"
             >
-              <div>
+              {/* Subtle Terracotta Watermark */}
+              <div className="absolute -right-6 -bottom-6 pointer-events-none opacity-[0.07] overflow-hidden select-none">
+                <ArtLynkLogo size={160} color="terracotta" />
+              </div>
+
+              <div className="relative z-10">
                 {/* Header Strip */}
                 <div className="flex items-center justify-between border-b border-[#D4AF37]/40 pb-3">
                   <div className="flex items-center gap-2 text-xs font-bold text-[#B83227] uppercase tracking-wider font-sans">
-                    <ShieldCheck className="w-4 h-4 text-[#27AE60]" />
+                    <ArtLynkLogo size={18} color="terracotta" />
                     <span>{t.cert_registered_label || 'GI Registered Certificate'}</span>
                   </div>
                   <span className="text-[11px] font-mono font-bold text-stone-500 bg-stone-200 px-2.5 py-0.5 rounded-md">

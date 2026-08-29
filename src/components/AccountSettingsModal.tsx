@@ -30,7 +30,8 @@ import { useArtisan } from '../context/ArtisanContext';
 import { CraftCategory, LanguageCode } from '../types';
 import { INDIAN_LANGUAGES, DEFAULT_DEMO_ARTISAN, DEFAULT_DEMO_BUYER } from '../data/mockCrafts';
 import { getProfileTranslation } from '../locales/profileTranslations';
-import { ArtisanLinkLogo } from './ArtisanLinkLogo';
+import { ArtLynkLogo } from './ArtLynkLogo';
+import { lockScroll, unlockScroll } from '../lib/scrollLock';
 
 const ARTISAN_AVATAR_PRESETS = [
   {
@@ -230,11 +231,7 @@ export const AccountSettingsModal: React.FC = () => {
   // Lock background scroll when open & GSAP Entrance Animation
   useEffect(() => {
     if (isAccountSettingsOpen) {
-      document.body.classList.add('overflow-hidden');
-      const win = window as any;
-      if (win.lenis && typeof win.lenis.stop === 'function') {
-        win.lenis.stop();
-      }
+      lockScroll();
 
       if (cardRef.current && overlayRef.current) {
         const ctx = gsap.context(() => {
@@ -257,7 +254,7 @@ export const AccountSettingsModal: React.FC = () => {
               scale: 1, 
               y: 0, 
               opacity: 1, 
-              rotationX: 0,
+              rotationX: 0, 
               duration: 0.4, 
               ease: 'power3.out' 
             }
@@ -267,19 +264,11 @@ export const AccountSettingsModal: React.FC = () => {
         return () => ctx.revert();
       }
     } else {
-      document.body.classList.remove('overflow-hidden');
-      const win = window as any;
-      if (win.lenis && typeof win.lenis.start === 'function') {
-        win.lenis.start();
-      }
+      unlockScroll();
     }
 
     return () => {
-      document.body.classList.remove('overflow-hidden');
-      const win = window as any;
-      if (win.lenis && typeof win.lenis.start === 'function') {
-        win.lenis.start();
-      }
+      unlockScroll();
     };
   }, [isAccountSettingsOpen]);
 
@@ -468,7 +457,9 @@ export const AccountSettingsModal: React.FC = () => {
         {/* ========================================================= */}
         <div className="flex flex-wrap items-center justify-between gap-3 border-b border-white/10 pb-4 shrink-0">
           <div className="flex items-center space-x-3 min-w-0">
-            <ArtisanLinkLogo size={42} className="shrink-0" />
+            <div className="w-10 h-10 rounded-xl bg-stone-900/80 border border-amber-500/40 p-1.5 flex items-center justify-center shrink-0 shadow-xs">
+              <ArtLynkLogo size={30} glow className="shrink-0" />
+            </div>
             <div className="min-w-0">
               <div className="flex items-center gap-2 flex-wrap">
                 <h2 className="text-base sm:text-lg font-bold font-serif text-amber-200 tracking-wide truncate">

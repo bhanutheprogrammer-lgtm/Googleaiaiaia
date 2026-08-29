@@ -5,6 +5,7 @@ import gsap from 'gsap';
 import { useArtisan } from '../context/ArtisanContext';
 import { INDIAN_LANGUAGES } from '../data/mockCrafts';
 import { LanguageCode } from '../types';
+import { lockScroll, unlockScroll } from '../lib/scrollLock';
 
 interface LanguageModalProps {
   isOpen: boolean;
@@ -26,12 +27,7 @@ export const LanguageModal: React.FC<LanguageModalProps> = ({
   useEffect(() => {
     if (!isOpen) return;
 
-    document.body.classList.add('overflow-hidden');
-    document.documentElement.classList.add('overflow-hidden');
-    const lenis = (window as any).lenis;
-    if (lenis && typeof lenis.stop === 'function') {
-      lenis.stop();
-    }
+    lockScroll();
 
     if (cardRef.current && overlayRef.current) {
       const ctx = gsap.context(() => {
@@ -60,15 +56,14 @@ export const LanguageModal: React.FC<LanguageModalProps> = ({
         }
       });
 
-      return () => ctx.revert();
+      return () => {
+        unlockScroll();
+        ctx.revert();
+      };
     }
 
     return () => {
-      document.body.classList.remove('overflow-hidden');
-      document.documentElement.classList.remove('overflow-hidden');
-      if (lenis && typeof lenis.start === 'function') {
-        lenis.start();
-      }
+      unlockScroll();
     };
   }, [isOpen]);
 

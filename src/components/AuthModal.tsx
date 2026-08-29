@@ -30,7 +30,8 @@ import { useArtisan } from '../context/ArtisanContext';
 import { CraftCategory, LanguageCode } from '../types';
 import { INDIAN_LANGUAGES } from '../data/mockCrafts';
 import { authTranslations, AuthTranslationDictionary } from '../locales/authTranslations';
-import { ArtisanLinkLogo } from './ArtisanLinkLogo';
+import { ArtLynkLogo } from './ArtLynkLogo';
+import { lockScroll, unlockScroll } from '../lib/scrollLock';
 import gsap from 'gsap';
 
 const CRAFT_SPECIALTIES: CraftCategory[] = [
@@ -152,11 +153,7 @@ export const AuthModal: React.FC = () => {
   // Background Scroll Locking, Lenis Prevention & GSAP animation
   useEffect(() => {
     if (isAuthModalOpen) {
-      document.body.classList.add('overflow-hidden');
-      const lenis = (window as any).lenis;
-      if (lenis && typeof lenis.stop === 'function') {
-        lenis.stop();
-      }
+      lockScroll();
 
       if (cardRef.current && overlayRef.current) {
         const ctx = gsap.context(() => {
@@ -189,11 +186,7 @@ export const AuthModal: React.FC = () => {
         return () => ctx.revert();
       }
     } else {
-      document.body.classList.remove('overflow-hidden');
-      const lenis = (window as any).lenis;
-      if (lenis && typeof lenis.start === 'function') {
-        lenis.start();
-      }
+      unlockScroll();
     }
 
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -207,12 +200,8 @@ export const AuthModal: React.FC = () => {
     }
 
     return () => {
-      document.body.classList.remove('overflow-hidden');
+      unlockScroll();
       window.removeEventListener('keydown', handleKeyDown);
-      const lenis = (window as any).lenis;
-      if (lenis && typeof lenis.start === 'function') {
-        lenis.start();
-      }
     };
   }, [isAuthModalOpen]);
 
@@ -431,9 +420,11 @@ export const AuthModal: React.FC = () => {
             </div>
           </div>
 
-          {/* Brand Intro */}
+          {/* Brand Intro with Terracotta Emblem */}
           <div className="flex items-center gap-3.5 min-w-0">
-            <ArtisanLinkLogo size={48} className="shrink-0" />
+            <div className="w-12 h-12 rounded-2xl bg-stone-900/90 border border-amber-500/40 p-2 flex items-center justify-center shrink-0 shadow-md">
+              <ArtLynkLogo size={36} glow className="shrink-0" />
+            </div>
             <div className="min-w-0 flex-1">
               <h2 className="text-xl sm:text-2xl font-black font-serif text-[#FAF6EE] leading-tight truncate">
                 {t.headerTitle}

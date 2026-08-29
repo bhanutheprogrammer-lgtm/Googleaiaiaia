@@ -1,7 +1,9 @@
 import React from 'react';
 import { 
-  ShieldCheck
+  ShieldCheck,
+  Heart
 } from 'lucide-react';
+import { motion } from 'motion/react';
 import { useArtisan } from '../../context/ArtisanContext';
 import { useAuth } from '../../context/AuthContext';
 import { BuyerProfile } from '../../types';
@@ -88,15 +90,31 @@ export const BuyerMarketplaceView: React.FC<BuyerMarketplaceViewProps> = ({ buye
 
         <div 
           onClick={() => setIsPitaraDrawerOpen(true)}
-          className="bg-white/5 hover:bg-white/10 border border-amber-500/20 rounded-2xl p-3 sm:p-3.5 cursor-pointer transition-all flex flex-col justify-between"
+          className="bg-white/5 hover:bg-white/10 border border-amber-500/20 rounded-2xl p-3 sm:p-3.5 cursor-pointer transition-all flex flex-col justify-between group"
         >
-          <span className="text-[10px] sm:text-xs font-sans font-bold uppercase tracking-wider text-stone-300 truncate">
-            {t.nav_pitara || 'Wishlist'}
-          </span>
-          <div className="flex items-baseline gap-1.5 mt-1 mb-0.5">
-            <span className="text-xl sm:text-2xl md:text-3xl font-bold font-serif text-red-400">
-              {wishlistIds.length}
+          <div className="flex items-center justify-between">
+            <span className="text-[10px] sm:text-xs font-sans font-bold uppercase tracking-wider text-stone-300 truncate">
+              {t.nav_pitara || 'Wishlist'}
             </span>
+            <motion.div
+              key={wishlistIds.length}
+              initial={{ scale: 0.8 }}
+              animate={{ scale: [1, 1.4, 0.9, 1.15, 1] }}
+              transition={{ duration: 0.5 }}
+            >
+              <Heart className="w-3.5 h-3.5 text-rose-400 fill-rose-400/80" />
+            </motion.div>
+          </div>
+          <div className="flex items-baseline gap-1.5 mt-1 mb-0.5">
+            <motion.span 
+              key={`count-${wishlistIds.length}`}
+              initial={{ scale: 0.8, y: -4 }}
+              animate={{ scale: 1, y: 0 }}
+              transition={{ type: 'spring', stiffness: 400, damping: 15 }}
+              className="text-xl sm:text-2xl md:text-3xl font-bold font-serif text-red-400"
+            >
+              {wishlistIds.length}
+            </motion.span>
             <span className="text-xs sm:text-sm font-semibold truncate text-red-300">
               Masterpieces
             </span>

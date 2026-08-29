@@ -22,7 +22,8 @@ import {
 import gsap from 'gsap';
 import { useArtisan } from '../context/ArtisanContext';
 import { useAuth } from '../context/AuthContext';
-import { ArtisanLinkLogo } from './ArtisanLinkLogo';
+import { ArtLynkLogo } from './ArtLynkLogo';
+import { lockScroll, unlockScroll } from '../lib/scrollLock';
 
 export const GICertificateModal: React.FC = () => {
   const {
@@ -54,11 +55,7 @@ export const GICertificateModal: React.FC = () => {
   // Background Scroll Locking & GSAP Animation
   useEffect(() => {
     if (selectedCraftForCertificate) {
-      document.body.classList.add('overflow-hidden');
-      const lenis = (window as any).lenis;
-      if (lenis && typeof lenis.stop === 'function') {
-        lenis.stop();
-      }
+      lockScroll();
 
       // GSAP Entrance
       if (cardRef.current && overlayRef.current) {
@@ -107,21 +104,13 @@ export const GICertificateModal: React.FC = () => {
         return () => ctx.revert();
       }
     } else {
-      document.body.classList.remove('overflow-hidden');
-      const lenis = (window as any).lenis;
-      if (lenis && typeof lenis.start === 'function') {
-        lenis.start();
-      }
+      unlockScroll();
       setCopiedLink(false);
       setJustAcquired(false);
     }
 
     return () => {
-      document.body.classList.remove('overflow-hidden');
-      const lenis = (window as any).lenis;
-      if (lenis && typeof lenis.start === 'function') {
-        lenis.start();
-      }
+      unlockScroll();
     };
   }, [selectedCraftForCertificate]);
 
@@ -397,8 +386,13 @@ export const GICertificateModal: React.FC = () => {
           className="space-y-4 text-[#0F1E2E] relative bg-[#FCF9F2] p-3 sm:p-5 md:p-6 rounded-2xl border-2 border-[#B88E28] shadow-md"
         >
           {/* Ornate Indian Double Border Frame */}
-          <div className="border-2 border-[#A84A2C]/60 p-4 sm:p-6 md:p-7 rounded-xl relative bg-white/85 shadow-xs space-y-4 sm:space-y-5">
+          <div className="border-2 border-[#A84A2C]/60 p-4 sm:p-6 md:p-7 rounded-xl relative bg-white/85 shadow-xs space-y-4 sm:space-y-5 overflow-hidden">
             
+            {/* Authentic Heritage Seal Watermark (Background Vector) */}
+            <div className="absolute inset-0 flex items-center justify-center pointer-events-none opacity-[0.05] overflow-hidden select-none">
+              <ArtLynkLogo size={340} color="terracotta" className="transform rotate-[-8deg] scale-110" />
+            </div>
+
             {/* Corner Ornate Diamond Emblems */}
             <div className="absolute top-2 left-2 text-[#B88E28] text-base sm:text-lg font-serif select-none">❖</div>
             <div className="absolute top-2 right-2 text-[#B88E28] text-base sm:text-lg font-serif select-none">❖</div>
@@ -406,9 +400,11 @@ export const GICertificateModal: React.FC = () => {
             <div className="absolute bottom-2 right-2 text-[#B88E28] text-base sm:text-lg font-serif select-none">❖</div>
 
             {/* Emblem & Official Header */}
-            <div className="text-center space-y-1.5">
+            <div className="text-center space-y-1.5 relative z-10">
               <div className="flex items-center justify-center gap-3 mb-1">
-                <ArtisanLinkLogo size={56} />
+                <div className="w-14 h-14 rounded-2xl bg-white border-2 border-amber-600/30 p-1.5 flex items-center justify-center shadow-xs">
+                  <ArtLynkLogo size={46} glow className="shrink-0" />
+                </div>
               </div>
 
               <p className="text-[10px] sm:text-[11px] font-extrabold tracking-[0.22em] text-[#A84A2C] uppercase font-sans">
@@ -581,6 +577,13 @@ export const GICertificateModal: React.FC = () => {
                     <ShieldCheck className="w-4 h-4" />
                     <span className="text-[6.5px] sm:text-[7.5px] font-black uppercase leading-tight mt-0.5">
                       100% SHUDDH HASTSHILP
+                    </span>
+                  </div>
+
+                  <div className="cert-stamp-badge w-14 h-14 sm:w-16 sm:h-16 rounded-full border-2 border-dashed border-[#E06B26] p-1 flex flex-col items-center justify-center text-center text-[#E06B26] bg-orange-50/80 shadow-2xs">
+                    <ArtLynkLogo size={18} color="terracotta" />
+                    <span className="text-[6.5px] sm:text-[7.5px] font-black uppercase leading-tight mt-0.5">
+                      ARTLYNK SEAL
                     </span>
                   </div>
 

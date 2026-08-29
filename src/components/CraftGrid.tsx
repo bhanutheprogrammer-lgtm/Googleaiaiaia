@@ -9,10 +9,9 @@ import {
   Flame, 
   Clock, 
   Coins, 
-  SlidersHorizontal,
-  ChevronRight,
-  QrCode,
-  Heart
+  SlidersHorizontal, 
+  ChevronRight, 
+  QrCode 
 } from 'lucide-react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
@@ -20,6 +19,8 @@ import { useArtisan } from '../context/ArtisanContext';
 import { useAuth } from '../context/AuthContext';
 import { CraftItem } from '../types';
 import { INDIAN_LANGUAGES } from '../data/mockCrafts';
+import { FavoriteHeartButton } from './FavoriteHeartButton';
+import { SocialShareButton } from './SocialShareButton';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -262,22 +263,15 @@ const CraftCard: React.FC<CraftCardProps> = ({
           {craft.category}
         </span>
 
-        {/* Wishlist Heart Button (Top-Left) */}
-        <button
-          onClick={(e) => {
-            e.stopPropagation();
-            toggleWishlist(craft.id);
-          }}
-          aria-label={isWishlisted ? 'Remove from Wishlist' : 'Save to Wishlist'}
-          className={`absolute top-2.5 left-2.5 z-10 p-1.5 sm:p-2 rounded-full backdrop-blur-md transition-all active:scale-90 cursor-pointer shadow-xs ${
-            isWishlisted
-              ? 'bg-[#b45a28] text-white'
-              : 'bg-white/85 hover:bg-white text-stone-700 hover:text-[#b45a28]'
-          }`}
-          title={isWishlisted ? 'Remove from Wishlist' : 'Save to Wishlist'}
-        >
-          <Heart className={`w-3.5 h-3.5 ${isWishlisted ? 'fill-current' : ''}`} />
-        </button>
+        {/* Wishlist Heart Button with Framer Motion Animation (Top-Left) */}
+        <div className="absolute top-2.5 left-2.5 z-10">
+          <FavoriteHeartButton
+            isFavorited={isWishlisted}
+            onToggle={() => toggleWishlist(craft.id)}
+            size="sm"
+            showTooltip
+          />
+        </div>
 
         {/* GI Tag Indicator Pill (Bottom-Left) */}
         {craft.isGiTagged && (
@@ -319,7 +313,7 @@ const CraftCard: React.FC<CraftCardProps> = ({
           </div>
         </div>
 
-        {/* Action Controls: Story, Certificate & WhatsApp Direct Trade */}
+        {/* Action Controls: Story, Certificate, Social Share & WhatsApp Direct Trade */}
         <div className="pt-2.5 mt-2 border-t border-stone-100 flex items-center gap-1.5">
           {/* View Heritage Story Button */}
           <button
@@ -340,6 +334,13 @@ const CraftCard: React.FC<CraftCardProps> = ({
           >
             <Award className="w-3.5 h-3.5 text-amber-600" />
           </button>
+
+          {/* Social Share Button */}
+          <SocialShareButton 
+            craft={craft} 
+            size="sm"
+            className="shrink-0"
+          />
 
           {/* WhatsApp Direct Buy CTA */}
           <a
