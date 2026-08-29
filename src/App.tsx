@@ -36,6 +36,7 @@ import { ArtisanStoreQRModal } from './components/ArtisanStoreQRModal';
 import { AccountSettingsModal } from './components/AccountSettingsModal';
 import { JudgeRoleSwitcher } from './components/JudgeRoleSwitcher';
 import { MobileBottomNav } from './components/MobileBottomNav';
+import { PersonaTransitionScreen } from './components/PersonaTransitionScreen';
 
 const MainContent: React.FC = () => {
   const { userRole, currentUser, openAuthModal } = useAuth();
@@ -229,6 +230,9 @@ const MainLayout: React.FC = () => {
 
       {/* Floating Role Switcher Pill for Judges */}
       <JudgeRoleSwitcher />
+
+      {/* Full-Screen Persona Switch Transition Screen with React Bits BlurText */}
+      <PersonaTransitionScreen />
     </div>
   );
 };

@@ -85,6 +85,9 @@ interface AuthContextType {
   }) => void;
   logout: () => Promise<void>;
   switchRole: (role: UserRole) => void;
+  isSwitchingPersona: boolean;
+  switchingTargetRole: UserRole | null;
+  triggerPersonaSwitch: (targetRole: UserRole, callback?: () => void) => void;
   wishlistIds: string[];
   toggleWishlist: (craftId: string) => void;
   isWishlisted: (craftId: string) => boolean;
@@ -161,6 +164,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
     return DEFAULT_DEMO_BUYER.purchasedCertificates;
   });
+
+  // Full-Screen Persona Switch Transition State
+  const [isSwitchingPersona, setIsSwitchingPersona] = useState(false);
+  const [switchingTargetRole, setSwitchingTargetRole] = useState<UserRole | null>(null);
+  const switchTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const switchFinishTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [authModalRole, setAuthModalRole] = useState<'artisan' | 'buyer'>('artisan');
@@ -552,20 +561,53 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setAuthError(null);
   };
 
+  const triggerPersonaSwitch = (targetRole: UserRole, callback?: () => void) => {
+    if (targetRole === 'guest') {
+      setUserRole('guest');
+      if (callback) callback();
+      return;
+    }
+
+    if (targetRole === 'artisan' && !artisanUser) {
+      setArtisanUser(DEFAULT_DEMO_ARTISAN);
+    }
+    if (targetRole === 'buyer' && !buyerUser) {
+      setBuyerUser(DEFAULT_DEMO_BUYER);
+    }
+
+    setSwitchingTargetRole(targetRole);
+    setIsSwitchingPersona(true);
+
+    if (switchTimerRef.current) clearTimeout(switchTimerRef.current);
+    if (switchFinishTimerRef.current) clearTimeout(switchFinishTimerRef.current);
+
+    // Switch underlying role halfway at 450ms so the new view is already mounted and rendered behind the overlay
+    switchTimerRef.current = setTimeout(() => {
+      setUserRole(targetRole);
+      if (callback) callback();
+    }, 450);
+
+    // Complete transition and unmount after 2.3 seconds
+    switchFinishTimerRef.current = setTimeout(() => {
+      setIsSwitchingPersona(false);
+      setSwitchingTargetRole(null);
+    }, 2300);
+  };
+
   const loginAsArtisanDemo = () => {
     setArtisanUser(DEFAULT_DEMO_ARTISAN);
-    setUserRole('artisan');
     setIsAuthModalOpen(false);
     setAuthError(null);
     triggerCelebration();
+    triggerPersonaSwitch('artisan');
   };
 
   const loginAsBuyerDemo = () => {
     setBuyerUser(DEFAULT_DEMO_BUYER);
-    setUserRole('buyer');
     setIsAuthModalOpen(false);
     setAuthError(null);
     triggerCelebration();
+    triggerPersonaSwitch('buyer');
   };
 
   const loginAsGuest = () => {
@@ -721,13 +763,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   const switchRole = (role: UserRole) => {
-    setUserRole(role);
-    if (role === 'artisan' && !artisanUser) {
-      setArtisanUser(DEFAULT_DEMO_ARTISAN);
-    }
-    if (role === 'buyer' && !buyerUser) {
-      setBuyerUser(DEFAULT_DEMO_BUYER);
-    }
+    if (role === userRole && !isSwitchingPersona) return;
+    triggerPersonaSwitch(role);
   };
 
   const toggleWishlist = (craftId: string) => {
@@ -897,6 +934,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         signupBuyer,
         logout,
         switchRole,
+        isSwitchingPersona,
+        switchingTargetRole,
+        triggerPersonaSwitch,
         wishlistIds,
         toggleWishlist,
         isWishlisted,

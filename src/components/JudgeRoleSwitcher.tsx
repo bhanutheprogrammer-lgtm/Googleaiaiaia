@@ -4,7 +4,7 @@ import { useArtisan } from '../context/ArtisanContext';
 import { Sparkles } from 'lucide-react';
 
 export const JudgeRoleSwitcher: React.FC = () => {
-  const { userRole, currentUser, openAuthModal, logout } = useAuth();
+  const { userRole, switchRole, logout } = useAuth();
   const { setActiveTab, triggerMarigoldConfetti, t } = useArtisan();
 
   const handleSwitchView = (targetRole: 'artisan' | 'buyer' | 'guest') => {
@@ -14,23 +14,12 @@ export const JudgeRoleSwitcher: React.FC = () => {
       return;
     }
 
-    // If the user is currently a guest / not logged in, trigger role-specific Auth Modal:
-    if (userRole === 'guest' || !currentUser) {
-      openAuthModal(targetRole);
-      return;
-    }
-
-    // If already logged in with a different role, trigger role-specific Auth Modal:
-    if (userRole !== targetRole) {
-      openAuthModal(targetRole);
-      return;
-    }
-
-    // If already in that role, ensure default tab
     if (targetRole === 'artisan') {
       setActiveTab('scan_studio');
-    } else {
+      switchRole('artisan');
+    } else if (targetRole === 'buyer') {
       setActiveTab('bazaar');
+      switchRole('buyer');
     }
     triggerMarigoldConfetti();
   };

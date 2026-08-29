@@ -98,9 +98,9 @@ export const BuyerNavbar: React.FC = () => {
       {/* Top Auspicious & Heritage Subtle Ribbon */}
       <div className={`h-[2.5px] w-full bg-linear-to-r from-[#B83227] via-[#D4AF37] to-[#2D6A4F] transition-opacity duration-300 ${isScrolled ? 'opacity-100 shadow-[0_0_12px_rgba(212,175,55,0.6)]' : 'opacity-80'}`} />
 
-      <div className="w-full max-w-7xl mx-auto px-2.5 sm:px-4 lg:px-8 box-border">
+      <div className="w-full max-w-7xl mx-auto px-2 sm:px-4 lg:px-6 box-border">
         {/* RESPONSIVE NAVBAR CONTAINER */}
-        <div className={`w-full max-w-full ${isScrolled ? 'h-13 sm:h-16' : 'h-14 sm:h-18'} px-1 sm:px-2 py-1.5 sm:py-0 flex items-center justify-between box-border gap-1 sm:gap-3 transition-all duration-300`}>
+        <div className={`w-full max-w-full ${isScrolled ? 'h-13 sm:h-16' : 'h-14 sm:h-18'} px-1 sm:px-2 py-1.5 sm:py-0 flex items-center justify-between box-border gap-2 sm:gap-4 transition-all duration-300`}>
           
           {/* ========================================================= */}
           {/* 1. LEFT: Brand Logo + ArtLynk Text (shrink-0) */}
@@ -108,10 +108,10 @@ export const BuyerNavbar: React.FC = () => {
           <div 
             id="buyer-brand-logo"
             onClick={() => handleNavClick('bazaar')}
-            className="flex items-center gap-2 cursor-pointer select-none group shrink-0 min-w-0"
+            className="flex items-center gap-1.5 sm:gap-2 cursor-pointer select-none group shrink-0 min-w-0"
           >
-            <div className="w-8 h-8 rounded-xl overflow-hidden shrink-0 flex items-center justify-center bg-stone-900/80 border border-amber-500/30 p-1 group-hover:border-amber-400/60 transition-colors">
-              <ArtLynkLogo size={24} className="w-6 h-6 shrink-0 group-hover:scale-110 transition-transform" />
+            <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-xl overflow-hidden shrink-0 flex items-center justify-center bg-stone-900/80 border border-amber-500/30 p-1 group-hover:border-amber-400/60 transition-colors">
+              <ArtLynkLogo size={22} className="w-5 h-5 sm:w-6 sm:h-6 shrink-0 group-hover:scale-110 transition-transform" />
             </div>
 
             <div className="flex flex-col min-w-0">
@@ -119,7 +119,7 @@ export const BuyerNavbar: React.FC = () => {
                 <span className="font-serif font-bold text-base sm:text-lg md:text-xl text-white tracking-tight leading-none shrink-0">
                   {t.app_name || 'ArtLynk'}
                 </span>
-                <span className="hidden xl:inline-flex items-center gap-1 text-[10px] font-sans font-bold bg-[#2D6A4F]/40 text-emerald-300 px-2 py-0.5 rounded-full uppercase tracking-wider border border-emerald-400/40 whitespace-nowrap shrink-0">
+                <span className="hidden 2xl:inline-flex items-center gap-1 text-[10px] font-sans font-bold bg-[#2D6A4F]/40 text-emerald-300 px-2 py-0.5 rounded-full uppercase tracking-wider border border-emerald-400/40 whitespace-nowrap shrink-0">
                   <span>🛍️</span>
                   <span>{t.nav_patron_badge || 'Art Patron'}</span>
                 </span>
@@ -128,11 +128,11 @@ export const BuyerNavbar: React.FC = () => {
           </div>
 
           {/* ========================================================= */}
-          {/* 2. CENTER: Floating / Pill Navigation Menu Container */}
+          {/* 2. CENTER: Floating / Pill Navigation Menu Container (Desktop lg+) */}
           {/* ========================================================= */}
           <nav 
             id="buyer-desktop-pill-nav"
-            className="hidden md:flex items-center justify-center bg-[#4A1E0B]/85 backdrop-blur-md px-5 lg:px-6 py-2 rounded-full border border-amber-500/20 gap-5 lg:gap-7 text-sm text-stone-200 shadow-inner"
+            className="hidden lg:flex items-center justify-center bg-[#4A1E0B]/85 backdrop-blur-md px-3 lg:px-4 xl:px-6 py-1.5 lg:py-2 rounded-full border border-amber-500/20 gap-2.5 lg:gap-3 xl:gap-5 text-xs xl:text-sm text-stone-200 shadow-inner shrink min-w-0"
           >
             {/* Explore Crafts */}
             <button
@@ -144,7 +144,7 @@ export const BuyerNavbar: React.FC = () => {
                   : 'text-stone-300 hover:text-white'
               }`}
             >
-              <ShoppingBag className="w-4 h-4 text-amber-400" />
+              <ShoppingBag className="w-3.5 h-3.5 xl:w-4 xl:h-4 text-amber-400 shrink-0" />
               <span>{t.nav_crafts || 'Explore Crafts'}</span>
             </button>
 
@@ -158,7 +158,7 @@ export const BuyerNavbar: React.FC = () => {
                   : 'text-stone-300 hover:text-white'
               }`}
             >
-              <BookOpen className="w-4 h-4 text-amber-400" />
+              <BookOpen className="w-3.5 h-3.5 xl:w-4 xl:h-4 text-amber-400 shrink-0" />
               <span>{t.nav_stories || 'Heritage Stories'}</span>
             </button>
 
@@ -172,7 +172,7 @@ export const BuyerNavbar: React.FC = () => {
                   : 'text-stone-300 hover:text-white'
               }`}
             >
-              <Map className="w-4 h-4 text-emerald-400" />
+              <Map className="w-3.5 h-3.5 xl:w-4 xl:h-4 text-emerald-400 shrink-0" />
               <span>{t.nav_map || 'GI Map'}</span>
             </button>
           </nav>
@@ -185,7 +185,7 @@ export const BuyerNavbar: React.FC = () => {
             {/* Dark Mode Toggle */}
             <ThemeToggle 
               id="buyer-theme-toggle" 
-              className="p-1.5 w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-white/10 hover:bg-white/20 border border-white/15 flex items-center justify-center shrink-0 transition-colors"
+              className="p-1 sm:p-1.5 w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-white/10 hover:bg-white/20 border border-white/15 flex items-center justify-center shrink-0 transition-colors"
             />
 
             {/* Wishlist Button */}
@@ -193,7 +193,7 @@ export const BuyerNavbar: React.FC = () => {
               id="buyer-nav-wishlist-btn"
               onClick={handleOpenPitara}
               title="Wishlist"
-              className="relative p-1.5 w-7 h-7 sm:w-8 sm:h-8 rounded-full text-stone-300 hover:text-white bg-white/10 hover:bg-white/20 border border-white/15 flex items-center justify-center transition-colors cursor-pointer shrink-0"
+              className="relative p-1 sm:p-1.5 w-7 h-7 sm:w-8 sm:h-8 rounded-full text-stone-300 hover:text-white bg-white/10 hover:bg-white/20 border border-white/15 flex items-center justify-center transition-colors cursor-pointer shrink-0"
             >
               <Heart className={`w-3.5 h-3.5 sm:w-4 sm:h-4 ${wishlistIds.length > 0 ? 'text-rose-400 fill-rose-400' : 'text-stone-300'}`} />
               {wishlistIds.length > 0 && (
@@ -217,7 +217,7 @@ export const BuyerNavbar: React.FC = () => {
                   e.stopPropagation();
                   setProfileDropdownOpen(!profileDropdownOpen);
                 }}
-                className="flex items-center gap-1.5 p-1 rounded-full hover:bg-white/15 border border-amber-400/40 hover:border-amber-300 transition-all cursor-pointer group shrink-0 bg-[#5C2A12]/60"
+                className="flex items-center gap-1 sm:gap-1.5 p-0.5 sm:p-1 rounded-full hover:bg-white/15 border border-amber-400/40 hover:border-amber-300 transition-all cursor-pointer group shrink-0 bg-[#5C2A12]/60"
                 aria-label="User Menu"
                 aria-expanded={profileDropdownOpen}
               >
@@ -227,7 +227,7 @@ export const BuyerNavbar: React.FC = () => {
                   className="w-7 h-7 sm:w-8 sm:h-8 rounded-full object-cover border-2 border-amber-400/80 shadow-xs shrink-0"
                 />
                 <ChevronDown 
-                  className={`w-3.5 h-3.5 text-amber-200 group-hover:text-white transition-transform duration-200 mr-0.5 ${
+                  className={`w-3 h-3 sm:w-3.5 sm:h-3.5 text-amber-200 group-hover:text-white transition-transform duration-200 mr-0.5 ${
                     profileDropdownOpen ? 'rotate-180 text-amber-300' : ''
                   }`} 
                 />
@@ -325,14 +325,14 @@ export const BuyerNavbar: React.FC = () => {
               </AnimatePresence>
             </div>
 
-            {/* Mobile Hamburger Toggle Button */}
+            {/* Mobile/Tablet Hamburger Toggle Button */}
             <button
               id="buyer-mobile-menu-toggle"
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="p-2 rounded-xl text-stone-300 hover:text-white bg-white/5 md:hidden border border-white/10 cursor-pointer active:scale-95 transition-transform"
+              className="p-1.5 sm:p-2 rounded-xl text-stone-300 hover:text-white bg-white/5 lg:hidden border border-white/10 cursor-pointer active:scale-95 transition-transform shrink-0"
               aria-label="Toggle navigation"
             >
-              {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+              {mobileMenuOpen ? <X className="w-4 h-4 sm:w-5 sm:h-5" /> : <Menu className="w-4 h-4 sm:w-5 sm:h-5" />}
             </button>
 
           </div>
@@ -349,7 +349,7 @@ export const BuyerNavbar: React.FC = () => {
             animate={{ opacity: 1, height: 'auto', y: 0 }}
             exit={{ opacity: 0, height: 0, y: -10 }}
             transition={{ type: "spring", stiffness: 350, damping: 28 }}
-            className="md:hidden overflow-hidden border-t border-white/10 bg-[#5C2A12] px-4 py-4 space-y-3 shadow-2xl backdrop-blur-xl"
+            className="lg:hidden overflow-hidden border-t border-white/10 bg-[#5C2A12] px-4 py-4 space-y-3 shadow-2xl backdrop-blur-xl"
           >
             <motion.div 
               initial={{ opacity: 0, x: -10 }}

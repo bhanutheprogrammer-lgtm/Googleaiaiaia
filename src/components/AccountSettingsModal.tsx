@@ -1134,9 +1134,9 @@ export const AccountSettingsModal: React.FC = () => {
                     <button
                       type="button"
                       onClick={() => {
+                        closeAccountSettings();
                         switchRole('artisan');
                         setActiveTab('scan_studio');
-                        setShowSuccessToast(true);
                       }}
                       className={`p-3.5 rounded-xl border text-left flex items-center justify-between transition-all cursor-pointer ${
                         userRole === 'artisan'
@@ -1159,9 +1159,9 @@ export const AccountSettingsModal: React.FC = () => {
                     <button
                       type="button"
                       onClick={() => {
+                        closeAccountSettings();
                         switchRole('buyer');
                         setActiveTab('bazaar');
-                        setShowSuccessToast(true);
                       }}
                       className={`p-3.5 rounded-xl border text-left flex items-center justify-between transition-all cursor-pointer ${
                         userRole === 'buyer'

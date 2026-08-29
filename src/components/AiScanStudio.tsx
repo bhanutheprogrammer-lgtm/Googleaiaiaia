@@ -246,62 +246,36 @@ export const AiScanStudio: React.FC = () => {
   };
 
   return (
-    <div className="py-8 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
-      
-      {/* Studio Banner */}
-      <div className="bg-[#0C243C] rounded-3xl p-6 sm:p-8 text-white border border-[#D4AF37]/50 shadow-xl mb-8 relative overflow-hidden">
-        <div className="absolute -right-10 -bottom-10 w-64 h-64 bg-radial from-amber-500/20 to-transparent pointer-events-none rounded-full" />
-        
-        <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
-          <div className="space-y-2">
-            <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-white/10 text-amber-300 text-xs font-semibold border border-amber-300/30 font-sans uppercase tracking-wider">
-              <Sparkles className="w-3.5 h-3.5 text-amber-400" />
-              <span>{t.studio_badge}</span>
-            </div>
-            <h1 className="text-3xl sm:text-4xl font-black font-serif text-[#FAF9F6] tracking-tight leading-tight">
-              {t.studio_title}
-            </h1>
-            <p className="text-sm sm:text-base text-stone-300 max-w-2xl font-serif leading-relaxed">
-              {t.studio_subtitle}
-            </p>
-          </div>
-
-          {/* Target Language Selector for AI Listing */}
-          <div className="bg-white/10 backdrop-blur-md p-4 rounded-2xl border border-white/20">
-            <label className="text-[11px] font-bold text-amber-200 uppercase tracking-wider block mb-1.5 flex items-center gap-1.5 font-sans">
-              <Languages className="w-3.5 h-3.5 text-amber-300" />
-              <span>{t.studio_target_lang}</span>
-            </label>
-            <select
-              id="ai-output-lang-select"
-              value={selectedOutputLang}
-              onChange={(e) => setSelectedOutputLang(e.target.value as LanguageCode)}
-              className="w-full bg-[#0F1E2E] border border-amber-500/40 rounded-xl px-3 py-2 text-xs font-bold text-[#FAF9F6] focus:outline-hidden cursor-pointer font-sans"
-            >
-              {INDIAN_LANGUAGES.map((lang) => (
-                <option key={lang.code} value={lang.code}>
-                  {lang.nativeName} ({lang.label})
-                </option>
-              ))}
-            </select>
-          </div>
-        </div>
-      </div>
-
+    <div className="py-4 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
       {/* Main Dual-Pane Studio Layout */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
         
         {/* Left Pane (5 Cols): Image & Voice Input */}
         <div className="lg:col-span-5 space-y-6">
           
-          {/* 1-Click Judge Demo Presets */}
+          {/* 1-Click Judge Demo Presets & Language Selection */}
           <div className="bg-white rounded-3xl p-5 border border-amber-900/15 shadow-xs">
-            <div className="flex items-center justify-between mb-3">
+            <div className="flex items-center justify-between mb-3 gap-2 flex-wrap">
               <span className="text-xs font-bold text-[#A84A2C] uppercase tracking-wider flex items-center gap-1.5 font-sans">
                 <Wand2 className="w-3.5 h-3.5 text-[#A84A2C]" />
                 {t.studio_demo_presets}
               </span>
-              <span className="text-[10px] text-stone-500 font-sans uppercase tracking-wider">Tap to load</span>
+              <div className="flex items-center gap-1.5 bg-[#FAF6EE] px-2.5 py-1 rounded-xl border border-amber-500/30">
+                <Languages className="w-3.5 h-3.5 text-[#A84A2C] shrink-0" />
+                <select
+                  id="ai-output-lang-select"
+                  value={selectedOutputLang}
+                  onChange={(e) => setSelectedOutputLang(e.target.value as LanguageCode)}
+                  aria-label="Output Language"
+                  className="bg-transparent text-[11px] font-bold text-[#0F1E2E] focus:outline-hidden cursor-pointer font-sans"
+                >
+                  {INDIAN_LANGUAGES.map((lang) => (
+                    <option key={lang.code} value={lang.code}>
+                      {lang.nativeName} ({lang.label})
+                    </option>
+                  ))}
+                </select>
+              </div>
             </div>
 
             <div className="grid grid-cols-2 gap-2.5">
