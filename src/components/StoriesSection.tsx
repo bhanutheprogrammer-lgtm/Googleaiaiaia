@@ -69,8 +69,6 @@ export const StoriesSection: React.FC = () => {
   return (
     <section 
       id="stories-section" 
-      data-scroll-section 
-      data-scroll 
       className="py-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto space-y-8"
     >
       
@@ -91,44 +89,66 @@ export const StoriesSection: React.FC = () => {
       {/* Main Interactive Story Stage */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-start">
         
-        {/* Left (4 Cols): Story Selector List */}
-        <div className="lg:col-span-4 space-y-3">
-          {crafts.map((craft) => (
-            <div
-              key={craft.id}
-              onClick={() => {
-                setActiveStoryCraft(craft);
-                if (isPlayingAudio) {
-                  window.speechSynthesis?.cancel();
-                  setIsPlayingAudio(false);
-                }
-              }}
-              className={`p-4 rounded-2xl border transition-all cursor-pointer flex items-center space-x-3.5 ${
-                activeStoryCraft.id === craft.id
-                  ? 'bg-white border-[#A84A2C] shadow-md ring-2 ring-[#A84A2C]/10 scale-[1.01]'
-                  : 'bg-white hover:bg-amber-50/40 border-stone-200/80 text-stone-700'
-              }`}
-            >
-              <img
-                src={craft.imageUrl}
-                alt={craft.title}
-                className="w-14 h-14 rounded-xl object-cover border border-stone-200 shrink-0"
-              />
-              <div className="overflow-hidden">
-                <span className="text-[10px] font-bold uppercase tracking-wider text-[#A84A2C]">
-                  {craft.category} • {craft.stateOfOrigin}
-                </span>
-                <h3 className="text-xs font-bold text-[#0F1E2E] font-serif truncate mt-0.5">
-                  {currentLanguage === 'hi' ? craft.hindiTitle : craft.title}
-                </h3>
-                {currentLanguage !== 'en' && (
-                  <p className="text-[11px] font-semibold text-stone-600 truncate">
-                    {craft.regionalTitle}
-                  </p>
-                )}
+        {/* Left (4 Cols): Story Selector List with Smooth Scrolling & Lenis Prevention */}
+        <div className="lg:col-span-4 flex flex-col space-y-3">
+          <div className="flex items-center justify-between px-1">
+            <span className="text-xs font-bold uppercase tracking-wider text-stone-500 font-sans">
+              Artisan Chronicles ({crafts.length})
+            </span>
+            <span className="text-[11px] text-[#A84A2C] font-semibold font-sans">
+              Select to Read
+            </span>
+          </div>
+
+          <div 
+            id="stories-selector-scroll-list"
+            data-lenis-prevent
+            onWheel={(e) => e.stopPropagation()}
+            onTouchMove={(e) => e.stopPropagation()}
+            className="space-y-2.5 max-h-[580px] overflow-y-auto pr-1.5 overscroll-contain rounded-2xl touch-pan-y"
+            style={{
+              scrollbarWidth: 'thin',
+              scrollbarColor: '#A84A2C transparent',
+              WebkitOverflowScrolling: 'touch'
+            }}
+          >
+            {crafts.map((craft) => (
+              <div
+                key={craft.id}
+                onClick={() => {
+                  setActiveStoryCraft(craft);
+                  if (isPlayingAudio) {
+                    window.speechSynthesis?.cancel();
+                    setIsPlayingAudio(false);
+                  }
+                }}
+                className={`p-3.5 sm:p-4 rounded-2xl border transition-all cursor-pointer flex items-center space-x-3.5 ${
+                  activeStoryCraft.id === craft.id
+                    ? 'bg-white border-[#A84A2C] shadow-md ring-2 ring-[#A84A2C]/15 scale-[1.01]'
+                    : 'bg-white hover:bg-amber-50/40 border-stone-200/80 text-stone-700'
+                }`}
+              >
+                <img
+                  src={craft.imageUrl}
+                  alt={craft.title}
+                  className="w-14 h-14 rounded-xl object-cover border border-stone-200 shrink-0"
+                />
+                <div className="overflow-hidden flex-1">
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-[#A84A2C] block truncate">
+                    {craft.category} • {craft.stateOfOrigin}
+                  </span>
+                  <h3 className="text-xs font-bold text-[#0F1E2E] font-serif truncate mt-0.5">
+                    {currentLanguage === 'hi' ? craft.hindiTitle : craft.title}
+                  </h3>
+                  {currentLanguage !== 'en' && (
+                    <p className="text-[11px] font-semibold text-stone-600 truncate">
+                      {craft.regionalTitle}
+                    </p>
+                  )}
+                </div>
               </div>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
 
         {/* Right (8 Cols): Featured Story Reading Room */}

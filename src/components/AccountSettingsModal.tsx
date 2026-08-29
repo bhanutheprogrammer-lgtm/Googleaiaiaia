@@ -453,8 +453,15 @@ export const AccountSettingsModal: React.FC = () => {
         ref={cardRef}
         id="account-settings-modal-card"
         data-lenis-prevent
-        className="w-full max-w-2xl bg-[#0b1b2b] border border-amber-500/30 rounded-3xl p-6 shadow-2xl max-h-[90vh] overflow-y-auto text-white flex flex-col space-y-6 box-border"
+        onWheel={(e) => e.stopPropagation()}
+        onTouchMove={(e) => e.stopPropagation()}
         onClick={(e) => e.stopPropagation()}
+        className="w-full max-w-2xl bg-[#0b1b2b] border border-amber-500/30 rounded-3xl p-4 sm:p-6 shadow-2xl max-h-[90vh] overflow-y-auto text-white flex flex-col space-y-6 box-border touch-pan-y"
+        style={{
+          scrollbarWidth: 'thin',
+          scrollbarColor: '#D4AF37 transparent',
+          WebkitOverflowScrolling: 'touch'
+        }}
       >
         {/* ========================================================= */}
         {/* MODAL HEADER */}

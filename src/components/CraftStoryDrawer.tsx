@@ -187,8 +187,15 @@ export const CraftStoryDrawer: React.FC = () => {
           ref={cardRef}
           id="craft-story-modal-card"
           data-lenis-prevent
+          onWheel={(e) => e.stopPropagation()}
+          onTouchMove={(e) => e.stopPropagation()}
           onClick={(e) => e.stopPropagation()}
-          className="relative w-[92%] sm:w-full max-w-3xl md:max-w-4xl mx-auto max-h-[88vh] overflow-y-auto bg-[#0F1E2E] text-white rounded-3xl border border-amber-500/30 shadow-2xl p-4 sm:p-6 md:p-8 overscroll-contain flex flex-col space-y-5 box-border"
+          className="relative w-[94%] sm:w-full max-w-3xl md:max-w-4xl mx-auto max-h-[88vh] overflow-y-auto bg-[#0F1E2E] text-white rounded-3xl border border-amber-500/30 shadow-2xl p-4 sm:p-6 md:p-8 overscroll-contain flex flex-col space-y-5 box-border touch-pan-y"
+          style={{
+            scrollbarWidth: 'thin',
+            scrollbarColor: '#D4AF37 transparent',
+            WebkitOverflowScrolling: 'touch'
+          }}
         >
           {/* Modal Header */}
           <div className="flex items-center justify-between border-b border-white/15 pb-4 shrink-0">

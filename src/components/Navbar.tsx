@@ -24,6 +24,7 @@ import { useArtisan } from '../context/ArtisanContext';
 import { useAuth } from '../context/AuthContext';
 import { LanguageSelector } from './LanguageSelector';
 import { ArtisanLinkLogo } from './ArtisanLinkLogo';
+import { ThemeToggle } from './ThemeToggle';
 import { LanguageCode, UserRole } from '../types';
 
 export const Navbar: React.FC = () => {
@@ -328,9 +329,12 @@ export const Navbar: React.FC = () => {
 
           </nav>
 
-          {/* Right Controls: Multilingual Selector + Auth / Profile Dropdown */}
+          {/* Right Controls: Multilingual Selector + Theme Toggle + Auth / Profile Dropdown */}
           <div className="flex items-center gap-1.5 sm:gap-2.5 shrink-0">
             
+            {/* Dark Mode Toggle */}
+            <ThemeToggle id="navbar-theme-toggle" />
+
             {/* Quick Wishlist Icon for Buyers */}
             {userRole === 'buyer' && (
               <button

@@ -132,7 +132,7 @@ export const LanguageModal: React.FC<LanguageModalProps> = ({
         role="dialog"
         aria-modal="true"
         aria-labelledby="language-modal-title"
-        className="w-full max-w-sm bg-[#0c1f30] border border-amber-500/30 rounded-3xl p-5 shadow-2xl max-h-[80vh] flex flex-col overflow-hidden select-none relative z-10"
+        className="w-full max-w-sm bg-[#5C2A12] border-2 border-amber-500/40 rounded-3xl p-5 shadow-2xl max-h-[80vh] flex flex-col overflow-hidden select-none relative z-10"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
@@ -168,6 +168,9 @@ export const LanguageModal: React.FC<LanguageModalProps> = ({
             scrollbarColor: '#D97706 rgba(255, 255, 255, 0.05)',
           }}
           onWheel={(e) => {
+            e.stopPropagation();
+          }}
+          onTouchMove={(e) => {
             e.stopPropagation();
           }}
         >

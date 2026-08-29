@@ -35,7 +35,7 @@ export function LanguageSelector({
         aria-label="Select Language (11 Indian Languages)"
         className={
           buttonClassName ||
-          'flex items-center gap-1 sm:gap-1.5 px-2 sm:px-3 py-1 sm:py-1.5 rounded-full text-xs font-semibold border border-amber-500/40 bg-[#0C243C] text-white hover:border-amber-400 hover:bg-[#123152] transition shadow-md cursor-pointer shrink-0'
+          'flex items-center gap-1 sm:gap-1.5 px-2 sm:px-3 py-1 sm:py-1.5 rounded-full text-xs font-semibold border border-amber-500/40 bg-[#A0522D] text-white hover:border-amber-400 hover:bg-[#8B4513] transition shadow-md cursor-pointer shrink-0'
         }
       >
         {showPulse ? (
@@ -43,10 +43,10 @@ export function LanguageSelector({
         ) : (
           <Globe className="w-3 h-3 text-amber-300 shrink-0" />
         )}
-        <span className="truncate max-w-[50px] xs:max-w-[70px] sm:max-w-[95px] font-semibold text-[11px] sm:text-xs">
+        <span className="truncate max-w-[38px] xxs:max-w-[50px] xs:max-w-[68px] sm:max-w-[95px] font-semibold text-[11px] sm:text-xs">
           {currentLangMeta.nativeName}
         </span>
-        <ChevronDown className="w-3 h-3 text-stone-400 shrink-0" />
+        <ChevronDown className="w-2.5 h-2.5 sm:w-3 sm:h-3 text-stone-400 shrink-0" />
       </button>
 
       {/* Multilingual Selection Dialog Modal */}

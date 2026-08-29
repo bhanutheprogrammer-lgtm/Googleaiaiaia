@@ -7,6 +7,7 @@ import {
   Sparkles
 } from 'lucide-react';
 import { useArtisan } from '../context/ArtisanContext';
+import { useTheme } from '../context/ThemeContext';
 
 export const HeroSection: React.FC = () => {
   const { 
@@ -16,6 +17,7 @@ export const HeroSection: React.FC = () => {
     selectedCategory, 
     setSelectedCategory,
   } = useArtisan();
+  const { isDarkMode } = useTheme();
 
   const heroRef = useRef<HTMLDivElement>(null);
   const subheadRef = useRef<HTMLParagraphElement>(null);
@@ -79,10 +81,12 @@ export const HeroSection: React.FC = () => {
       data-scroll-section
       data-scroll
       id="hero-section"
-      className="relative overflow-hidden bg-[#FAF9F6] border-b border-amber-900/10"
+      className={`relative overflow-hidden transition-colors duration-300 ${
+        isDarkMode ? 'bg-transparent border-b border-amber-500/20' : 'bg-[#FAF9F6] border-b border-amber-900/10'
+      }`}
     >
       {/* Background Jaali Pattern & Mandala Glow */}
-      <div className="absolute inset-0 jaali-pattern pointer-events-none opacity-40" />
+      <div className={`absolute inset-0 pointer-events-none ${isDarkMode ? 'bg-jaali-dark opacity-80' : 'jaali-pattern opacity-40'}`} />
       <div className="absolute top-0 right-0 w-[550px] h-[550px] bg-mandala-radial pointer-events-none opacity-60" />
 
       {/* Main Editorial Hero Wrapper */}
@@ -101,7 +105,9 @@ export const HeroSection: React.FC = () => {
           {/* BlurText & ShinyText Animated Main Headline */}
           <h1 
             id="hero-main-headline"
-            className="text-2xl sm:text-4xl md:text-5xl font-serif font-bold text-stone-900 leading-tight my-2 flex flex-wrap items-center justify-center gap-x-2 sm:gap-x-3"
+            className={`text-2xl sm:text-4xl md:text-5xl font-serif font-bold leading-tight my-2 flex flex-wrap items-center justify-center gap-x-2 sm:gap-x-3 ${
+              isDarkMode ? 'text-[#FAF9F6]' : 'text-stone-900'
+            }`}
           >
             {headlineWords.map((item, index) => (
               <motion.span
@@ -116,7 +122,7 @@ export const HeroSection: React.FC = () => {
                 className={`inline-block ${
                   item.isHighlight
                     ? 'bg-[linear-gradient(110deg,#a0522d,45%,#fcd34d,55%,#a0522d)] bg-[length:200%_100%] animate-shimmer bg-clip-text text-transparent italic font-normal'
-                    : 'text-stone-900'
+                    : isDarkMode ? 'text-[#FAF9F6]' : 'text-stone-900'
                 }`}
               >
                 {item.word}
@@ -126,16 +132,22 @@ export const HeroSection: React.FC = () => {
 
           <p 
             ref={subheadRef}
-            className="text-xs sm:text-sm md:text-base text-stone-600 max-w-xl mx-auto leading-relaxed px-4 font-serif"
+            className={`text-xs sm:text-sm md:text-base max-w-xl mx-auto leading-relaxed px-4 font-serif ${
+              isDarkMode ? 'text-stone-300' : 'text-stone-600'
+            }`}
           >
             {t.hero_subtitle}
           </p>
         </div>
 
         {/* Editorial Search & Category Filter Strip */}
-        <div className="mt-6 sm:mt-8 pt-6 border-t border-amber-900/10">
+        <div className={`mt-6 sm:mt-8 pt-6 border-t ${isDarkMode ? 'border-amber-500/20' : 'border-amber-900/10'}`}>
           <div className="max-w-4xl mx-auto">
-            <div className="relative flex items-center bg-white rounded-2xl shadow-sm border border-amber-900/15 p-2 focus-within:border-[#A84A2C] focus-within:ring-2 focus-within:ring-[#A84A2C]/10 transition-all">
+            <div className={`relative flex items-center rounded-2xl shadow-sm border p-2 focus-within:border-[#A84A2C] focus-within:ring-2 focus-within:ring-[#A84A2C]/20 transition-all ${
+              isDarkMode 
+                ? 'bg-[#0C1F30]/90 border-amber-500/30' 
+                : 'bg-white border-amber-900/15'
+            }`}>
               <Search className="w-5 h-5 text-stone-400 ml-3 shrink-0" />
               <input
                 id="hero-search-input"
@@ -143,12 +155,14 @@ export const HeroSection: React.FC = () => {
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder={t.hero_search_placeholder}
-                className="w-full px-3 py-2 text-sm text-[#0F1E2E] placeholder-stone-400 bg-transparent focus:outline-hidden font-sans"
+                className={`w-full px-3 py-2 text-sm placeholder-stone-400 bg-transparent focus:outline-hidden font-sans ${
+                  isDarkMode ? 'text-[#FAF9F6]' : 'text-[#0F1E2E]'
+                }`}
               />
               {searchQuery && (
                 <button 
                   onClick={() => setSearchQuery('')}
-                  className="text-xs text-stone-400 hover:text-stone-600 px-2 cursor-pointer font-sans"
+                  className="text-xs text-stone-400 hover:text-stone-200 px-2 cursor-pointer font-sans"
                 >
                   {t.hero_clear}
                 </button>
@@ -160,7 +174,7 @@ export const HeroSection: React.FC = () => {
                   const bazaarElem = document.getElementById('marketplace-section');
                   bazaarElem?.scrollIntoView({ behavior: 'smooth' });
                 }}
-                className="flex items-center space-x-1.5 px-5 py-2.5 rounded-xl bg-[#0F1E2E] hover:bg-[#A84A2C] text-white text-xs font-sans uppercase tracking-widest font-bold transition-all shadow-xs cursor-pointer shrink-0"
+                className="flex items-center space-x-1.5 px-5 py-2.5 rounded-xl bg-linear-to-r from-[#A84A2C] to-[#C05621] hover:from-[#913D22] hover:to-[#A84A2C] text-white text-xs font-sans uppercase tracking-widest font-bold transition-all shadow-xs cursor-pointer shrink-0"
               >
                 <span>{t.hero_explore}</span>
                 <ArrowRight className="w-3.5 h-3.5" />
@@ -168,10 +182,10 @@ export const HeroSection: React.FC = () => {
             </div>
 
             {/* Quick Vernacular Cultural Discovery Tagline */}
-            <div className="flex items-center justify-between mt-3 text-stone-500 text-xs font-sans px-1">
+            <div className="flex items-center justify-between mt-3 text-stone-400 text-xs font-sans px-1">
               <div className="flex items-center gap-1.5">
-                <Sparkles className="w-3.5 h-3.5 text-amber-600" />
-                <span className="text-[11px] text-stone-600">
+                <Sparkles className="w-3.5 h-3.5 text-amber-400" />
+                <span className={`text-[11px] ${isDarkMode ? 'text-stone-300' : 'text-stone-600'}`}>
                   Explore 100% GI-certified authentic crafts direct from master Indian karigars
                 </span>
               </div>
@@ -187,7 +201,9 @@ export const HeroSection: React.FC = () => {
                   className={`px-3.5 py-1.5 rounded-full text-xs font-sans uppercase tracking-wider font-semibold transition-all cursor-pointer ${
                     selectedCategory === cat.name
                       ? 'bg-[#A84A2C] text-white shadow-xs'
-                      : 'bg-white text-stone-700 border border-stone-200 hover:border-[#A84A2C]'
+                      : isDarkMode
+                        ? 'bg-[#0C1F30] text-stone-200 border border-amber-500/20 hover:border-amber-400'
+                        : 'bg-white text-stone-700 border border-stone-200 hover:border-[#A84A2C]'
                   }`}
                 >
                   {cat.label}

@@ -19,7 +19,11 @@ import {
   Eye,
   KeyRound,
   Globe,
-  ChevronDown
+  ChevronDown,
+  Loader2,
+  AlertCircle,
+  RotateCcw,
+  Check
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useArtisan } from '../context/ArtisanContext';
@@ -64,6 +68,11 @@ export const AuthModal: React.FC = () => {
     closeAuthModal,
     authModalRole,
     authModalTab,
+    isAuthLoading,
+    authError,
+    sendPhoneOtp,
+    verifyPhoneOtp,
+    clearAuthError,
     loginAsArtisanDemo,
     loginAsBuyerDemo,
     loginAsGuest,
@@ -101,10 +110,11 @@ export const AuthModal: React.FC = () => {
   const [activeRole, setActiveRole] = useState<'artisan' | 'buyer'>(authModalRole || 'artisan');
   const [tab, setTab] = useState<'login' | 'signup'>(authModalTab || 'login');
 
-  // Login Form States
-  const [loginIdentifier, setLoginIdentifier] = useState('');
-  const [loginPassword, setLoginPassword] = useState('');
-  const [isOtpSent, setIsOtpSent] = useState(false);
+  // Phone Auth State
+  const [phoneNumber, setPhoneNumber] = useState('+91 ');
+  const [otpCode, setOtpCode] = useState('');
+  const [otpSent, setOtpSent] = useState(false);
+  const [resendTimer, setResendTimer] = useState(0);
 
   // Artisan Signup States
   const [artisanName, setArtisanName] = useState('');
@@ -113,20 +123,31 @@ export const AuthModal: React.FC = () => {
   const [artisanVillage, setArtisanVillage] = useState('');
   const [artisanDistrict, setArtisanDistrict] = useState('');
   const [artisanState, setArtisanState] = useState('Telangana');
-  const [artisanPhone, setArtisanPhone] = useState('');
   const [artisanLanguage, setArtisanLanguage] = useState<LanguageCode>('en');
   const [artisanGiDeclaration, setArtisanGiDeclaration] = useState(true);
 
   // Buyer Signup States
   const [buyerName, setBuyerName] = useState('');
   const [buyerEmail, setBuyerEmail] = useState('');
-  const [buyerPhone, setBuyerPhone] = useState('');
   const [buyerDeliveryState, setBuyerDeliveryState] = useState('Karnataka');
   const [buyerPincode, setBuyerPincode] = useState('');
   const [selectedMediums, setSelectedMediums] = useState<CraftCategory[]>(['Handloom', 'Clay/Pottery']);
 
   const overlayRef = useRef<HTMLDivElement>(null);
   const cardRef = useRef<HTMLDivElement>(null);
+
+  // Resend Timer Countdown
+  useEffect(() => {
+    let interval: NodeJS.Timeout;
+    if (resendTimer > 0) {
+      interval = setInterval(() => {
+        setResendTimer((prev) => prev - 1);
+      }, 1000);
+    }
+    return () => {
+      if (interval) clearInterval(interval);
+    };
+  }, [resendTimer]);
 
   // Background Scroll Locking, Lenis Prevention & GSAP animation
   useEffect(() => {
@@ -196,6 +217,7 @@ export const AuthModal: React.FC = () => {
   }, [isAuthModalOpen]);
 
   const handleClose = () => {
+    clearAuthError();
     if (cardRef.current && overlayRef.current) {
       gsap.to(cardRef.current, {
         scale: 0.85,
@@ -220,6 +242,7 @@ export const AuthModal: React.FC = () => {
     if (isAuthModalOpen) {
       if (authModalRole) setActiveRole(authModalRole);
       if (authModalTab) setTab(authModalTab);
+      clearAuthError();
     }
   }, [isAuthModalOpen, authModalRole, authModalTab]);
 
@@ -231,7 +254,7 @@ export const AuthModal: React.FC = () => {
 
   const handleLanguageSelect = (code: LanguageCode) => {
     setModalLanguage(code);
-    setLanguage(code); // Also sync with global app language for cohesive experience
+    setLanguage(code);
     setIsLangDropdownOpen(false);
   };
 
@@ -243,45 +266,66 @@ export const AuthModal: React.FC = () => {
     }
   };
 
-  const handleLoginSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    const identifier = loginIdentifier.trim() || (activeRole === 'artisan' ? '+91 98480 23412' : 'ananya.sharma@heritagepatron.in');
-    loginWithCredentials(activeRole, identifier);
-    if (activeRole === 'artisan') {
-      setActiveTab('scan_studio');
-    } else {
-      setActiveTab('bazaar');
+  // Handle Send OTP via Firebase Phone Auth
+  const handleSendOtp = async (e?: React.FormEvent) => {
+    if (e) e.preventDefault();
+    clearAuthError();
+    const rawPhone = phoneNumber.trim();
+    if (!rawPhone || rawPhone === '+91') {
+      return;
+    }
+
+    const result = await sendPhoneOtp(rawPhone);
+    if (result.success) {
+      setOtpSent(true);
+      setResendTimer(60);
     }
   };
 
-  const handleArtisanSignupSubmit = (e: React.FormEvent) => {
+  // Handle Verify OTP and Complete Auth
+  const handleVerifyOtp = async (e: React.FormEvent) => {
     e.preventDefault();
-    signupArtisan({
-      name: artisanName || 'Ustad Rameshwar Rao',
-      regionalName: artisanRegionalName || artisanName || 'Ustad Rameshwar Rao',
-      craftSpecialty: artisanSpecialty,
-      village: artisanVillage || 'Bhoodan Pochampally',
-      district: artisanDistrict || 'Yadadri Bhuvanagiri',
-      state: artisanState,
-      phone: artisanPhone || '+91 98480 23412',
-      whatsapp: (artisanPhone || '9848023412').replace(/[^0-9]/g, ''),
-      primaryLanguage: artisanLanguage,
-      giCertified: artisanGiDeclaration
-    });
-    setActiveTab('scan_studio');
-  };
+    if (!otpCode.trim()) return;
 
-  const handleBuyerSignupSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    signupBuyer({
-      name: buyerName || 'Ananya Sharma',
-      email: buyerEmail || 'ananya.sharma@heritagepatron.in',
-      phone: buyerPhone || '+91 97411 99201',
-      favoriteMediums: selectedMediums,
-      deliveryState: buyerDeliveryState,
-      pincode: buyerPincode || '560038'
-    });
-    setActiveTab('bazaar');
+    if (tab === 'login') {
+      const res = await verifyPhoneOtp(otpCode);
+      if (res.success) {
+        if (activeRole === 'artisan') {
+          setActiveTab('scan_studio');
+        } else {
+          setActiveTab('bazaar');
+        }
+      }
+    } else {
+      // Sign Up Flow with Custom Profile
+      if (activeRole === 'artisan') {
+        const res = await verifyPhoneOtp(otpCode, {
+          role: 'artisan',
+          name: artisanName || 'Ustad Rameshwar Rao',
+          craftSpecialty: artisanSpecialty,
+          village: artisanVillage || 'Bhoodan Pochampally',
+          district: artisanDistrict || 'Yadadri Bhuvanagiri',
+          state: artisanState,
+          primaryLanguage: artisanLanguage,
+          giCertified: artisanGiDeclaration
+        });
+        if (res.success) {
+          setActiveTab('scan_studio');
+        }
+      } else {
+        const res = await verifyPhoneOtp(otpCode, {
+          role: 'buyer',
+          name: buyerName || 'Ananya Sharma',
+          email: buyerEmail || 'ananya.sharma@heritagepatron.in',
+          state: buyerDeliveryState,
+          pincode: buyerPincode || '560038',
+          favoriteMediums: selectedMediums
+        });
+        if (res.success) {
+          setActiveTab('bazaar');
+        }
+      }
+    }
   };
 
   if (typeof document === 'undefined') return null;
@@ -295,11 +339,14 @@ export const AuthModal: React.FC = () => {
         if (e.target === e.currentTarget) handleClose();
       }}
     >
+      {/* Invisible reCAPTCHA container for Firebase Phone Auth */}
+      <div id="recaptcha-container"></div>
+
       <div 
         ref={cardRef}
         id="auth-modal-card"
         data-lenis-prevent
-        className="relative w-[92%] sm:w-full max-w-lg md:max-w-xl mx-auto max-h-[88vh] overflow-y-auto bg-[#0C243C] text-white rounded-3xl border border-amber-500/30 shadow-2xl p-4 sm:p-6 overscroll-contain flex flex-col space-y-4 sm:space-y-5 box-border"
+        className="relative w-[94%] sm:w-full max-w-lg md:max-w-xl mx-auto max-h-[90vh] overflow-y-auto bg-[#0C243C] text-white rounded-3xl border border-amber-500/30 shadow-2xl p-4 sm:p-6 overscroll-contain flex flex-col space-y-4 sm:space-y-5 box-border"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Subtle Ambient Mandala Background */}
@@ -307,7 +354,7 @@ export const AuthModal: React.FC = () => {
 
         <div className="relative z-10 space-y-4 sm:space-y-5 w-full min-w-0">
           {/* Top Row: Badge (Left) and Language Dropdown + Close "✕" Button (Right) */}
-          <div className="flex items-center justify-between w-full mb-3 px-1 pb-3 border-b border-white/15 min-w-0 gap-2">
+          <div className="flex items-center justify-between w-full mb-2 px-1 pb-3 border-b border-white/15 min-w-0 gap-2">
             <span className="text-[10px] sm:text-xs font-semibold px-3 py-1 rounded-full bg-amber-950/50 text-amber-300 border border-amber-500/30 truncate min-w-0 shrink">
               {t.portalBadge}
             </span>
@@ -386,7 +433,7 @@ export const AuthModal: React.FC = () => {
 
           {/* Brand Intro */}
           <div className="flex items-center gap-3.5 min-w-0">
-            <ArtisanLinkLogo size={52} className="shrink-0" />
+            <ArtisanLinkLogo size={48} className="shrink-0" />
             <div className="min-w-0 flex-1">
               <h2 className="text-xl sm:text-2xl font-black font-serif text-[#FAF6EE] leading-tight truncate">
                 {t.headerTitle}
@@ -396,6 +443,23 @@ export const AuthModal: React.FC = () => {
               </p>
             </div>
           </div>
+
+          {/* Error Alert Box */}
+          {authError && (
+            <div className="p-3 bg-red-950/60 border border-red-500/50 rounded-xl flex items-start justify-between gap-2 text-xs text-red-200 animate-in fade-in duration-200">
+              <div className="flex items-start gap-2">
+                <AlertCircle className="w-4 h-4 text-red-400 shrink-0 mt-0.5" />
+                <p className="leading-relaxed">{authError}</p>
+              </div>
+              <button
+                type="button"
+                onClick={clearAuthError}
+                className="text-red-400 hover:text-red-200 shrink-0 p-0.5"
+              >
+                <X className="w-3.5 h-3.5" />
+              </button>
+            </div>
+          )}
 
           {/* ⚡ 1-Click Quick Demo Login Ribbon for Judges */}
           <div className="pt-2 sm:pt-3 border-t border-white/15 w-full">
@@ -452,7 +516,10 @@ export const AuthModal: React.FC = () => {
               <button
                 id="auth-role-artisan-tab"
                 type="button"
-                onClick={() => setActiveRole('artisan')}
+                onClick={() => {
+                  setActiveRole('artisan');
+                  setOtpSent(false);
+                }}
                 className={`flex-1 flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-full text-xs sm:text-sm font-semibold whitespace-nowrap text-center transition-all cursor-pointer ${
                   activeRole === 'artisan'
                     ? 'bg-[#B83227] text-white shadow-md font-bold'
@@ -466,7 +533,10 @@ export const AuthModal: React.FC = () => {
               <button
                 id="auth-role-buyer-tab"
                 type="button"
-                onClick={() => setActiveRole('buyer')}
+                onClick={() => {
+                  setActiveRole('buyer');
+                  setOtpSent(false);
+                }}
                 className={`flex-1 flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-full text-xs sm:text-sm font-semibold whitespace-nowrap text-center transition-all cursor-pointer ${
                   activeRole === 'buyer'
                     ? 'bg-[#117A65] text-white shadow-md font-bold'
@@ -484,7 +554,10 @@ export const AuthModal: React.FC = () => {
                 <button
                   id="auth-subtab-login"
                   type="button"
-                  onClick={() => setTab('login')}
+                  onClick={() => {
+                    setTab('login');
+                    setOtpSent(false);
+                  }}
                   className={`pb-1 transition-colors cursor-pointer ${
                     tab === 'login'
                       ? 'text-amber-300 border-b-2 border-amber-400'
@@ -496,7 +569,10 @@ export const AuthModal: React.FC = () => {
                 <button
                   id="auth-subtab-signup"
                   type="button"
-                  onClick={() => setTab('signup')}
+                  onClick={() => {
+                    setTab('signup');
+                    setOtpSent(false);
+                  }}
                   className={`pb-1 transition-colors cursor-pointer ${
                     tab === 'signup'
                       ? 'text-amber-300 border-b-2 border-amber-400'
@@ -513,91 +589,181 @@ export const AuthModal: React.FC = () => {
             </div>
           </div>
 
-          {/* Dynamic Form Area */}
+          {/* Dynamic Form Area: Phone OTP Authentication Workflow */}
           <div className="w-full">
             {tab === 'login' ? (
-              /* SIGN IN FORM */
-              <form onSubmit={handleLoginSubmit} className="space-y-4 font-sans w-full">
+              /* SIGN IN WITH PHONE OTP FORM */
+              <div className="space-y-4 font-sans w-full">
                 <div className="bg-[#132A45]/80 p-4 sm:p-5 rounded-2xl border border-amber-500/20 shadow-xs space-y-4 box-border">
                   <div>
                     <label className="text-xs font-bold text-amber-200 uppercase tracking-wider block mb-1.5 flex items-center gap-1.5">
-                      {activeRole === 'artisan' ? (
-                        <Phone className="w-3.5 h-3.5 text-[#E67E22] shrink-0" />
-                      ) : (
-                        <Mail className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
-                      )}
-                      <span className="truncate">
-                        {activeRole === 'artisan' ? t.phoneOrEmailLabelArtisan : t.phoneOrEmailLabelBuyer} *
-                      </span>
+                      <Phone className="w-3.5 h-3.5 text-[#E67E22] shrink-0" />
+                      <span>{t.phoneOrEmailLabelArtisan} *</span>
                     </label>
-                    <input
-                      type="text"
-                      required
-                      value={loginIdentifier}
-                      onChange={(e) => setLoginIdentifier(e.target.value)}
-                      placeholder={activeRole === 'artisan' ? t.phonePlaceholderArtisan : t.emailOrPhonePlaceholderBuyer}
-                      className="w-full block rounded-xl px-3.5 py-2.5 text-sm bg-[#0A1A2D] border border-amber-500/30 focus:outline-hidden focus:border-amber-400 text-white font-semibold placeholder-stone-400 overflow-hidden text-ellipsis box-border"
-                    />
+                    <div className="flex items-center gap-2">
+                      <input
+                        type="tel"
+                        required
+                        value={phoneNumber}
+                        onChange={(e) => setPhoneNumber(e.target.value)}
+                        placeholder="+91 98480 23412"
+                        disabled={otpSent || isAuthLoading}
+                        className="flex-1 block rounded-xl px-3.5 py-2.5 text-sm bg-[#0A1A2D] border border-amber-500/30 focus:outline-hidden focus:border-amber-400 text-white font-semibold placeholder-stone-400 box-border disabled:opacity-60"
+                      />
+                      {!otpSent ? (
+                        <button
+                          type="button"
+                          id="send-phone-otp-btn"
+                          onClick={() => handleSendOtp()}
+                          disabled={isAuthLoading || phoneNumber.trim().length < 5}
+                          className="shrink-0 whitespace-nowrap px-4 py-2.5 text-xs font-bold rounded-xl bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 border border-amber-400/40 cursor-pointer disabled:opacity-50 transition-all flex items-center gap-1.5"
+                        >
+                          {isAuthLoading ? (
+                            <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                          ) : (
+                            <Sparkles className="w-3.5 h-3.5" />
+                          )}
+                          <span>Send OTP</span>
+                        </button>
+                      ) : (
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setOtpSent(false);
+                            setOtpCode('');
+                          }}
+                          className="shrink-0 p-2.5 rounded-xl bg-white/10 hover:bg-white/20 text-stone-300 text-xs font-medium cursor-pointer"
+                          title="Change phone number"
+                        >
+                          <RotateCcw className="w-3.5 h-3.5" />
+                        </button>
+                      )}
+                    </div>
                     <p className="text-[10px] text-stone-400 mt-1">
                       {activeRole === 'artisan' ? t.phoneTipArtisan : t.phoneTipBuyer}
                     </p>
                   </div>
 
-                  <div>
-                    <label className="text-xs font-bold text-amber-200 uppercase tracking-wider block mb-1.5 flex items-center gap-1.5">
-                      <KeyRound className="w-3.5 h-3.5 text-[#E67E22] shrink-0" />
-                      <span>{t.passwordLabel} *</span>
-                    </label>
-                    <div className="flex flex-row items-center gap-2 w-full min-w-0 box-border">
+                  {/* OTP Input Section */}
+                  {otpSent && (
+                    <div className="animate-in fade-in duration-300 space-y-2 pt-2 border-t border-white/10">
+                      <div className="flex items-center justify-between">
+                        <label className="text-xs font-bold text-amber-200 uppercase tracking-wider flex items-center gap-1.5">
+                          <KeyRound className="w-3.5 h-3.5 text-amber-400 shrink-0" />
+                          <span>6-Digit Verification Code (SMS OTP) *</span>
+                        </label>
+                        <span className="text-[11px] text-emerald-400 font-medium">OTP Sent to {phoneNumber}</span>
+                      </div>
+
                       <input
-                        type="password"
-                        value={loginPassword}
-                        onChange={(e) => setLoginPassword(e.target.value)}
-                        placeholder={t.passwordPlaceholder}
-                        className="flex-1 min-w-0 w-full block rounded-xl px-3.5 py-2.5 text-sm bg-[#0A1A2D] border border-amber-500/30 focus:outline-hidden focus:border-amber-400 text-white placeholder-stone-400 box-border overflow-hidden text-ellipsis"
+                        type="text"
+                        maxLength={6}
+                        required
+                        value={otpCode}
+                        onChange={(e) => setOtpCode(e.target.value.replace(/[^0-9]/g, ''))}
+                        placeholder="Enter 6-digit OTP (e.g. 123456)"
+                        className="w-full block rounded-xl px-3.5 py-2.5 text-center text-lg tracking-widest font-mono font-bold bg-[#0A1A2D] border border-amber-400 text-white placeholder-stone-500 focus:outline-hidden focus:ring-1 focus:ring-amber-400 box-border"
                       />
-                      <button
-                        type="button"
-                        onClick={() => {
-                          setIsOtpSent(true);
-                          setLoginPassword('1234');
-                        }}
-                        className="shrink-0 whitespace-nowrap px-3 sm:px-4 py-2.5 text-xs sm:text-sm rounded-xl font-bold text-amber-300 bg-amber-500/15 hover:bg-amber-500/25 border border-amber-400/40 cursor-pointer transition-colors"
-                      >
-                        {isOtpSent ? t.otpSentBtn : t.getOtpBtn}
-                      </button>
+
+                      <div className="flex items-center justify-between text-xs text-stone-400 pt-1 flex-wrap gap-2">
+                        <div className="flex items-center gap-1.5">
+                          <span className="px-2 py-0.5 rounded-md bg-amber-500/20 text-amber-300 font-mono text-[11px] border border-amber-500/30">
+                            Demo Code: 123456
+                          </span>
+                          <button
+                            type="button"
+                            onClick={() => setOtpCode('123456')}
+                            className="text-[11px] text-amber-300 underline font-semibold hover:text-amber-200 cursor-pointer"
+                          >
+                            Auto-Fill
+                          </button>
+                        </div>
+                        {resendTimer > 0 ? (
+                          <span className="text-amber-300 font-mono">Resend in {resendTimer}s</span>
+                        ) : (
+                          <button
+                            type="button"
+                            onClick={() => handleSendOtp()}
+                            disabled={isAuthLoading}
+                            className="text-amber-300 hover:underline font-bold cursor-pointer"
+                          >
+                            Resend SMS OTP
+                          </button>
+                        )}
+                      </div>
                     </div>
-                  </div>
+                  )}
                 </div>
 
-                <button
-                  type="submit"
-                  id="submit-login-btn"
-                  className={`w-full block text-center py-3 sm:py-3.5 rounded-2xl text-white font-bold text-xs sm:text-sm uppercase tracking-wider shadow-md hover:shadow-lg transition-all cursor-pointer active:scale-[0.99] ${
-                    activeRole === 'artisan'
-                      ? 'bg-linear-to-r from-[#B83227] via-[#D4AF37] to-[#B83227]'
-                      : 'bg-linear-to-r from-[#117A65] via-[#D4AF37] to-[#117A65]'
-                  }`}
-                >
-                  <span className="flex items-center justify-center gap-2 w-full">
-                    <span className="truncate">{activeRole === 'artisan' ? t.submitArtisanSignIn : t.submitBuyerSignIn}</span>
-                    <ArrowRight className="w-4 h-4 shrink-0" />
-                  </span>
-                </button>
+                {otpSent ? (
+                  <button
+                    type="button"
+                    id="submit-verify-otp-btn"
+                    onClick={handleVerifyOtp}
+                    disabled={isAuthLoading || otpCode.trim().length < 4}
+                    className={`w-full block text-center py-3 sm:py-3.5 rounded-2xl text-white font-bold text-xs sm:text-sm uppercase tracking-wider shadow-md hover:shadow-lg transition-all cursor-pointer active:scale-[0.99] disabled:opacity-50 ${
+                      activeRole === 'artisan'
+                        ? 'bg-linear-to-r from-[#B83227] via-[#D4AF37] to-[#B83227]'
+                        : 'bg-linear-to-r from-[#117A65] via-[#D4AF37] to-[#117A65]'
+                    }`}
+                  >
+                    <span className="flex items-center justify-center gap-2 w-full">
+                      {isAuthLoading ? (
+                        <>
+                          <Loader2 className="w-4 h-4 animate-spin shrink-0" />
+                          <span>Verifying with Firebase...</span>
+                        </>
+                      ) : (
+                        <>
+                          <span className="truncate">Verify & Sign In</span>
+                          <ArrowRight className="w-4 h-4 shrink-0" />
+                        </>
+                      )}
+                    </span>
+                  </button>
+                ) : (
+                  <button
+                    type="button"
+                    onClick={() => handleSendOtp()}
+                    disabled={isAuthLoading || phoneNumber.trim().length < 5}
+                    className={`w-full block text-center py-3 sm:py-3.5 rounded-2xl text-white font-bold text-xs sm:text-sm uppercase tracking-wider shadow-md hover:shadow-lg transition-all cursor-pointer active:scale-[0.99] disabled:opacity-50 ${
+                      activeRole === 'artisan'
+                        ? 'bg-linear-to-r from-[#B83227] via-[#D4AF37] to-[#B83227]'
+                        : 'bg-linear-to-r from-[#117A65] via-[#D4AF37] to-[#117A65]'
+                    }`}
+                  >
+                    <span className="flex items-center justify-center gap-2 w-full">
+                      {isAuthLoading ? (
+                        <>
+                          <Loader2 className="w-4 h-4 animate-spin shrink-0" />
+                          <span>Sending OTP...</span>
+                        </>
+                      ) : (
+                        <>
+                          <span className="truncate">Request OTP to Sign In</span>
+                          <ArrowRight className="w-4 h-4 shrink-0" />
+                        </>
+                      )}
+                    </span>
+                  </button>
+                )}
 
                 <div className="text-center pt-1">
                   <button
                     type="button"
-                    onClick={() => setTab('signup')}
+                    onClick={() => {
+                      setTab('signup');
+                      setOtpSent(false);
+                    }}
                     className="text-xs font-bold text-amber-300 hover:underline cursor-pointer"
                   >
                     {t.dontHaveAccount}
                   </button>
                 </div>
-              </form>
+              </div>
             ) : activeRole === 'artisan' ? (
-              /* ARTISAN SIGNUP FORM */
-              <form onSubmit={handleArtisanSignupSubmit} className="space-y-4 font-sans w-full">
+              /* ARTISAN SIGNUP FORM WITH PHONE OTP */
+              <form onSubmit={otpSent ? handleVerifyOtp : (e) => { e.preventDefault(); handleSendOtp(); }} className="space-y-4 font-sans w-full">
                 <div className="bg-[#132A45]/80 p-4 sm:p-5 rounded-2xl border border-amber-500/20 shadow-xs space-y-3.5 box-border">
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div>
@@ -713,18 +879,63 @@ export const AuthModal: React.FC = () => {
                     <label className="text-xs font-bold text-amber-200 uppercase tracking-wider block mb-1">
                       {t.whatsappNumberLabel} *
                     </label>
-                    <input
-                      type="tel"
-                      required
-                      value={artisanPhone}
-                      onChange={(e) => setArtisanPhone(e.target.value)}
-                      placeholder={t.whatsappNumberPlaceholder}
-                      className="w-full block rounded-xl px-3.5 py-2.5 text-sm bg-[#0A1A2D] border border-amber-500/30 text-white font-semibold placeholder-stone-400 focus:outline-hidden focus:border-amber-400 box-border overflow-hidden text-ellipsis"
-                    />
+                    <div className="flex items-center gap-2">
+                      <input
+                        type="tel"
+                        required
+                        value={phoneNumber}
+                        onChange={(e) => setPhoneNumber(e.target.value)}
+                        placeholder="+91 98480 23412"
+                        disabled={otpSent || isAuthLoading}
+                        className="flex-1 block rounded-xl px-3.5 py-2.5 text-sm bg-[#0A1A2D] border border-amber-500/30 text-white font-semibold placeholder-stone-400 focus:outline-hidden focus:border-amber-400 box-border disabled:opacity-60"
+                      />
+                      {!otpSent && (
+                        <button
+                          type="button"
+                          onClick={() => handleSendOtp()}
+                          disabled={isAuthLoading || phoneNumber.trim().length < 5}
+                          className="shrink-0 px-3.5 py-2.5 text-xs font-bold rounded-xl bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 border border-amber-400/40 cursor-pointer disabled:opacity-50"
+                        >
+                          {isAuthLoading ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : 'Send OTP'}
+                        </button>
+                      )}
+                    </div>
                     <p className="text-[10px] text-stone-400 mt-1">
                       {t.whatsappNote}
                     </p>
                   </div>
+
+                  {/* OTP verification input on Signup */}
+                  {otpSent && (
+                    <div className="pt-2 border-t border-white/10 space-y-2 animate-in fade-in duration-200">
+                      <div className="flex items-center justify-between">
+                        <label className="text-xs font-bold text-amber-200 uppercase tracking-wider block">
+                          Enter 6-Digit SMS OTP Code *
+                        </label>
+                        <div className="flex items-center gap-1.5">
+                          <span className="px-2 py-0.5 rounded-md bg-amber-500/20 text-amber-300 font-mono text-[11px] border border-amber-500/30">
+                            Demo: 123456
+                          </span>
+                          <button
+                            type="button"
+                            onClick={() => setOtpCode('123456')}
+                            className="text-[11px] text-amber-300 underline font-semibold hover:text-amber-200 cursor-pointer"
+                          >
+                            Auto-Fill
+                          </button>
+                        </div>
+                      </div>
+                      <input
+                        type="text"
+                        maxLength={6}
+                        required
+                        value={otpCode}
+                        onChange={(e) => setOtpCode(e.target.value.replace(/[^0-9]/g, ''))}
+                        placeholder="123456"
+                        className="w-full block rounded-xl px-3.5 py-2.5 text-center text-lg tracking-widest font-mono font-bold bg-[#0A1A2D] border border-amber-400 text-white placeholder-stone-500 focus:outline-hidden focus:ring-1 focus:ring-amber-400 box-border"
+                      />
+                    </div>
+                  )}
 
                   {/* GI Self-Declaration */}
                   <div className="pt-2 border-t border-white/10">
@@ -745,18 +956,31 @@ export const AuthModal: React.FC = () => {
                 <button
                   type="submit"
                   id="submit-artisan-signup-btn"
-                  className="w-full block text-center py-3 sm:py-3.5 rounded-2xl bg-linear-to-r from-[#B83227] via-[#D4AF37] to-[#B83227] text-white font-bold text-xs sm:text-sm uppercase tracking-wider shadow-md hover:shadow-lg transition-all cursor-pointer active:scale-[0.99]"
+                  disabled={isAuthLoading}
+                  className="w-full block text-center py-3 sm:py-3.5 rounded-2xl bg-linear-to-r from-[#B83227] via-[#D4AF37] to-[#B83227] text-white font-bold text-xs sm:text-sm uppercase tracking-wider shadow-md hover:shadow-lg transition-all cursor-pointer active:scale-[0.99] disabled:opacity-50"
                 >
                   <span className="flex items-center justify-center gap-2 w-full">
-                    <span className="truncate">{t.submitArtisanSignUp}</span>
-                    <ArrowRight className="w-4 h-4 shrink-0" />
+                    {isAuthLoading ? (
+                      <>
+                        <Loader2 className="w-4 h-4 animate-spin shrink-0" />
+                        <span>Processing...</span>
+                      </>
+                    ) : (
+                      <>
+                        <span className="truncate">{otpSent ? 'Verify OTP & Open Studio' : 'Get OTP & Continue'}</span>
+                        <ArrowRight className="w-4 h-4 shrink-0" />
+                      </>
+                    )}
                   </span>
                 </button>
 
                 <div className="text-center pt-1">
                   <button
                     type="button"
-                    onClick={() => setTab('login')}
+                    onClick={() => {
+                      setTab('login');
+                      setOtpSent(false);
+                    }}
                     className="text-xs font-bold text-amber-300 hover:underline cursor-pointer"
                   >
                     {t.alreadyHaveAccount}
@@ -764,8 +988,8 @@ export const AuthModal: React.FC = () => {
                 </div>
               </form>
             ) : (
-              /* BUYER SIGNUP FORM */
-              <form onSubmit={handleBuyerSignupSubmit} className="space-y-4 font-sans w-full">
+              /* BUYER SIGNUP FORM WITH PHONE OTP */
+              <form onSubmit={otpSent ? handleVerifyOtp : (e) => { e.preventDefault(); handleSendOtp(); }} className="space-y-4 font-sans w-full">
                 <div className="bg-[#132A45]/80 p-4 sm:p-5 rounded-2xl border border-amber-500/20 shadow-xs space-y-3.5 box-border">
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div>
@@ -805,10 +1029,11 @@ export const AuthModal: React.FC = () => {
                       <input
                         type="tel"
                         required
-                        value={buyerPhone}
-                        onChange={(e) => setBuyerPhone(e.target.value)}
-                        placeholder={t.buyerPhonePlaceholder}
-                        className="w-full block rounded-xl px-3.5 py-2.5 text-sm bg-[#0A1A2D] border border-amber-500/30 text-white placeholder-stone-400 focus:outline-hidden focus:border-amber-400 box-border overflow-hidden text-ellipsis"
+                        value={phoneNumber}
+                        onChange={(e) => setPhoneNumber(e.target.value)}
+                        placeholder="+91 97411 99201"
+                        disabled={otpSent || isAuthLoading}
+                        className="w-full block rounded-xl px-3.5 py-2.5 text-sm bg-[#0A1A2D] border border-amber-500/30 text-white placeholder-stone-400 focus:outline-hidden focus:border-amber-400 box-border disabled:opacity-60"
                       />
                     </div>
 
@@ -842,6 +1067,38 @@ export const AuthModal: React.FC = () => {
                     </div>
                   </div>
 
+                  {/* OTP Input for Buyer */}
+                  {otpSent && (
+                    <div className="pt-2 border-t border-white/10 space-y-2 animate-in fade-in duration-200">
+                      <div className="flex items-center justify-between">
+                        <label className="text-xs font-bold text-amber-200 uppercase tracking-wider block">
+                          Enter 6-Digit SMS OTP Code *
+                        </label>
+                        <div className="flex items-center gap-1.5">
+                          <span className="px-2 py-0.5 rounded-md bg-amber-500/20 text-amber-300 font-mono text-[11px] border border-amber-500/30">
+                            Demo: 123456
+                          </span>
+                          <button
+                            type="button"
+                            onClick={() => setOtpCode('123456')}
+                            className="text-[11px] text-amber-300 underline font-semibold hover:text-amber-200 cursor-pointer"
+                          >
+                            Auto-Fill
+                          </button>
+                        </div>
+                      </div>
+                      <input
+                        type="text"
+                        maxLength={6}
+                        required
+                        value={otpCode}
+                        onChange={(e) => setOtpCode(e.target.value.replace(/[^0-9]/g, ''))}
+                        placeholder="123456"
+                        className="w-full block rounded-xl px-3.5 py-2.5 text-center text-lg tracking-widest font-mono font-bold bg-[#0A1A2D] border border-amber-400 text-white placeholder-stone-500 focus:outline-hidden focus:ring-1 focus:ring-amber-400 box-border"
+                      />
+                    </div>
+                  )}
+
                   {/* Favorite Craft Categories Multi-select */}
                   <div>
                     <label className="text-xs font-bold text-amber-200 uppercase tracking-wider block mb-2">
@@ -873,18 +1130,31 @@ export const AuthModal: React.FC = () => {
                 <button
                   type="submit"
                   id="submit-buyer-signup-btn"
-                  className="w-full block text-center py-3 sm:py-3.5 rounded-2xl bg-linear-to-r from-[#117A65] via-[#D4AF37] to-[#117A65] text-white font-bold text-xs sm:text-sm uppercase tracking-wider shadow-md hover:shadow-lg transition-all border border-emerald-400/60 cursor-pointer active:scale-[0.99]"
+                  disabled={isAuthLoading}
+                  className="w-full block text-center py-3 sm:py-3.5 rounded-2xl bg-linear-to-r from-[#117A65] via-[#D4AF37] to-[#117A65] text-white font-bold text-xs sm:text-sm uppercase tracking-wider shadow-md hover:shadow-lg transition-all border border-emerald-400/60 cursor-pointer active:scale-[0.99] disabled:opacity-50"
                 >
                   <span className="flex items-center justify-center gap-2 w-full">
-                    <span className="truncate">{t.submitBuyerSignUp}</span>
-                    <ArrowRight className="w-4 h-4 shrink-0" />
+                    {isAuthLoading ? (
+                      <>
+                        <Loader2 className="w-4 h-4 animate-spin shrink-0" />
+                        <span>Processing...</span>
+                      </>
+                    ) : (
+                      <>
+                        <span className="truncate">{otpSent ? 'Verify OTP & Join Community' : 'Get OTP & Join'}</span>
+                        <ArrowRight className="w-4 h-4 shrink-0" />
+                      </>
+                    )}
                   </span>
                 </button>
 
                 <div className="text-center pt-1">
                   <button
                     type="button"
-                    onClick={() => setTab('login')}
+                    onClick={() => {
+                      setTab('login');
+                      setOtpSent(false);
+                    }}
                     className="text-xs font-bold text-amber-300 hover:underline cursor-pointer"
                   >
                     {t.alreadyHaveAccount}
@@ -907,3 +1177,4 @@ export const AuthModal: React.FC = () => {
     document.body
   );
 };
+

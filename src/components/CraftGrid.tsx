@@ -198,7 +198,7 @@ export const CraftGrid: React.FC = () => {
         <div 
           ref={gridRef}
           id="craft-items-grid-container"
-          className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5 sm:gap-6"
+          className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4 p-1 sm:p-2"
         >
           {filteredCrafts.map((craft) => (
             <CraftCard 
@@ -245,20 +245,20 @@ const CraftCard: React.FC<CraftCardProps> = ({
   return (
     <article
       id={`craft-card-${craft.id}`}
-      className="craft-card-item bg-white rounded-3xl border border-amber-900/10 hover:border-amber-900/25 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 overflow-hidden flex flex-col justify-between h-full group"
+      className="craft-card-item bg-white rounded-2xl sm:rounded-3xl border border-stone-100 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-300 overflow-hidden flex flex-col justify-between h-full group"
     >
       {/* Image & Category Tag (Top) */}
       <div className="relative w-full aspect-square overflow-hidden bg-stone-100">
         <img
           src={craft.imageUrl}
           alt={craft.title}
-          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 cursor-pointer"
+          className="w-full h-full object-cover rounded-t-2xl group-hover:scale-105 transition-transform duration-500 cursor-pointer"
           loading="lazy"
           onClick={onViewStory}
         />
 
-        {/* Floating Pill Badge (Top-Right): Category Name */}
-        <span className="absolute top-3 right-3 bg-white/90 backdrop-blur-md text-stone-800 text-[11px] px-3 py-1 rounded-full font-semibold shadow-xs z-10 pointer-events-none border border-stone-200/60">
+        {/* Floating Pill Badge (Top-Right): Light beige/cream pill badge with Category name */}
+        <span className="absolute top-2.5 right-2.5 bg-[#f4efe6]/90 backdrop-blur-xs text-stone-800 text-xs px-2.5 py-1 rounded-full font-medium shadow-xs z-10 pointer-events-none border border-stone-200/50">
           {craft.category}
         </span>
 
@@ -269,10 +269,10 @@ const CraftCard: React.FC<CraftCardProps> = ({
             toggleWishlist(craft.id);
           }}
           aria-label={isWishlisted ? 'Remove from Wishlist' : 'Save to Wishlist'}
-          className={`absolute top-3 left-3 z-10 p-2 rounded-full backdrop-blur-md transition-all active:scale-90 cursor-pointer shadow-sm ${
+          className={`absolute top-2.5 left-2.5 z-10 p-1.5 sm:p-2 rounded-full backdrop-blur-md transition-all active:scale-90 cursor-pointer shadow-xs ${
             isWishlisted
-              ? 'bg-[#A84A2C] text-white'
-              : 'bg-white/85 hover:bg-white text-stone-700 hover:text-[#A84A2C]'
+              ? 'bg-[#b45a28] text-white'
+              : 'bg-white/85 hover:bg-white text-stone-700 hover:text-[#b45a28]'
           }`}
           title={isWishlisted ? 'Remove from Wishlist' : 'Save to Wishlist'}
         >
@@ -281,64 +281,64 @@ const CraftCard: React.FC<CraftCardProps> = ({
 
         {/* GI Tag Indicator Pill (Bottom-Left) */}
         {craft.isGiTagged && (
-          <span className="absolute bottom-3 left-3 px-2.5 py-1 rounded-full bg-[#0F1E2E]/90 backdrop-blur-md text-amber-300 text-[10px] font-sans font-semibold border border-[#D4AF37]/40 shadow-xs flex items-center gap-1">
+          <span className="absolute bottom-2.5 left-2.5 px-2 py-0.5 rounded-full bg-[#0F1E2E]/90 backdrop-blur-md text-amber-300 text-[10px] font-sans font-medium border border-[#D4AF37]/30 shadow-xs flex items-center gap-1">
             <ShieldCheck className="w-3 h-3 text-amber-300" />
-            GI Tagged
+            <span className="hidden xs:inline sm:inline">GI Tagged</span>
           </span>
         )}
       </div>
 
       {/* Details & Typography (Bottom Content Area) */}
-      <div className="p-4 sm:p-5 flex flex-col gap-2 flex-1 justify-between">
+      <div className="p-3 sm:p-3.5 flex flex-col gap-1 flex-1 justify-between">
         
         {/* Title, Subtitle, Price Section */}
-        <div className="flex flex-col gap-1.5">
-          {/* Product Title */}
+        <div className="flex flex-col gap-1">
+          {/* Product Title: Elegant serif heading, bold, 2-line truncated */}
           <h3
             onClick={onViewStory}
             title={displayTitle}
-            className="font-serif font-bold text-base text-[#0F1E2E] line-clamp-2 leading-snug group-hover:text-[#A84A2C] transition-colors cursor-pointer"
+            className="font-serif font-bold text-sm sm:text-base text-stone-900 line-clamp-2 leading-snug group-hover:text-[#b45a28] transition-colors cursor-pointer"
           >
             {displayTitle}
           </h3>
 
-          {/* Artisan / Origin Subtitle */}
+          {/* Artisan / Origin Subtitle: Muted gray text, single line truncated */}
           <p className="text-xs text-stone-500 truncate flex items-center gap-1" title={artisanSubtitle}>
-            <MapPin className="w-3 h-3 text-[#A84A2C] shrink-0" />
+            <MapPin className="w-3 h-3 text-[#b45a28] shrink-0" />
             <span className="truncate">{artisanSubtitle}</span>
           </p>
 
-          {/* Price & Craft Tag Section */}
-          <div className="flex items-baseline justify-between gap-2 mt-1.5 pt-1">
-            <span className="text-[#A84A2C] font-bold text-lg font-serif">
+          {/* Price & Craft Tag Section: Warm terracotta/copper color */}
+          <div className="flex items-baseline justify-between gap-1.5 mt-2 pt-0.5">
+            <span className="text-[#b45a28] font-bold text-base sm:text-lg font-serif">
               ₹{craft.pricingEstimation.recommendedRetailPriceINR.toLocaleString('en-IN')}
             </span>
-            <span className="text-[11px] text-stone-500 bg-stone-100 px-2 py-0.5 rounded-md truncate">
+            <span className="text-[11px] text-stone-500 leading-tight truncate max-w-[50%] text-right font-medium">
               {craftType}
             </span>
           </div>
         </div>
 
         {/* Action Controls: Story, Certificate & WhatsApp Direct Trade */}
-        <div className="pt-3 mt-2 border-t border-stone-100 flex items-center gap-2">
+        <div className="pt-2.5 mt-2 border-t border-stone-100 flex items-center gap-1.5">
           {/* View Heritage Story Button */}
           <button
             id={`story-btn-${craft.id}`}
             onClick={onViewStory}
-            className="p-2 rounded-xl bg-stone-50 hover:bg-amber-50 text-stone-700 hover:text-[#A84A2C] border border-stone-200 hover:border-[#A84A2C]/40 transition-colors cursor-pointer shrink-0"
+            className="p-1.5 sm:p-2 rounded-xl bg-stone-50 hover:bg-amber-50 text-stone-700 hover:text-[#b45a28] border border-stone-200/80 hover:border-[#b45a28]/30 transition-colors cursor-pointer shrink-0"
             title={t.bazaar_read_story || 'Read Heritage Story'}
           >
-            <BookOpen className="w-4 h-4 text-[#A84A2C]" />
+            <BookOpen className="w-3.5 h-3.5 text-[#b45a28]" />
           </button>
 
           {/* View Authenticity Certificate Button */}
           <button
             id={`cert-btn-${craft.id}`}
             onClick={onViewCertificate}
-            className="p-2 rounded-xl bg-stone-50 hover:bg-amber-50 text-stone-700 hover:text-[#B88E28] border border-stone-200 hover:border-[#B88E28]/40 transition-colors cursor-pointer shrink-0"
+            className="p-1.5 sm:p-2 rounded-xl bg-stone-50 hover:bg-amber-50 text-stone-700 hover:text-[#B88E28] border border-stone-200/80 hover:border-[#B88E28]/30 transition-colors cursor-pointer shrink-0"
             title={t.bazaar_gi_seal || 'View GI Seal Certificate'}
           >
-            <Award className="w-4 h-4 text-amber-600" />
+            <Award className="w-3.5 h-3.5 text-amber-600" />
           </button>
 
           {/* WhatsApp Direct Buy CTA */}
@@ -347,11 +347,11 @@ const CraftCard: React.FC<CraftCardProps> = ({
             href={whatsAppLink}
             target="_blank"
             rel="noopener noreferrer"
-            className="flex-1 bg-[#27AE60] hover:bg-[#219653] text-white text-xs font-sans font-bold py-2 px-3 rounded-xl flex items-center justify-center gap-1.5 shadow-xs hover:shadow-md transition-all cursor-pointer truncate"
+            className="flex-1 bg-[#27AE60] hover:bg-[#219653] text-white text-[11px] sm:text-xs font-sans font-bold py-1.5 sm:py-2 px-2 sm:px-3 rounded-xl flex items-center justify-center gap-1 shadow-2xs hover:shadow-xs transition-all cursor-pointer truncate"
             title="Direct WhatsApp Buy"
           >
             <MessageCircle className="w-3.5 h-3.5 shrink-0" />
-            <span className="truncate">{t.bazaar_buy_whatsapp || 'WhatsApp Buy'}</span>
+            <span className="truncate">{t.bazaar_buy_whatsapp || 'Buy'}</span>
           </a>
         </div>
 

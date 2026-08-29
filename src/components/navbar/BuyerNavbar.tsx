@@ -9,15 +9,14 @@ import {
   LogOut, 
   User, 
   Menu, 
-  X, 
-  Info,
-  Sparkles
+  X 
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { useArtisan } from '../../context/ArtisanContext';
 import { useAuth } from '../../context/AuthContext';
 import { LanguageSelector } from '../LanguageSelector';
 import { ArtisanLinkLogo } from '../ArtisanLinkLogo';
+import { ThemeToggle } from '../ThemeToggle';
 
 export const BuyerNavbar: React.FC = () => {
   const {
@@ -80,17 +79,6 @@ export const BuyerNavbar: React.FC = () => {
     setMobileMenuOpen(false);
   };
 
-  const handleAboutClick = () => {
-    setMobileMenuOpen(false);
-    // Smooth scroll to footer or heritage manifesto
-    const element = document.getElementById('heritage-manifesto-footer') || document.querySelector('footer');
-    if (element) {
-      element.scrollIntoView({ behavior: 'smooth' });
-    } else {
-      setActiveTab('stories');
-    }
-  };
-
   const handleOpenPitara = () => {
     setIsPitaraDrawerOpen(true);
     setMobileMenuOpen(false);
@@ -99,18 +87,18 @@ export const BuyerNavbar: React.FC = () => {
   return (
     <header 
       id="buyer-sticky-navbar"
-      className={`sticky top-0 z-50 w-full transition-all duration-300 ${
+      className={`sticky top-0 z-50 w-full max-w-full box-border transition-all duration-300 ${
         isScrolled 
-          ? 'bg-[#0B1522]/98 backdrop-blur-xl shadow-2xl border-b border-amber-500/30' 
-          : 'bg-[#121c2b]/95 backdrop-blur-md shadow-lg border-b border-white/10'
+          ? 'bg-[#5C2A12]/98 backdrop-blur-xl shadow-2xl border-b border-amber-500/30' 
+          : 'bg-[#703816]/95 backdrop-blur-md shadow-lg border-b border-white/10'
       } text-white`}
     >
       {/* Top Auspicious & Heritage Subtle Ribbon */}
-      <div className={`h-[2.5px] w-full bg-linear-to-r from-[#B83227] via-[#D4AF37] to-[#2D6A4F] transition-opacity duration-300 ${isScrolled ? 'opacity-100 shadow-[0_0_12px_rgba(184,142,40,0.6)]' : 'opacity-80'}`} />
+      <div className={`h-[2.5px] w-full bg-linear-to-r from-[#B83227] via-[#D4AF37] to-[#2D6A4F] transition-opacity duration-300 ${isScrolled ? 'opacity-100 shadow-[0_0_12px_rgba(212,175,55,0.6)]' : 'opacity-80'}`} />
 
-      <div className="w-full max-w-7xl mx-auto px-3 sm:px-5 lg:px-8">
-        {/* MODERN 3-PART SEPARATED NAVBAR (DESKTOP) */}
-        <div className={`w-full ${isScrolled ? 'h-14 sm:h-16' : 'h-16 sm:h-20'} flex items-center justify-between gap-2 sm:gap-4 transition-all duration-300`}>
+      <div className="w-full max-w-7xl mx-auto px-2.5 sm:px-4 lg:px-8 box-border">
+        {/* RESPONSIVE NAVBAR CONTAINER */}
+        <div className={`w-full max-w-full ${isScrolled ? 'h-13 sm:h-16' : 'h-14 sm:h-18'} px-1 sm:px-2 py-1.5 sm:py-0 flex items-center justify-between box-border gap-1 sm:gap-3 transition-all duration-300`}>
           
           {/* ========================================================= */}
           {/* 1. LEFT: Brand Logo + ArtLynk Text (shrink-0) */}
@@ -118,16 +106,18 @@ export const BuyerNavbar: React.FC = () => {
           <div 
             id="buyer-brand-logo"
             onClick={() => handleNavClick('bazaar')}
-            className="flex items-center gap-2 cursor-pointer select-none group shrink-0 min-w-0"
+            className="flex items-center gap-1.5 sm:gap-2 cursor-pointer select-none group shrink-0 min-w-0"
           >
-            <ArtisanLinkLogo size={36} className="shrink-0 group-hover:scale-105 transition-transform" />
+            <div className="w-8 h-8 rounded-xl overflow-hidden shrink-0 flex items-center justify-center bg-stone-900 border border-white/10">
+              <ArtisanLinkLogo size={32} className="w-8 h-8 rounded-xl shrink-0 group-hover:scale-105 transition-transform" />
+            </div>
 
             <div className="flex flex-col min-w-0">
-              <div className="flex items-center gap-1.5 sm:gap-2">
-                <span className="text-xl sm:text-2xl font-black tracking-tighter leading-none text-[#FAF8F5] font-serif">
+              <div className="flex items-center gap-1 sm:gap-2">
+                <span className="font-serif font-bold text-base sm:text-lg md:text-xl text-white tracking-tight leading-none shrink-0">
                   {t.app_name || 'ArtLynk'}
                 </span>
-                <span className="hidden xl:inline-flex items-center gap-1 text-[10px] font-sans font-bold bg-[#2D6A4F]/40 text-emerald-300 px-2 py-0.5 rounded-full uppercase tracking-wider border border-emerald-400/40 whitespace-nowrap">
+                <span className="hidden xl:inline-flex items-center gap-1 text-[10px] font-sans font-bold bg-[#2D6A4F]/40 text-emerald-300 px-2 py-0.5 rounded-full uppercase tracking-wider border border-emerald-400/40 whitespace-nowrap shrink-0">
                   <span>🛍️</span>
                   <span>{t.nav_patron_badge || 'Art Patron'}</span>
                 </span>
@@ -140,7 +130,7 @@ export const BuyerNavbar: React.FC = () => {
           {/* ========================================================= */}
           <nav 
             id="buyer-desktop-pill-nav"
-            className="hidden md:flex items-center bg-stone-900/80 backdrop-blur-md px-6 py-2 rounded-full border border-white/10 gap-6 text-sm text-stone-200 shadow-inner"
+            className="hidden md:flex items-center justify-center bg-[#4A1E0B]/85 backdrop-blur-md px-5 lg:px-6 py-2 rounded-full border border-amber-500/20 gap-5 lg:gap-7 text-sm text-stone-200 shadow-inner"
           >
             {/* Explore Crafts */}
             <button
@@ -183,43 +173,29 @@ export const BuyerNavbar: React.FC = () => {
               <Map className="w-4 h-4 text-emerald-400" />
               <span>{t.nav_map || 'GI Map'}</span>
             </button>
-
-            {/* Karigar Direct */}
-            <button
-              id="buyer-nav-karigar-direct"
-              onClick={() => handleNavClick('bazaar')}
-              className="transition-colors whitespace-nowrap cursor-pointer text-stone-300 hover:text-amber-300 flex items-center gap-1.5"
-            >
-              <Sparkles className="w-4 h-4 text-amber-400" />
-              <span>Karigar Direct</span>
-            </button>
-
-            {/* About */}
-            <button
-              id="buyer-nav-about"
-              onClick={handleAboutClick}
-              className="transition-colors whitespace-nowrap cursor-pointer text-stone-300 hover:text-white flex items-center gap-1.5"
-            >
-              <Info className="w-4 h-4 text-stone-400" />
-              <span>About</span>
-            </button>
           </nav>
 
           {/* ========================================================= */}
-          {/* 3. RIGHT: Action Group (Wishlist + Language + Profile Trigger) */}
+          {/* 3. RIGHT: Action Group (Theme + Wishlist + Language + Profile Trigger) */}
           {/* ========================================================= */}
-          <div className="flex items-center gap-2 sm:gap-3 shrink-0">
+          <div className="flex items-center gap-1.5 sm:gap-2 shrink-0 justify-end">
             
+            {/* Dark Mode Toggle */}
+            <ThemeToggle 
+              id="buyer-theme-toggle" 
+              className="p-1.5 w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-white/10 hover:bg-white/20 border border-white/15 flex items-center justify-center shrink-0 transition-colors"
+            />
+
             {/* Wishlist Button */}
             <button
               id="buyer-nav-wishlist-btn"
               onClick={handleOpenPitara}
               title="Wishlist"
-              className="relative p-2 rounded-full text-stone-300 hover:text-white hover:bg-white/10 border border-white/10 transition-colors cursor-pointer"
+              className="relative p-1.5 w-7 h-7 sm:w-8 sm:h-8 rounded-full text-stone-300 hover:text-white bg-white/10 hover:bg-white/20 border border-white/15 flex items-center justify-center transition-colors cursor-pointer shrink-0"
             >
-              <Heart className={`w-4 h-4 ${wishlistIds.length > 0 ? 'text-rose-400 fill-rose-400' : 'text-stone-300'}`} />
+              <Heart className={`w-3.5 h-3.5 sm:w-4 sm:h-4 ${wishlistIds.length > 0 ? 'text-rose-400 fill-rose-400' : 'text-stone-300'}`} />
               {wishlistIds.length > 0 && (
-                <span className="absolute -top-1 -right-1 px-1.5 py-0.2 rounded-full bg-[#B83227] text-white text-[9px] font-black border border-white/80">
+                <span className="absolute -top-1 -right-1 px-1 sm:px-1.5 py-0.2 rounded-full bg-[#B83227] text-white text-[8px] sm:text-[9px] font-black border border-white/80">
                   {wishlistIds.length}
                 </span>
               )}
@@ -228,24 +204,28 @@ export const BuyerNavbar: React.FC = () => {
             {/* Compact Language Selector */}
             <LanguageSelector 
               id="buyer-language-selector" 
-              buttonClassName="flex items-center gap-1 px-2.5 py-1.5 rounded-full text-xs font-semibold border border-amber-500/40 bg-[#0C243C] text-white hover:border-amber-400 hover:bg-[#123152] transition shadow-xs cursor-pointer shrink-0"
+              buttonClassName="px-2 sm:px-2.5 py-1 sm:py-1.5 text-[11px] sm:text-xs rounded-full flex items-center gap-1 shrink-0 font-medium border border-amber-500/40 bg-[#A0522D] text-white hover:border-amber-400 hover:bg-[#8B4513] transition shadow-2xs cursor-pointer"
             />
 
             {/* USER PROFILE TRIGGER: Circular avatar + ChevronDown */}
-            <div className="relative shrink-0" ref={profileDropdownRef}>
+            <div className="relative shrink-0 z-50" ref={profileDropdownRef}>
               <button
                 id="buyer-profile-menu-btn"
-                onClick={() => setProfileDropdownOpen(!profileDropdownOpen)}
-                className="flex items-center gap-1.5 p-1 rounded-full hover:bg-white/10 border border-white/10 hover:border-amber-400/50 transition-all cursor-pointer group"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setProfileDropdownOpen(!profileDropdownOpen);
+                }}
+                className="flex items-center gap-1.5 p-1 rounded-full hover:bg-white/15 border border-amber-400/40 hover:border-amber-300 transition-all cursor-pointer group shrink-0 bg-[#5C2A12]/60"
                 aria-label="User Menu"
+                aria-expanded={profileDropdownOpen}
               >
                 <img
                   src={buyerUser?.photo || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=300&q=80'}
                   alt={buyerName}
-                  className="w-8 h-8 rounded-full object-cover border-2 border-amber-400/60 shadow-sm"
+                  className="w-7 h-7 sm:w-8 sm:h-8 rounded-full object-cover border-2 border-amber-400/80 shadow-xs shrink-0"
                 />
                 <ChevronDown 
-                  className={`w-3.5 h-3.5 text-stone-300 group-hover:text-amber-300 transition-transform duration-200 mr-1 ${
+                  className={`w-3.5 h-3.5 text-amber-200 group-hover:text-white transition-transform duration-200 mr-0.5 ${
                     profileDropdownOpen ? 'rotate-180 text-amber-300' : ''
                   }`} 
                 />
@@ -256,19 +236,20 @@ export const BuyerNavbar: React.FC = () => {
                 {profileDropdownOpen && (
                   <motion.div 
                     id="buyer-profile-dropdown-menu"
-                    initial={{ opacity: 0, scale: 0.92, y: -8 }}
+                    initial={{ opacity: 0, scale: 0.92, y: -6 }}
                     animate={{ opacity: 1, scale: 1, y: 0 }}
                     exit={{ opacity: 0, scale: 0.94, y: -6 }}
                     transition={{ type: "spring", stiffness: 450, damping: 30 }}
-                    className="absolute right-0 top-full mt-2 w-52 bg-[#0c1f30] border border-amber-500/30 rounded-2xl p-2 shadow-2xl z-50 text-stone-200 origin-top-right backdrop-blur-xl"
+                    className="absolute right-0 top-full mt-2 w-56 bg-[#5C2A12] border-2 border-amber-500/40 rounded-2xl p-2 shadow-2xl z-[999] text-stone-100 origin-top-right backdrop-blur-xl"
                   >
                     {/* User Mini Summary */}
-                    <div className="px-3 py-2 border-b border-white/10">
+                    <div className="px-3 py-2.5 border-b border-white/15 bg-[#4A1E0B]/50 rounded-xl mb-1">
                       <p className="text-xs font-bold text-amber-200 truncate font-serif">
                         {buyerName}
                       </p>
-                      <p className="text-[10px] text-emerald-400 font-sans font-semibold">
-                        🌟 {buyerUser?.patronLevel || 'Patron'}
+                      <p className="text-[11px] text-emerald-300 font-sans font-semibold flex items-center gap-1 mt-0.5">
+                        <span>🌟</span>
+                        <span>{buyerUser?.patronLevel || 'Patron'}</span>
                       </p>
                     </div>
 
@@ -280,20 +261,33 @@ export const BuyerNavbar: React.FC = () => {
                           setProfileDropdownOpen(false);
                           openAccountSettings();
                         }}
-                        className="w-full text-left px-3 py-2 rounded-xl text-xs font-medium hover:bg-white/10 hover:text-amber-300 flex items-center gap-2.5 transition-colors cursor-pointer"
+                        className="w-full text-left px-3 py-2 rounded-xl text-xs font-medium hover:bg-white/15 hover:text-amber-300 flex items-center gap-2.5 transition-colors cursor-pointer"
                       >
                         <User className="w-4 h-4 text-amber-400" />
                         <span>Profile & Settings</span>
                       </button>
 
-                      {/* Item 2: Sign Out */}
+                      {/* Item 2: Pitara / Wishlist */}
+                      <button
+                        id="dropdown-open-pitara-btn"
+                        onClick={() => {
+                          setProfileDropdownOpen(false);
+                          setIsPitaraDrawerOpen(true);
+                        }}
+                        className="w-full text-left px-3 py-2 rounded-xl text-xs font-medium hover:bg-white/15 hover:text-amber-300 flex items-center gap-2.5 transition-colors cursor-pointer"
+                      >
+                        <Heart className="w-4 h-4 text-rose-400" />
+                        <span>My Pitara ({wishlistIds.length})</span>
+                      </button>
+
+                      {/* Item 3: Sign Out */}
                       <button
                         id="dropdown-signout-btn"
                         onClick={() => {
                           setProfileDropdownOpen(false);
                           logout();
                         }}
-                        className="w-full text-left px-3 py-2 rounded-xl text-xs font-medium text-rose-300 hover:bg-rose-950/40 hover:text-rose-200 flex items-center gap-2.5 transition-colors cursor-pointer"
+                        className="w-full text-left px-3 py-2 rounded-xl text-xs font-medium text-rose-300 hover:bg-rose-950/50 hover:text-rose-200 flex items-center gap-2.5 transition-colors cursor-pointer"
                       >
                         <LogOut className="w-4 h-4 text-rose-400" />
                         <span>Sign Out</span>
@@ -328,7 +322,7 @@ export const BuyerNavbar: React.FC = () => {
             animate={{ opacity: 1, height: 'auto', y: 0 }}
             exit={{ opacity: 0, height: 0, y: -10 }}
             transition={{ type: "spring", stiffness: 350, damping: 28 }}
-            className="md:hidden overflow-hidden border-t border-white/10 bg-[#0C1F30] px-4 py-4 space-y-3 shadow-2xl backdrop-blur-xl"
+            className="md:hidden overflow-hidden border-t border-white/10 bg-[#5C2A12] px-4 py-4 space-y-3 shadow-2xl backdrop-blur-xl"
           >
             <motion.div 
               initial={{ opacity: 0, x: -10 }}
@@ -429,6 +423,16 @@ export const BuyerNavbar: React.FC = () => {
                 <User className="w-4 h-4" />
                 <span>Account Settings & Profile</span>
               </motion.button>
+
+              <motion.div
+                initial={{ opacity: 0, x: -10 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: 0.30 }}
+                className="px-3.5 py-1.5 flex items-center justify-between"
+              >
+                <span className="text-stone-400 text-xs font-medium">Theme Mode</span>
+                <ThemeToggle id="buyer-mobile-theme-toggle" />
+              </motion.div>
 
               <motion.button
                 initial={{ opacity: 0, x: -10 }}

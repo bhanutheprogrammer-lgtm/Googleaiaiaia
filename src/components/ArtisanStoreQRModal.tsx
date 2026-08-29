@@ -133,8 +133,15 @@ export const ArtisanStoreQRModal: React.FC = () => {
         ref={cardRef}
         id="store-qr-modal-card"
         data-lenis-prevent
+        onWheel={(e) => e.stopPropagation()}
+        onTouchMove={(e) => e.stopPropagation()}
         onClick={(e) => e.stopPropagation()}
-        className="relative w-[92%] sm:w-full max-w-xl mx-auto max-h-[88vh] overflow-y-auto rounded-3xl shadow-2xl p-4 sm:p-6 md:p-8 overscroll-contain bg-[#0C243C] text-white border border-amber-500/30 flex flex-col space-y-4 box-border"
+        className="relative w-[94%] sm:w-full max-w-xl mx-auto max-h-[88vh] overflow-y-auto rounded-3xl shadow-2xl p-4 sm:p-6 md:p-8 overscroll-contain bg-[#0C243C] text-white border border-amber-500/30 flex flex-col space-y-4 box-border touch-pan-y"
+        style={{
+          scrollbarWidth: 'thin',
+          scrollbarColor: '#D4AF37 transparent',
+          WebkitOverflowScrolling: 'touch'
+        }}
       >
         {/* Modal Controls Bar */}
         <div className="flex items-center justify-between border-b border-white/15 pb-4 text-white shrink-0">

@@ -17,7 +17,7 @@ export const Footer: React.FC = () => {
   const { setLanguage, setActiveTab, t, currentLanguage } = useArtisan();
 
   return (
-    <footer className="bg-[#0C243C] text-[#FAF6EE] border-t-2 border-[#D4AF37] relative overflow-hidden pt-12 sm:pt-16 pb-20 md:pb-12 m-0">
+    <footer className="bg-[#5C2A12] text-[#FAF6EE] border-t-2 border-[#D4AF37] relative overflow-hidden pt-12 sm:pt-16 pb-20 md:pb-12 m-0">
       {/* Background Mandala Watermark */}
       <div className="absolute -left-20 -bottom-20 w-96 h-96 bg-radial from-amber-500/10 to-transparent pointer-events-none rounded-full" />
 

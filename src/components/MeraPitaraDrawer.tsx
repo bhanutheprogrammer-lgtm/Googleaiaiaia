@@ -111,10 +111,10 @@ export const MeraPitaraDrawer: React.FC = () => {
         id="pitara-drawer-content"
         data-lenis-prevent
         onClick={(e) => e.stopPropagation()}
-        className="w-full max-w-md bg-[#0C243C] text-white h-full shadow-2xl flex flex-col border-l border-amber-500/40 overscroll-contain"
+        className="w-full max-w-md bg-[#5C2A12] text-white h-full shadow-2xl flex flex-col border-l border-amber-500/40 overscroll-contain"
       >
         {/* Drawer Header */}
-        <div className="bg-[#0C243C] p-5 text-white flex items-center justify-between border-b border-white/15 shrink-0">
+        <div className="bg-[#5C2A12] p-5 text-white flex items-center justify-between border-b border-white/15 shrink-0">
           <div className="flex items-center space-x-2.5">
             <div className="w-9 h-9 rounded-xl bg-linear-to-br from-[#B83227] to-[#E67E22] flex items-center justify-center text-white font-serif text-lg font-black border border-[#D4AF37]">
               🎁
@@ -139,7 +139,7 @@ export const MeraPitaraDrawer: React.FC = () => {
         </div>
 
         {/* Impact Notice */}
-        <div className="bg-[#132A45] p-3 border-b border-amber-500/20 px-5 flex items-center gap-2.5 text-xs text-amber-200">
+        <div className="bg-[#703816] p-3 border-b border-amber-500/20 px-5 flex items-center gap-2.5 text-xs text-amber-200">
           <Award className="w-4 h-4 text-amber-400 shrink-0" />
           <span className="font-serif">
             Directly supporting <strong>{wishlistedCrafts.length} Karigar Families</strong> with 100% fair artisan wages.
@@ -148,7 +148,15 @@ export const MeraPitaraDrawer: React.FC = () => {
 
         {/* Scrollable Item List */}
         <div 
-          className="p-4 overflow-y-auto flex-1 space-y-3 overscroll-contain"
+          data-lenis-prevent
+          onWheel={(e) => e.stopPropagation()}
+          onTouchMove={(e) => e.stopPropagation()}
+          className="p-4 overflow-y-auto flex-1 space-y-3 overscroll-contain touch-pan-y"
+          style={{
+            scrollbarWidth: 'thin',
+            scrollbarColor: '#D4AF37 transparent',
+            WebkitOverflowScrolling: 'touch'
+          }}
         >
           {wishlistedCrafts.length === 0 ? (
             <div className="text-center py-16 px-4 space-y-3">
