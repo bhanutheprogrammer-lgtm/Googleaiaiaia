@@ -8,6 +8,8 @@ import { ThemeProvider, useTheme } from './context/ThemeContext';
 import { ArtisanProfile, BuyerProfile } from './types';
 import { IntroLoader } from './components/IntroLoader';
 import { LanguageGatewayScreen } from './components/LanguageGatewayScreen';
+import { TutorialPromptScreen } from './components/TutorialPromptScreen';
+import { AppTourGuide } from './components/AppTourGuide';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -85,7 +87,7 @@ const MainContent: React.FC = () => {
 const MainLayout: React.FC = () => {
   const { isDarkMode } = useTheme();
   const { userRole } = useAuth();
-  const { activeTab, crafts } = useArtisan();
+  const { activeTab, crafts, isTourOpen, closeTour } = useArtisan();
   const scrollContainerRef = React.useRef<HTMLDivElement>(null);
 
   // Initialize Locomotive Scroll & Lenis across all role views & tabs
@@ -233,13 +235,24 @@ const MainLayout: React.FC = () => {
 
       {/* Full-Screen Persona Switch Transition Screen with React Bits BlurText */}
       <PersonaTransitionScreen />
+
+      {/* Autonomous Multilingual & Voice-Guided App Tour Engine */}
+      <AppTourGuide isActive={isTourOpen} onComplete={closeTour} />
     </div>
   );
 };
 
-export default function App() {
+const AppFlow: React.FC = () => {
+  const { startTour, closeTour } = useArtisan();
   const [introFinished, setIntroFinished] = useState(false);
   const [gatewayFinished, setGatewayFinished] = useState(false);
+  const [tutorialPromptFinished, setTutorialPromptFinished] = useState(() => {
+    try {
+      return localStorage.getItem('artisan_link_has_seen_tour_v1') === 'true';
+    } catch {
+      return false;
+    }
+  });
 
   const handleIntroComplete = () => {
     setIntroFinished(true);
@@ -249,17 +262,45 @@ export default function App() {
     setGatewayFinished(true);
   };
 
+  const handleStartTour = () => {
+    setTutorialPromptFinished(true);
+    startTour();
+  };
+
+  const handleSkipTour = () => {
+    try {
+      localStorage.setItem('artisan_link_has_seen_tour_v1', 'true');
+    } catch {
+      // ignore
+    }
+    closeTour();
+    setTutorialPromptFinished(true);
+  };
+
+  return (
+    <>
+      {!introFinished ? (
+        <IntroLoader onComplete={handleIntroComplete} />
+      ) : !gatewayFinished ? (
+        <LanguageGatewayScreen onComplete={handleGatewayComplete} />
+      ) : !tutorialPromptFinished ? (
+        <TutorialPromptScreen 
+          onStartTour={handleStartTour} 
+          onSkipTour={handleSkipTour} 
+        />
+      ) : (
+        <MainLayout />
+      )}
+    </>
+  );
+};
+
+export default function App() {
   return (
     <ThemeProvider>
       <AuthProvider>
         <ArtisanProvider>
-          {!introFinished ? (
-            <IntroLoader onComplete={handleIntroComplete} />
-          ) : !gatewayFinished ? (
-            <LanguageGatewayScreen onComplete={handleGatewayComplete} />
-          ) : (
-            <MainLayout />
-          )}
+          <AppFlow />
         </ArtisanProvider>
       </AuthProvider>
     </ThemeProvider>

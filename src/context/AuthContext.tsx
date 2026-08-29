@@ -34,6 +34,7 @@ interface AuthContextType {
   buyerUser: BuyerProfile | null;
   firebaseUser: User | null;
   isAuthModalOpen: boolean;
+  setIsAuthModalOpen: (open: boolean) => void;
   authModalRole: 'artisan' | 'buyer';
   authModalTab: 'login' | 'signup';
   isAuthLoading: boolean;
@@ -85,6 +86,7 @@ interface AuthContextType {
   }) => void;
   logout: () => Promise<void>;
   switchRole: (role: UserRole) => void;
+  setRoleDirectly: (role: UserRole) => void;
   isSwitchingPersona: boolean;
   switchingTargetRole: UserRole | null;
   triggerPersonaSwitch: (targetRole: UserRole, callback?: () => void) => void;
@@ -768,6 +770,15 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     triggerPersonaSwitch(role);
   };
 
+  const setRoleDirectly = (role: UserRole) => {
+    setUserRole(role);
+    try {
+      localStorage.setItem('artisan_link_auth_role_v2', role);
+    } catch {
+      // ignore
+    }
+  };
+
   const toggleWishlist = (craftId: string) => {
     setWishlistIds((prev) => {
       const exists = prev.includes(craftId);
@@ -917,6 +928,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         buyerUser,
         firebaseUser,
         isAuthModalOpen,
+        setIsAuthModalOpen,
         authModalRole,
         authModalTab,
         isAuthLoading,
@@ -935,6 +947,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         signupBuyer,
         logout,
         switchRole,
+        setRoleDirectly,
         isSwitchingPersona,
         switchingTargetRole,
         triggerPersonaSwitch,

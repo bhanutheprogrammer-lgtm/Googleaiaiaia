@@ -69,6 +69,9 @@ interface ArtisanContextType {
   markInquiryReplied: (id: string) => void;
   updateInquiryStatus: (id: string, status: InquiryMessage['status']) => void;
   generateWhatsAppLink: (craft: CraftItem, buyerLang?: LanguageCode) => string;
+  isTourOpen: boolean;
+  startTour: () => void;
+  closeTour: () => void;
 }
 
 const ArtisanContext = createContext<ArtisanContextType | undefined>(undefined);
@@ -96,6 +99,15 @@ export const ArtisanProvider: React.FC<{ children: React.ReactNode }> = ({ child
 
   const [activeRole, setActiveRole] = useState<'buyer' | 'artisan'>('buyer');
   const [activeTab, setActiveTab] = useState<AppTab>('bazaar');
+  const [isTourOpen, setIsTourOpen] = useState(false);
+
+  const startTour = () => {
+    setIsTourOpen(true);
+  };
+
+  const closeTour = () => {
+    setIsTourOpen(false);
+  };
 
   const t = getTranslation(currentLanguage);
 
@@ -367,6 +379,9 @@ export const ArtisanProvider: React.FC<{ children: React.ReactNode }> = ({ child
         markInquiryReplied,
         updateInquiryStatus,
         generateWhatsAppLink,
+        isTourOpen,
+        startTour,
+        closeTour,
       }}
     >
       {children}

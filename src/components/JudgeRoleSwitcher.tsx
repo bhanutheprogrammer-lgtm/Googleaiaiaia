@@ -1,11 +1,11 @@
 import React from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useArtisan } from '../context/ArtisanContext';
-import { Sparkles } from 'lucide-react';
+import { Sparkles, HelpCircle } from 'lucide-react';
 
 export const JudgeRoleSwitcher: React.FC = () => {
   const { userRole, openAuthModal, logout } = useAuth();
-  const { triggerMarigoldConfetti, t } = useArtisan();
+  const { triggerMarigoldConfetti, t, startTour } = useArtisan();
 
   const handleSwitchView = (targetRole: 'artisan' | 'buyer' | 'guest') => {
     if (targetRole === 'guest') {
@@ -28,8 +28,22 @@ export const JudgeRoleSwitcher: React.FC = () => {
       aria-label="Judge Demo Quick View Switcher"
       className="fixed bottom-24 sm:bottom-28 md:bottom-8 lg:bottom-10 right-3 sm:right-6 md:right-8 z-40 bg-[#0C243C]/95 backdrop-blur-md rounded-full border border-amber-500/40 shadow-xl sm:shadow-2xl p-1 sm:p-1.5 flex items-center gap-1 text-white animate-in slide-in-from-bottom-5 duration-300 font-sans max-w-[calc(100vw-24px)]"
     >
+      {/* Tour Replay Button */}
+      <button
+        id="judge-replay-tour-btn"
+        onClick={() => {
+          triggerMarigoldConfetti();
+          startTour();
+        }}
+        className="px-2 sm:px-2.5 py-1.5 rounded-full text-[11px] sm:text-xs font-bold transition-all flex items-center gap-1 cursor-pointer select-none bg-amber-500/20 text-amber-300 border border-amber-400/40 hover:bg-amber-500/30"
+        title="Start Multilingual Guided Tour"
+      >
+        <span className="animate-pulse">🎙️</span>
+        <span className="hidden xs:inline">Tour</span>
+      </button>
+
       {/* Label */}
-      <div className="hidden sm:flex items-center gap-1.5 px-2.5 py-1 text-[11px] font-bold text-amber-300 border-r border-[#D4AF37]/40 uppercase tracking-wider select-none">
+      <div className="hidden sm:flex items-center gap-1.5 px-2 py-1 text-[11px] font-bold text-amber-300 border-r border-[#D4AF37]/40 uppercase tracking-wider select-none">
         <Sparkles className="w-3.5 h-3.5 text-[#D4AF37] animate-pulse" />
         <span>⚡ {t.switch_view_label || 'Role:'}</span>
       </div>
