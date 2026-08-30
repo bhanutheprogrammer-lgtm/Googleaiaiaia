@@ -82,7 +82,7 @@ export const AuthModal: React.FC = () => {
     signupBuyer,
   } = useAuth();
 
-  const { setActiveTab, setLanguage, currentLanguage } = useArtisan();
+  const { setActiveTab, setLanguage, currentLanguage, closeTour } = useArtisan();
 
   // DEFAULT ENGLISH UI by requirement
   const [modalLanguage, setModalLanguage] = useState<LanguageCode>('en');
@@ -279,6 +279,8 @@ export const AuthModal: React.FC = () => {
     if (tab === 'login') {
       const res = await verifyPhoneOtp(otpCode);
       if (res.success) {
+        closeAuthModal();
+        closeTour();
         if (activeRole === 'artisan') {
           setActiveTab('scan_studio');
         } else {
@@ -299,6 +301,8 @@ export const AuthModal: React.FC = () => {
           giCertified: artisanGiDeclaration
         });
         if (res.success) {
+          closeAuthModal();
+          closeTour();
           setActiveTab('scan_studio');
         }
       } else {
@@ -311,6 +315,8 @@ export const AuthModal: React.FC = () => {
           favoriteMediums: selectedMediums
         });
         if (res.success) {
+          closeAuthModal();
+          closeTour();
           setActiveTab('bazaar');
         }
       }
