@@ -246,17 +246,8 @@ const AppFlow: React.FC = () => {
   const { startTour, closeTour } = useArtisan();
   const [introFinished, setIntroFinished] = useState(false);
   const [gatewayFinished, setGatewayFinished] = useState(false);
-  const [tutorialPromptFinished, setTutorialPromptFinished] = useState(() => {
-    try {
-      return (
-        localStorage.getItem('artisan_link_has_seen_tour_v1') === 'true' ||
-        localStorage.getItem('artlynk_has_seen_tour') === 'true' ||
-        sessionStorage.getItem('artlynk_tutorial_done') === 'true'
-      );
-    } catch {
-      return false;
-    }
-  });
+  // Always prompt the tutorial gateway on every page load/reload for judges & evaluators
+  const [tutorialPromptFinished, setTutorialPromptFinished] = useState(false);
 
   const handleIntroComplete = () => {
     setIntroFinished(true);
@@ -272,13 +263,6 @@ const AppFlow: React.FC = () => {
   };
 
   const handleSkipTour = () => {
-    try {
-      localStorage.setItem('artisan_link_has_seen_tour_v1', 'true');
-      localStorage.setItem('artlynk_has_seen_tour', 'true');
-      sessionStorage.setItem('artlynk_tutorial_done', 'true');
-    } catch {
-      // ignore
-    }
     closeTour();
     setTutorialPromptFinished(true);
   };

@@ -8,8 +8,13 @@ import {
 } from 'lucide-react';
 import { useArtisan } from '../context/ArtisanContext';
 import { useTheme } from '../context/ThemeContext';
+import { useAuth } from '../context/AuthContext';
 
-export const HeroSection: React.FC = () => {
+interface HeroSectionProps {
+  onAuthPrompt?: (role: 'artisan' | 'buyer') => void;
+}
+
+export const HeroSection: React.FC<HeroSectionProps> = ({ onAuthPrompt }) => {
   const { 
     t,
     searchQuery, 
@@ -18,10 +23,16 @@ export const HeroSection: React.FC = () => {
     setSelectedCategory,
   } = useArtisan();
   const { isDarkMode } = useTheme();
+  const { openAuthModal } = useAuth();
 
   const heroRef = useRef<HTMLDivElement>(null);
   const subheadRef = useRef<HTMLParagraphElement>(null);
   const badgeRef = useRef<HTMLDivElement>(null);
+
+  const handleOpenAuth = (role: 'artisan' | 'buyer') => {
+    if (onAuthPrompt) onAuthPrompt(role);
+    else openAuthModal(role);
+  };
 
   useEffect(() => {
     if (!heroRef.current) return;
@@ -67,12 +78,12 @@ export const HeroSection: React.FC = () => {
   }, [t.hero_title_1, t.hero_title_highlight, t.hero_title_2]);
 
   const categories = [
-    { name: 'All', label: t.cat_all },
-    { name: 'Handloom', label: t.cat_handloom },
-    { name: 'Clay/Pottery', label: t.cat_clay },
-    { name: 'Metalcraft', label: t.cat_metal },
-    { name: 'Folk Art', label: t.cat_folk },
-    { name: 'Woodcraft', label: t.cat_wood },
+    { name: 'All', label: t.cat_all || 'All' },
+    { name: 'Handloom', label: t.cat_handloom || 'Handloom' },
+    { name: 'Clay/Pottery', label: t.cat_clay || 'Clay/Pottery' },
+    { name: 'Metalcraft', label: t.cat_metal || 'Metalcraft' },
+    { name: 'Folk Art', label: t.cat_folk || 'Folk Art' },
+    { name: 'Woodcraft', label: t.cat_wood || 'Woodcraft' },
   ];
 
   return (
@@ -92,12 +103,12 @@ export const HeroSection: React.FC = () => {
       {/* Main Editorial Hero Wrapper */}
       <div className="max-w-7xl mx-auto px-4 md:px-8 relative z-10 py-8 sm:py-10 lg:py-12">
         
-        {/* Top Header Manifesto */}
+        {/* 1. Top Header Manifesto & Titles */}
         <div className="max-w-4xl mx-auto text-center mb-6">
           <div ref={badgeRef} className="inline-flex items-center justify-center gap-2.5 text-[#a0522d] mb-1.5">
             <span className="w-6 sm:w-8 h-[1.5px] bg-[#a0522d] inline-block opacity-80"></span>
             <span className="font-sans text-[10px] sm:text-xs md:text-sm tracking-widest font-bold uppercase text-[#a0522d]">
-              {t.hero_lead}
+              {t.hero_lead || 'DIRECT FROM BHARAT • KALALINK'}
             </span>
             <span className="w-6 sm:w-8 h-[1.5px] bg-[#a0522d] inline-block opacity-80"></span>
           </div>
@@ -132,17 +143,19 @@ export const HeroSection: React.FC = () => {
 
           <p 
             ref={subheadRef}
-            className={`text-xs sm:text-sm md:text-base max-w-xl mx-auto leading-relaxed px-4 font-serif ${
+            className={`text-xs sm:text-sm md:text-base max-w-2xl mx-auto leading-relaxed px-4 font-serif ${
               isDarkMode ? 'text-stone-300' : 'text-stone-600'
             }`}
           >
-            {t.hero_subtitle}
+            {t.hero_subtitle || 'Connecting 7 million grassroots Indian artisans directly to global and domestic buyers with zero middlemen commissions, blockchain GI authenticity verification, and AI-powered storytelling.'}
           </p>
         </div>
 
-        {/* Editorial Search & Category Filter Strip */}
+        {/* 2. Editorial Search Bar & Category Filter Chips */}
         <div className={`mt-6 sm:mt-8 pt-6 border-t ${isDarkMode ? 'border-amber-500/20' : 'border-amber-900/10'}`}>
           <div className="max-w-4xl mx-auto">
+            
+            {/* Search Input Bar */}
             <div 
               id="voice-search-bar"
               className={`relative flex items-center rounded-2xl shadow-sm border p-2 focus-within:border-[#A84A2C] focus-within:ring-2 focus-within:ring-[#A84A2C]/20 transition-all ${
@@ -156,7 +169,7 @@ export const HeroSection: React.FC = () => {
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder={t.hero_search_placeholder}
+                placeholder={t.hero_search_placeholder || 'Search by craft, GI state, weaver lineage, or material...'}
                 className={`w-full px-3 py-2 text-sm placeholder-stone-400 bg-transparent focus:outline-hidden font-sans ${
                   isDarkMode ? 'text-[#FAF9F6]' : 'text-[#0F1E2E]'
                 }`}
@@ -166,7 +179,7 @@ export const HeroSection: React.FC = () => {
                   onClick={() => setSearchQuery('')}
                   className="text-xs text-stone-400 hover:text-stone-200 px-2 cursor-pointer font-sans"
                 >
-                  {t.hero_clear}
+                  {t.hero_clear || 'Clear'}
                 </button>
               )}
 
@@ -178,7 +191,7 @@ export const HeroSection: React.FC = () => {
                 }}
                 className="flex items-center space-x-1.5 px-5 py-2.5 rounded-xl bg-linear-to-r from-[#A84A2C] to-[#C05621] hover:from-[#913D22] hover:to-[#A84A2C] text-white text-xs font-sans uppercase tracking-widest font-bold transition-all shadow-xs cursor-pointer shrink-0"
               >
-                <span>{t.hero_explore}</span>
+                <span>{t.hero_explore || 'Explore'}</span>
                 <ArrowRight className="w-3.5 h-3.5" />
               </button>
             </div>
@@ -215,7 +228,75 @@ export const HeroSection: React.FC = () => {
           </div>
         </div>
 
+        {/* 3. Dual-Persona Cards (Cleanly below the search section with standard document flow & generous spacing) */}
+        <div id="guest-gateway-banner" className="my-8 max-w-5xl mx-auto">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            
+            {/* Card 1: Artisan / Karigar Onboarding */}
+            <div 
+              id="hero-persona-artisan-card"
+              onClick={() => handleOpenAuth('artisan')}
+              className="bg-linear-to-br from-[#0C243C] to-[#162E4A] border-2 border-[#D4AF37] rounded-3xl p-6 sm:p-7 text-white shadow-xl hover:border-amber-300 transition-all cursor-pointer group relative overflow-hidden"
+            >
+              <div className="flex items-start justify-between">
+                <div className="w-12 h-12 rounded-2xl bg-linear-to-br from-[#B83227] to-[#E67E22] flex items-center justify-center text-2xl border border-[#D4AF37] shadow-md group-hover:scale-105 transition-transform">
+                  🪔
+                </div>
+                <span className="px-3 py-1 rounded-full bg-[#B83227] text-white text-[10px] font-sans font-bold uppercase tracking-wider">
+                  {t.guest_artisan_card_badge || 'For Karigars & Weavers'}
+                </span>
+              </div>
+
+              <div className="mt-4 space-y-1.5">
+                <h3 className="font-serif font-black text-xl text-[#FAF6EE] group-hover:text-amber-300 transition-colors">
+                  {t.guest_artisan_card_title || 'Are you a Master Artisan (Karigar)?'}
+                </h3>
+                <p className="text-stone-300 text-xs font-sans leading-relaxed">
+                  {t.guest_artisan_card_desc || 'Open your digital Karkhana studio. Scan crafts via Vernacular AI, generate instant GI certificates, and receive 100% direct WhatsApp orders.'}
+                </p>
+              </div>
+
+              <div className="mt-5 flex items-center gap-2 text-xs font-bold font-sans uppercase tracking-wider text-amber-300 group-hover:translate-x-1 transition-transform">
+                <span>{t.guest_artisan_card_cta || 'Open Your Workshop Studio'}</span>
+                <ArrowRight className="w-4 h-4" />
+              </div>
+            </div>
+
+            {/* Card 2: Buyer / Patron Onboarding */}
+            <div 
+              id="hero-persona-buyer-card"
+              onClick={() => handleOpenAuth('buyer')}
+              className="bg-linear-to-br from-[#0E6655] to-[#117A65] border-2 border-[#D4AF37] rounded-3xl p-6 sm:p-7 text-white shadow-xl hover:border-emerald-300 transition-all cursor-pointer group relative overflow-hidden"
+            >
+              <div className="flex items-start justify-between">
+                <div className="w-12 h-12 rounded-2xl bg-linear-to-br from-[#117A65] to-[#0E6655] flex items-center justify-center text-2xl border border-emerald-400 shadow-md group-hover:scale-105 transition-transform">
+                  🛍️
+                </div>
+                <span className="px-3 py-1 rounded-full bg-[#0C243C] text-emerald-300 text-[10px] font-sans font-bold uppercase tracking-wider border border-emerald-400/40">
+                  {t.guest_buyer_card_badge || 'For Patrons & Collectors'}
+                </span>
+              </div>
+
+              <div className="mt-4 space-y-1.5">
+                <h3 className="font-serif font-black text-xl text-[#FAF6EE] group-hover:text-amber-200 transition-colors">
+                  {t.guest_buyer_card_title || 'Are you an Art Patron (Art Lover)?'}
+                </h3>
+                <p className="text-emerald-100 text-xs font-sans leading-relaxed">
+                  {t.guest_buyer_card_desc || 'Discover 100% verified handmade Indian crafts directly from weavers & sculptors. Save wishlists, collect authenticity certificates, and pay zero middleman commissions.'}
+                </p>
+              </div>
+
+              <div className="mt-5 flex items-center gap-2 text-xs font-bold font-sans uppercase tracking-wider text-amber-200 group-hover:translate-x-1 transition-transform">
+                <span>{t.guest_buyer_card_cta || 'Join as Heritage Buyer'}</span>
+                <ArrowRight className="w-4 h-4" />
+              </div>
+            </div>
+
+          </div>
+        </div>
+
       </div>
     </section>
   );
 };
+

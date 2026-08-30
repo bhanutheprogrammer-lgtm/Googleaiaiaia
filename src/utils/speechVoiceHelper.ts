@@ -3,6 +3,27 @@ import { getSpeechLangCode } from '../locales/tourTranslations';
 
 let activeUtterance: SpeechSynthesisUtterance | null = null;
 
+const langVoiceMap: Record<string, string> = {
+  ta: 'ta-IN', // Tamil
+  kn: 'kn-IN', // Kannada
+  te: 'te-IN', // Telugu
+  hi: 'hi-IN', // Hindi
+  pa: 'pa-IN', // Punjabi
+  bn: 'bn-IN', // Bengali
+  mr: 'mr-IN', // Marathi
+  gu: 'gu-IN', // Gujarati
+  ml: 'ml-IN', // Malayalam
+  or: 'or-IN', // Odia
+  as: 'as-IN', // Assamese
+  kok: 'kok-IN',
+  ne: 'ne-NP',
+  mni: 'mni-IN',
+  ur: 'ur-IN',
+  kha: 'en-IN',
+  lus: 'en-IN',
+  en: 'en-IN'  // English
+};
+
 export const isSpeechAvailable = (): boolean => {
   return typeof window !== 'undefined' && 'speechSynthesis' in window && 'SpeechSynthesisUtterance' in window;
 };
@@ -33,10 +54,10 @@ export const speakTourText = (
   try {
     stopSpeech();
 
-    const langCode = getSpeechLangCode(lang);
+    const langCode = langVoiceMap[lang] || getSpeechLangCode(lang) || 'en-IN';
     const utterance = new SpeechSynthesisUtterance(text);
     utterance.lang = langCode;
-    utterance.rate = 0.92; // Slightly measured rate for low-literacy clarity
+    utterance.rate = 0.95; // Natural speaking speed
     utterance.pitch = 1.0;
 
     // Pick best matching voice if available
@@ -77,3 +98,4 @@ export const speakTourText = (
     return false;
   }
 };
+

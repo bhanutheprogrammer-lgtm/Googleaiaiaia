@@ -358,8 +358,8 @@ Note: If the image is not a handmade craft, set isAuthenticCraft: false, categor
       config: {
         systemInstruction,
         responseMimeType: "application/json",
-        temperature: 0.2,
-        maxOutputTokens: 800,
+        temperature: 0.1,
+        maxOutputTokens: 500,
       },
     }, SUPPORTED_GEMINI_MODELS);
 
