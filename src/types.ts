@@ -215,5 +215,6 @@ export interface AIScanResult {
   pricingEstimation: PricingEstimation;
   careInstructions?: string;
   isAuthenticCraft?: boolean;
+  isCraft?: boolean;
 }
 

@@ -116,6 +116,7 @@ export const AuthModal: React.FC = () => {
   const [otpCode, setOtpCode] = useState('');
   const [otpSent, setOtpSent] = useState(false);
   const [resendTimer, setResendTimer] = useState(0);
+  const [otpToast, setOtpToast] = useState<string | null>(null);
 
   // Artisan Signup States
   const [artisanName, setArtisanName] = useState('');
@@ -252,7 +253,7 @@ export const AuthModal: React.FC = () => {
     }
   };
 
-  // Handle Send OTP via Firebase Phone Auth
+  // Handle Send OTP via Fast Mock / Phone Auth
   const handleSendOtp = async (e?: React.FormEvent) => {
     if (e) e.preventDefault();
     clearAuthError();
@@ -263,8 +264,14 @@ export const AuthModal: React.FC = () => {
 
     const result = await sendPhoneOtp(rawPhone);
     if (result.success) {
+      const code = result.code || '123456';
       setOtpSent(true);
+      setOtpCode(code);
       setResendTimer(60);
+      setOtpToast(`📱 Demo SMS OTP sent to ${rawPhone}: ${code} (Auto-filled)`);
+      setTimeout(() => {
+        setOtpToast(null);
+      }, 7000);
     }
   };
 
@@ -331,9 +338,6 @@ export const AuthModal: React.FC = () => {
         if (e.target === e.currentTarget) handleClose();
       }}
     >
-      {/* Invisible reCAPTCHA container for Firebase Phone Auth */}
-      <div id="recaptcha-container"></div>
-
       <div 
         ref={cardRef}
         id="auth-modal-card"
@@ -437,6 +441,23 @@ export const AuthModal: React.FC = () => {
               </p>
             </div>
           </div>
+
+          {/* Instant Demo SMS OTP Toast Banner */}
+          {otpToast && (
+            <div className="p-3 bg-emerald-950/80 border border-emerald-500/50 rounded-xl flex items-center justify-between gap-2 text-xs text-emerald-200 animate-in fade-in duration-200 shadow-md">
+              <div className="flex items-center gap-2 min-w-0">
+                <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
+                <span className="font-semibold truncate">{otpToast}</span>
+              </div>
+              <button
+                type="button"
+                onClick={() => setOtpToast(null)}
+                className="text-emerald-400 hover:text-emerald-200 shrink-0 p-0.5 cursor-pointer"
+              >
+                <X className="w-3.5 h-3.5" />
+              </button>
+            </div>
+          )}
 
           {/* Error Alert Box */}
           {authError && (
@@ -594,7 +615,7 @@ export const AuthModal: React.FC = () => {
                       <Phone className="w-3.5 h-3.5 text-[#E67E22] shrink-0" />
                       <span>{t.phoneOrEmailLabelArtisan} *</span>
                     </label>
-                    <div className="flex items-center gap-2">
+                    <div className="flex flex-row items-center gap-2 w-full mt-1.5">
                       <input
                         type="tel"
                         required
@@ -602,7 +623,7 @@ export const AuthModal: React.FC = () => {
                         onChange={(e) => setPhoneNumber(e.target.value)}
                         placeholder="+91 98480 23412"
                         disabled={otpSent || isAuthLoading}
-                        className="flex-1 block rounded-xl px-3.5 py-2.5 text-sm bg-[#0A1A2D] border border-amber-500/30 focus:outline-hidden focus:border-amber-400 text-white font-semibold placeholder-stone-400 box-border disabled:opacity-60"
+                        className="flex-1 min-w-0 w-full bg-slate-900/80 border border-slate-700 rounded-xl px-3 py-2.5 text-sm text-white focus:ring-1 focus:ring-amber-400 focus:border-amber-400"
                       />
                       {!otpSent ? (
                         <button
@@ -610,7 +631,7 @@ export const AuthModal: React.FC = () => {
                           id="send-phone-otp-btn"
                           onClick={() => handleSendOtp()}
                           disabled={isAuthLoading || phoneNumber.trim().length < 5}
-                          className="shrink-0 whitespace-nowrap px-4 py-2.5 text-xs font-bold rounded-xl bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 border border-amber-400/40 cursor-pointer disabled:opacity-50 transition-all flex items-center gap-1.5"
+                          className="shrink-0 whitespace-nowrap px-3.5 py-2.5 text-xs font-bold rounded-xl bg-amber-600 hover:bg-amber-700 text-white flex items-center gap-1.5 shadow-sm cursor-pointer disabled:opacity-50 transition-all"
                         >
                           {isAuthLoading ? (
                             <Loader2 className="w-3.5 h-3.5 animate-spin" />
@@ -873,7 +894,7 @@ export const AuthModal: React.FC = () => {
                     <label className="text-xs font-bold text-amber-200 uppercase tracking-wider block mb-1">
                       {t.whatsappNumberLabel} *
                     </label>
-                    <div className="flex items-center gap-2">
+                    <div className="flex flex-row items-center gap-2 w-full mt-1.5">
                       <input
                         type="tel"
                         required
@@ -881,16 +902,28 @@ export const AuthModal: React.FC = () => {
                         onChange={(e) => setPhoneNumber(e.target.value)}
                         placeholder="+91 98480 23412"
                         disabled={otpSent || isAuthLoading}
-                        className="flex-1 block rounded-xl px-3.5 py-2.5 text-sm bg-[#0A1A2D] border border-amber-500/30 text-white font-semibold placeholder-stone-400 focus:outline-hidden focus:border-amber-400 box-border disabled:opacity-60"
+                        className="flex-1 min-w-0 w-full bg-slate-900/80 border border-slate-700 rounded-xl px-3 py-2.5 text-sm text-white focus:ring-1 focus:ring-amber-400 focus:border-amber-400"
                       />
-                      {!otpSent && (
+                      {!otpSent ? (
                         <button
                           type="button"
                           onClick={() => handleSendOtp()}
                           disabled={isAuthLoading || phoneNumber.trim().length < 5}
-                          className="shrink-0 px-3.5 py-2.5 text-xs font-bold rounded-xl bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 border border-amber-400/40 cursor-pointer disabled:opacity-50"
+                          className="shrink-0 whitespace-nowrap px-3.5 py-2.5 text-xs font-bold rounded-xl bg-amber-600 hover:bg-amber-700 text-white flex items-center gap-1.5 shadow-sm cursor-pointer disabled:opacity-50 transition-all"
                         >
                           {isAuthLoading ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : 'Send OTP'}
+                        </button>
+                      ) : (
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setOtpSent(false);
+                            setOtpCode('');
+                          }}
+                          className="shrink-0 p-2.5 rounded-xl bg-white/10 hover:bg-white/20 text-stone-300 text-xs font-medium cursor-pointer"
+                          title="Change phone number"
+                        >
+                          <RotateCcw className="w-3.5 h-3.5" />
                         </button>
                       )}
                     </div>
@@ -1016,19 +1049,43 @@ export const AuthModal: React.FC = () => {
                   </div>
 
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                    <div>
+                    <div className="sm:col-span-1">
                       <label className="text-xs font-bold text-amber-200 uppercase tracking-wider block mb-1">
                         {t.buyerPhoneLabel} *
                       </label>
-                      <input
-                        type="tel"
-                        required
-                        value={phoneNumber}
-                        onChange={(e) => setPhoneNumber(e.target.value)}
-                        placeholder="+91 97411 99201"
-                        disabled={otpSent || isAuthLoading}
-                        className="w-full block rounded-xl px-3.5 py-2.5 text-sm bg-[#0A1A2D] border border-amber-500/30 text-white placeholder-stone-400 focus:outline-hidden focus:border-amber-400 box-border disabled:opacity-60"
-                      />
+                      <div className="flex flex-row items-center gap-2 w-full mt-1.5">
+                        <input
+                          type="tel"
+                          required
+                          value={phoneNumber}
+                          onChange={(e) => setPhoneNumber(e.target.value)}
+                          placeholder="+91 97411 99201"
+                          disabled={otpSent || isAuthLoading}
+                          className="flex-1 min-w-0 w-full bg-slate-900/80 border border-slate-700 rounded-xl px-3 py-2.5 text-sm text-white focus:ring-1 focus:ring-amber-400 focus:border-amber-400"
+                        />
+                        {!otpSent ? (
+                          <button
+                            type="button"
+                            onClick={() => handleSendOtp()}
+                            disabled={isAuthLoading || phoneNumber.trim().length < 5}
+                            className="shrink-0 whitespace-nowrap px-3.5 py-2.5 text-xs font-bold rounded-xl bg-amber-600 hover:bg-amber-700 text-white flex items-center gap-1.5 shadow-sm cursor-pointer disabled:opacity-50 transition-all"
+                          >
+                            {isAuthLoading ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : 'Send OTP'}
+                          </button>
+                        ) : (
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setOtpSent(false);
+                              setOtpCode('');
+                            }}
+                            className="shrink-0 p-2.5 rounded-xl bg-white/10 hover:bg-white/20 text-stone-300 text-xs font-medium cursor-pointer"
+                            title="Change phone number"
+                          >
+                            <RotateCcw className="w-3.5 h-3.5" />
+                          </button>
+                        )}
+                      </div>
                     </div>
 
                     <div>
@@ -1038,7 +1095,7 @@ export const AuthModal: React.FC = () => {
                       <select
                         value={buyerDeliveryState}
                         onChange={(e) => setBuyerDeliveryState(e.target.value)}
-                        className="w-full block rounded-xl px-3.5 py-2.5 text-sm bg-[#0A1A2D] border border-amber-500/30 text-white font-semibold cursor-pointer focus:outline-hidden focus:border-amber-400 box-border"
+                        className="w-full block rounded-xl px-3.5 py-2.5 text-sm bg-[#0A1A2D] border border-amber-500/30 text-white font-semibold cursor-pointer focus:outline-hidden focus:border-amber-400 box-border mt-1.5"
                       >
                         {STATES_LIST.map((st) => (
                           <option key={st} value={st} className="bg-[#0C243C] text-white">{st}</option>
@@ -1056,7 +1113,7 @@ export const AuthModal: React.FC = () => {
                         value={buyerPincode}
                         onChange={(e) => setBuyerPincode(e.target.value)}
                         placeholder={t.pincodePlaceholder}
-                        className="w-full block rounded-xl px-3.5 py-2.5 text-sm bg-[#0A1A2D] border border-amber-500/30 text-white placeholder-stone-400 focus:outline-hidden focus:border-amber-400 box-border overflow-hidden text-ellipsis"
+                        className="w-full block rounded-xl px-3.5 py-2.5 text-sm bg-[#0A1A2D] border border-amber-500/30 text-white placeholder-stone-400 focus:outline-hidden focus:border-amber-400 box-border overflow-hidden text-ellipsis mt-1.5"
                       />
                     </div>
                   </div>

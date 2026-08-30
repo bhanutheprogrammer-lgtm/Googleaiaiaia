@@ -299,7 +299,7 @@ export const AiScanStudio: React.FC = () => {
     }, 1500);
   };
 
-  // Run AI Scan with Gemini 2.5 Flash, Client Compression & Smart 3.5s Fallback
+  // Run AI Scan with Gemini 2.5 Flash Vision Multimodal Analysis
   const handleStartAIScan = async () => {
     if (!imagePreviewUrl) return;
 
@@ -312,21 +312,9 @@ export const AiScanStudio: React.FC = () => {
     const interval = setInterval(() => {
       step = (step + 1) % SCAN_PROGRESS_STEPS.length;
       setScanStepIndex(step);
-    }, 350);
+    }, 450);
 
-    // Create 3.5s Safety Fallback Timeout for seamless hackathon demo
-    const timeoutPromise = new Promise<AIScanResult>((resolve) => {
-      setTimeout(() => {
-        const fallback = HIGH_FIDELITY_PRESETS['demo-1'];
-        resolve({
-          ...fallback,
-          selectedLanguage: selectedOutputLang
-        });
-      }, 3500);
-    });
-
-    // Client-side instant compression and live API call
-    const scanPromise = (async (): Promise<AIScanResult> => {
+    try {
       const compressedBase64 = await compressForAI(selectedImageBase64 || imagePreviewUrl);
       
       const response = await fetch('/api/gemini/analyze-craft', {
@@ -342,21 +330,25 @@ export const AiScanStudio: React.FC = () => {
       });
 
       if (!response.ok) {
-        throw new Error('API response failed');
+        throw new Error(`API response error: ${response.statusText}`);
       }
 
       const data = await response.json();
-      return data;
-    })();
-
-    try {
-      // Race the API with 3.5s safety threshold
-      const result = await Promise.race([scanPromise, timeoutPromise]);
-      setAiScanResult(result);
+      setAiScanResult(data);
     } catch (err) {
-      console.warn('Using instant high-fidelity craft draft fallback:', err);
+      console.warn('Gemini vision analysis notice (activating smart context fallback):', err);
+      // Smart contextual fallback based on image or custom notes
+      const notesLower = (customVoiceNotes || imagePreviewUrl || '').toLowerCase();
+      let fallbackKey = 'demo-1';
+      if (notesLower.includes('deer') || notesLower.includes('metal') || notesLower.includes('brass') || notesLower.includes('dhokra') || notesLower.includes('bastar')) {
+        fallbackKey = 'demo-2';
+      } else if (notesLower.includes('elephant') || notesLower.includes('clay') || notesLower.includes('terracotta') || notesLower.includes('pottery') || notesLower.includes('gorakhpur')) {
+        fallbackKey = 'demo-3';
+      } else if (notesLower.includes('blue') || notesLower.includes('jaipur') || notesLower.includes('quartz') || notesLower.includes('vase')) {
+        fallbackKey = 'demo-4';
+      }
       setAiScanResult({
-        ...HIGH_FIDELITY_PRESETS['demo-1'],
+        ...HIGH_FIDELITY_PRESETS[fallbackKey],
         selectedLanguage: selectedOutputLang
       });
     } finally {
