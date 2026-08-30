@@ -115,17 +115,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [authError, setAuthError] = useState<string | null>(null);
   const [confirmationResult, setConfirmationResult] = useState<ConfirmationResult | null>(null);
 
-  const [userRole, setUserRole] = useState<UserRole>(() => {
-    try {
-      const saved = localStorage.getItem('artisan_link_auth_role_v2');
-      if (saved === 'artisan' || saved === 'buyer' || saved === 'guest') {
-        return saved as UserRole;
-      }
-    } catch (e) {
-      console.error(e);
-    }
-    return 'guest';
-  });
+  // Strict Guest Mode by default on fresh mount / page reload
+  const [userRole, setUserRole] = useState<UserRole>('guest');
 
   const [artisanUser, setArtisanUser] = useState<ArtisanProfile | null>(() => {
     try {
@@ -267,7 +258,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
             if (snapshot.exists()) {
               const data = snapshot.data();
               if (data.role === 'artisan') {
-                setUserRole('artisan');
                 setArtisanUser((prev) => ({
                   ...(prev || DEFAULT_DEMO_ARTISAN),
                   ...data,
@@ -276,7 +266,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
                   whatsapp: data.whatsapp || (user.phoneNumber || '').replace(/[^0-9]/g, '') || prev?.whatsapp || '',
                 }));
               } else if (data.role === 'buyer') {
-                setUserRole('buyer');
                 setBuyerUser((prev) => ({
                   ...(prev || DEFAULT_DEMO_BUYER),
                   ...data,
@@ -733,7 +722,20 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
+  const handleSetIsPitaraDrawerOpen = (open: boolean) => {
+    if (open && userRole === 'guest') {
+      openAuthModal('buyer', 'login');
+      return;
+    }
+    setIsPitaraDrawerOpen(open);
+  };
+
   const toggleWishlist = (craftId: string) => {
+    if (userRole === 'guest') {
+      openAuthModal('buyer', 'login');
+      return;
+    }
+
     setWishlistIds((prev) => {
       const exists = prev.includes(craftId);
       const updated = exists ? prev.filter((id) => id !== craftId) : [...prev, craftId];
@@ -911,7 +913,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         purchasedCertificates,
         acquireCraftCertificate,
         isPitaraDrawerOpen,
-        setIsPitaraDrawerOpen,
+        setIsPitaraDrawerOpen: handleSetIsPitaraDrawerOpen,
         isStoreQRModalOpen,
         setIsStoreQRModalOpen,
         isAccountSettingsOpen,

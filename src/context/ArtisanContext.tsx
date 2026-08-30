@@ -77,7 +77,7 @@ interface ArtisanContextType {
 const ArtisanContext = createContext<ArtisanContextType | undefined>(undefined);
 
 export const ArtisanProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const { artisanUser } = useAuth();
+  const { artisanUser, userRole } = useAuth();
   const [currentLanguage, setCurrentLanguageState] = useState<LanguageCode>(() => {
     try {
       const saved = localStorage.getItem('artisan_link_language') as LanguageCode;
@@ -98,8 +98,24 @@ export const ArtisanProvider: React.FC<{ children: React.ReactNode }> = ({ child
   };
 
   const [activeRole, setActiveRole] = useState<'buyer' | 'artisan'>('buyer');
+  // Default to 'bazaar' ("Explore Crafts") on initial load
   const [activeTab, setActiveTab] = useState<AppTab>('bazaar');
   const [isTourOpen, setIsTourOpen] = useState(false);
+
+  // Persona switching default tab router:
+  // Buyer ➡️ Seller: opens 'scan_studio' (AI Scan Studio)
+  // Seller ➡️ Buyer/Guest: opens 'bazaar' (Curated Marketplace / Explore Crafts)
+  const prevUserRoleRef = useRef<string>(userRole);
+  useEffect(() => {
+    if (prevUserRoleRef.current !== userRole) {
+      if (userRole === 'artisan') {
+        setActiveTab('scan_studio');
+      } else if (userRole === 'buyer' || userRole === 'guest') {
+        setActiveTab('bazaar');
+      }
+      prevUserRoleRef.current = userRole;
+    }
+  }, [userRole]);
 
   const startTour = () => {
     setIsTourOpen(true);
