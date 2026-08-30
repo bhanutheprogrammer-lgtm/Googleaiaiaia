@@ -160,13 +160,13 @@ export const GuestNavbar: React.FC<GuestNavbarProps> = ({ onAuthClick }) => {
               className="p-1 sm:p-1.5 w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-white/10 hover:bg-white/20 border border-white/15 flex items-center justify-center shrink-0 transition-colors"
             />
 
-            {/* Wishlist / Mera Pitara Heart Button for Guest */}
+            {/* Wishlist Button for Guest (Desktop only) */}
             <button
               id="guest-nav-wishlist-btn"
               onClick={handleOpenAuth}
-              title={t.nav_pitara || 'Wishlist / Mera Pitara'}
+              title="Wishlist"
               aria-label="Wishlist"
-              className="relative p-1 sm:p-1.5 w-7 h-7 sm:w-8 sm:h-8 rounded-full text-stone-300 hover:text-white bg-white/10 hover:bg-white/20 border border-white/15 flex items-center justify-center transition-colors cursor-pointer shrink-0"
+              className="hidden md:flex relative p-1 sm:p-1.5 w-7 h-7 sm:w-8 sm:h-8 rounded-full text-stone-300 hover:text-white bg-white/10 hover:bg-white/20 border border-white/15 items-center justify-center transition-colors cursor-pointer shrink-0"
             >
               <Heart className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-stone-300 hover:text-rose-400 transition-colors" />
             </button>
@@ -252,17 +252,6 @@ export const GuestNavbar: React.FC<GuestNavbarProps> = ({ onAuthClick }) => {
               >
                 <Map className="w-4 h-4 text-emerald-300" />
                 <span>{t.nav_map || 'GI Map'}</span>
-              </motion.button>
-
-              <motion.button
-                initial={{ opacity: 0, x: -10 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: 0.18 }}
-                onClick={handleOpenAuth}
-                className="w-full text-left px-3.5 py-2.5 rounded-xl flex items-center gap-2.5 cursor-pointer text-stone-300 hover:bg-white/5 transition-all"
-              >
-                <Heart className="w-4 h-4 text-rose-400" />
-                <span>{t.nav_pitara || 'Wishlist / Mera Pitara'}</span>
               </motion.button>
 
               <motion.div

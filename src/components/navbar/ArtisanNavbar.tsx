@@ -5,7 +5,6 @@ import {
   MessageSquare, 
   Calculator,
   QrCode,
-  ChevronDown, 
   LogOut, 
   User, 
   Menu, 
@@ -219,7 +218,7 @@ export const ArtisanNavbar: React.FC = () => {
               buttonClassName="px-2 sm:px-2.5 py-1 sm:py-1.5 text-[11px] sm:text-xs rounded-full flex items-center gap-1 shrink-0 font-medium border border-amber-500/40 bg-[#A0522D] text-white hover:border-amber-400 hover:bg-[#8B4513] transition shadow-2xs cursor-pointer"
             />
 
-            {/* USER PROFILE TRIGGER: Circular avatar + ChevronDown */}
+            {/* USER PROFILE TRIGGER: Circular avatar (Clickable to toggle menu) */}
             <div className="relative shrink-0 z-50" ref={profileDropdownRef}>
               <button
                 id="artisan-profile-menu-btn"
@@ -227,19 +226,14 @@ export const ArtisanNavbar: React.FC = () => {
                   e.stopPropagation();
                   setProfileDropdownOpen(!profileDropdownOpen);
                 }}
-                className="flex items-center gap-1 sm:gap-1.5 p-0.5 sm:p-1 rounded-full hover:bg-white/15 border border-amber-400/40 hover:border-amber-300 transition-all cursor-pointer group shrink-0 bg-[#5C2A12]/60"
+                className="flex items-center p-0.5 rounded-full hover:ring-2 hover:ring-amber-400/80 transition-all cursor-pointer group shrink-0"
                 aria-label="Artisan Menu"
                 aria-expanded={profileDropdownOpen}
               >
                 <img
                   src={artisanUser?.photo || 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=300&q=80'}
                   alt={artisanName}
-                  className="w-7 h-7 sm:w-8 sm:h-8 rounded-full object-cover border-2 border-amber-400/80 shadow-xs shrink-0"
-                />
-                <ChevronDown 
-                  className={`w-3 h-3 sm:w-3.5 sm:h-3.5 text-amber-200 group-hover:text-white transition-transform duration-200 mr-0.5 ${
-                    profileDropdownOpen ? 'rotate-180 text-amber-300' : ''
-                  }`} 
+                  className="w-7 h-7 sm:w-8 sm:h-8 rounded-full object-cover border-2 border-amber-400 shadow-sm shrink-0 transition-transform duration-200 group-hover:scale-105"
                 />
               </button>
 

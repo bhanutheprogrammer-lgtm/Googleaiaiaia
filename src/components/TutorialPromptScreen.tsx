@@ -99,36 +99,38 @@ export const TutorialPromptScreen: React.FC<TutorialPromptScreenProps> = ({
             transition={{ duration: 0.5, ease: 'easeOut' }}
             className="relative z-10 w-full max-w-xl bg-[#0C1F33]/90 border-2 border-amber-500/30 rounded-3xl p-6 sm:p-10 shadow-2xl backdrop-blur-md flex flex-col items-center text-center space-y-6"
           >
-            {/* Terracotta Emblem with Glowing Pulse */}
-            <div className="relative flex items-center justify-center">
+            {/* Header Stack: Logo Emblem + Direct Craft Badge + Welcome Chip */}
+            <div className="flex flex-col items-center gap-2.5">
+              {/* 1. Glowing Circular Logo Emblem */}
               <motion.div
                 animate={{
-                  scale: [1, 1.08, 1],
+                  scale: [1, 1.05, 1],
                   boxShadow: [
                     '0 0 20px rgba(245, 158, 11, 0.25)',
-                    '0 0 45px rgba(224, 107, 38, 0.5)',
+                    '0 0 40px rgba(224, 107, 38, 0.45)',
                     '0 0 20px rgba(245, 158, 11, 0.25)'
                   ]
                 }}
                 transition={{ repeat: Infinity, duration: 2.8, ease: 'easeInOut' }}
-                className="w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-[#071422] border-2 border-amber-400/60 p-3.5 flex items-center justify-center shadow-xl"
+                className="w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-gradient-to-b from-amber-500/20 to-amber-950/40 p-3 border border-amber-500/40 flex items-center justify-center shadow-[0_0_30px_rgba(245,158,11,0.25)]"
               >
-                <ArtLynkLogo size={56} glow color="gradient" />
+                <ArtLynkLogo size={44} glow color="gradient" className="w-10 h-10 sm:w-12 sm:h-12" />
               </motion.div>
 
-              {/* Cultural Stamp Badge */}
-              <span className="absolute -bottom-2 px-3 py-0.5 rounded-full bg-linear-to-r from-amber-600 to-terracotta-600 text-white text-[10px] font-sans font-bold tracking-widest uppercase border border-amber-300 shadow-md">
-                100% Direct Craft
+              {/* 2. Direct Craft Badge (Placed Cleanly BELOW the Logo) */}
+              <span className="text-[10px] sm:text-xs font-bold tracking-wider uppercase px-3 py-1 rounded-full bg-amber-950/80 text-amber-300 border border-amber-500/40 shadow-sm">
+                100% DIRECT CRAFT
               </span>
+
+              {/* 3. Welcome Chip */}
+              <div className="text-xs font-semibold px-3 py-1 rounded-full bg-white/5 border border-white/10 text-amber-200/90 flex items-center gap-1.5 mt-1">
+                <Sparkles className="w-3.5 h-3.5 text-amber-400" />
+                <span>{tourData.promptTitle || 'Welcome to ArtLynk Bharat'}</span>
+              </div>
             </div>
 
-            {/* Title & Badge */}
+            {/* Title & Question */}
             <div className="space-y-2 max-w-md">
-              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-500/15 border border-amber-500/30 text-amber-300 text-xs font-sans font-semibold">
-                <Sparkles className="w-3.5 h-3.5 text-amber-400" />
-                <span>{tourData.promptTitle}</span>
-              </div>
-
               {/* Main Question in Native Language */}
               <h2 className="font-serif text-2xl sm:text-3xl text-white font-bold leading-snug tracking-tight">
                 {tourData.promptQuestion}

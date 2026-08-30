@@ -78,7 +78,7 @@ export const MobileBottomNav: React.FC = () => {
             <button
               id="mobile-nav-guest-map"
               onClick={() => setActiveTab('craft_map')}
-              className={`flex flex-col items-center justify-center py-1 px-1.5 rounded-xl transition-all cursor-pointer min-h-[44px] min-w-[48px] ${
+              className={`flex flex-col items-center justify-center py-1 px-2 rounded-xl transition-all cursor-pointer min-h-[44px] min-w-[56px] ${
                 activeTab === 'craft_map'
                   ? 'text-amber-300 font-bold'
                   : 'text-stone-400 hover:text-stone-200'
@@ -93,22 +93,9 @@ export const MobileBottomNav: React.FC = () => {
             </button>
 
             <button
-              id="mobile-nav-guest-wishlist"
-              onClick={() => openAuthModal('buyer', 'login')}
-              className="flex flex-col items-center justify-center py-1 px-1.5 rounded-xl text-stone-400 hover:text-stone-200 transition-all cursor-pointer min-h-[44px] min-w-[48px]"
-            >
-              <div className="p-1 rounded-lg">
-                <Heart className="w-4 h-4 text-rose-400" />
-              </div>
-              <span className="text-[10px] mt-0.5 tracking-tight font-sans">
-                {t.nav_pitara || 'Wishlist'}
-              </span>
-            </button>
-
-            <button
               id="mobile-nav-guest-login"
               onClick={() => openAuthModal('buyer', 'login')}
-              className="flex flex-col items-center justify-center py-1 px-1.5 rounded-xl text-amber-400 hover:text-amber-300 transition-all cursor-pointer min-h-[44px] min-w-[48px]"
+              className="flex flex-col items-center justify-center py-1 px-2 rounded-xl text-amber-400 hover:text-amber-300 transition-all cursor-pointer min-h-[44px] min-w-[56px]"
             >
               <div className="p-1 rounded-lg bg-linear-to-r from-[#B83227] to-[#E67E22] text-white shadow-xs">
                 <LogIn className="w-4 h-4" />

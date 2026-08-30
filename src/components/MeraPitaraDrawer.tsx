@@ -18,6 +18,26 @@ import { SocialShareButton } from './SocialShareButton';
 import { lockScroll, unlockScroll } from '../lib/scrollLock';
 import { getCraftTitle } from '../utils/craftTranslations';
 
+const wishlistTranslations: Record<string, string> = {
+  en: "Wishlist",
+  te: "కోరికల జాబితా",
+  hi: "इच्छा सूची",
+  ta: "விருப்பப்பட்டியல்",
+  kn: "ಇಷ್ಟಪಟ್ಟ ಪಟ್ಟಿ",
+  ml: "വിഷ്ലിസ്റ്റ്",
+  mr: "इच्छा यादी",
+  gu: "વિશલિસ્ટ",
+  bn: "ইচ্ছেতালিকা",
+  pa: "ਇੱਛਾ ਸੂਚੀ",
+  or: "ଇଚ୍ଛା ତାଲିକା",
+  as: "পছন্দৰ তালিকা",
+  kok: "इत्सा वळेरी",
+  ne: "इच्छा सूची",
+  mni: "পামজবা পরিং",
+  kha: "Kiei kiba sngewbha",
+  lus: "Duhthusam"
+};
+
 export const MeraPitaraDrawer: React.FC = () => {
   const {
     isPitaraDrawerOpen,
@@ -112,7 +132,7 @@ export const MeraPitaraDrawer: React.FC = () => {
             </div>
             <div>
               <h2 className="text-base font-bold font-serif text-amber-200">
-                {t.pitara_title || 'Wishlist'}
+                {wishlistTranslations[currentLanguage] || t.pitara_title || 'Wishlist'}
               </h2>
               <p className="text-[10px] text-stone-300 font-sans">
                 Curated Saved Masterpieces • {wishlistedCrafts.length} items
