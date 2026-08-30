@@ -197,20 +197,23 @@ export interface InquiryMessage {
 
 export interface AIScanResult {
   title: string;
+  englishTitle?: string;
   hindiTitle: string;
   regionalTitle: string;
   selectedLanguage: LanguageCode;
   craftLineage: string;
+  categoryTag?: string;
   category: CraftCategory | string;
   stateOfOrigin: string;
   materialsDetected: string[];
   heritageStory: string;
-  hindiStory: string;
+  hindiStory?: string;
   regionalStory: string;
   suggestedTags: string[];
+  smartTags?: string[];
   estimatedCraftingDays: number;
   pricingEstimation: PricingEstimation;
-  careInstructions: string;
+  careInstructions?: string;
   isAuthenticCraft?: boolean;
 }
 

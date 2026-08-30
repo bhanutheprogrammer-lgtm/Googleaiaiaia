@@ -166,19 +166,16 @@ export const AuthModal: React.FC = () => {
           gsap.fromTo(
             cardRef.current,
             { 
-              scale: 0.82, 
-              y: 40, 
+              scale: 0.94, 
+              y: 20, 
               opacity: 0, 
-              rotationX: 8,
-              transformPerspective: 1000 
             },
             { 
               scale: 1, 
               y: 0, 
               opacity: 1, 
-              rotationX: 0,
-              duration: 0.45, 
-              ease: 'back.out(1.5)' 
+              duration: 0.35, 
+              ease: 'power3.out' 
             }
           );
         });
@@ -329,7 +326,7 @@ export const AuthModal: React.FC = () => {
     <div 
       ref={overlayRef}
       id="auth-modal-overlay"
-      className="fixed inset-0 z-[99999] flex items-center justify-center p-3 sm:p-4 bg-black/80 backdrop-blur-md overflow-y-auto"
+      className="fixed inset-0 z-[99999] flex items-center justify-center p-2.5 xs:p-3 sm:p-4 bg-black/80 backdrop-blur-md overflow-y-auto"
       onClick={(e) => {
         if (e.target === e.currentTarget) handleClose();
       }}
@@ -341,7 +338,7 @@ export const AuthModal: React.FC = () => {
         ref={cardRef}
         id="auth-modal-card"
         data-lenis-prevent
-        className="relative w-[94%] sm:w-full max-w-lg md:max-w-xl mx-auto max-h-[90vh] overflow-y-auto bg-[#0C243C] text-white rounded-3xl border border-amber-500/30 shadow-2xl p-4 sm:p-6 overscroll-contain flex flex-col space-y-4 sm:space-y-5 box-border"
+        className="relative w-full max-w-lg md:max-w-xl mx-auto my-auto max-h-[90vh] overflow-y-auto bg-[#0C243C] text-white rounded-2xl sm:rounded-3xl border border-amber-500/30 shadow-2xl p-3.5 xs:p-4 sm:p-6 overscroll-contain flex flex-col space-y-4 sm:space-y-5 box-border"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Subtle Ambient Mandala Background */}

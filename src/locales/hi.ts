@@ -2,7 +2,7 @@ import { TranslationSchema } from './types';
 
 export const hi: TranslationSchema = {
   // Brand & Global
-  app_name: 'ArtLynk (कारीगर लिंक)',
+  app_name: 'आर्टलिंक',
   app_badge_handmade: '100% भारतीय हस्तनिर्मित',
   app_tagline_guest: 'सीधे भारत के सिद्धहस्त कारीगरों से • सांस्कृतिक विरासत',
   app_tagline_buyer: 'शाही हस्तशिल्प बाज़ार • 100% सीधा कारीगर व्यापार',

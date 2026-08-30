@@ -245,18 +245,15 @@ export const AccountSettingsModal: React.FC = () => {
           gsap.fromTo(
             cardRef.current,
             { 
-              scale: 0.88, 
-              y: 30, 
+              scale: 0.94, 
+              y: 20, 
               opacity: 0, 
-              rotationX: 4,
-              transformPerspective: 1000 
             },
             { 
               scale: 1, 
               y: 0, 
               opacity: 1, 
-              rotationX: 0, 
-              duration: 0.4, 
+              duration: 0.35, 
               ease: 'power3.out' 
             }
           );
@@ -434,7 +431,7 @@ export const AccountSettingsModal: React.FC = () => {
     <div 
       ref={overlayRef}
       id="account-settings-modal-overlay"
-      className="fixed inset-0 bg-black/70 backdrop-blur-md z-[99999] flex items-center justify-center p-4"
+      className="fixed inset-0 bg-black/75 backdrop-blur-md z-[99999] flex items-center justify-center p-2.5 xs:p-3 sm:p-4 md:p-6 overflow-y-auto"
       onClick={(e) => {
         if (e.target === e.currentTarget) handleClose();
       }}
@@ -446,7 +443,7 @@ export const AccountSettingsModal: React.FC = () => {
         onWheel={(e) => e.stopPropagation()}
         onTouchMove={(e) => e.stopPropagation()}
         onClick={(e) => e.stopPropagation()}
-        className="w-full max-w-2xl bg-[#0b1b2b] border border-amber-500/30 rounded-3xl p-4 sm:p-6 shadow-2xl max-h-[90vh] overflow-y-auto text-white flex flex-col space-y-6 box-border touch-pan-y"
+        className="w-full max-w-2xl bg-[#0b1b2b] border border-amber-500/30 rounded-2xl sm:rounded-3xl p-3.5 xs:p-4 sm:p-6 shadow-2xl max-h-[90vh] overflow-y-auto text-white flex flex-col space-y-4 sm:space-y-6 box-border touch-pan-y"
         style={{
           scrollbarWidth: 'thin',
           scrollbarColor: '#D4AF37 transparent',

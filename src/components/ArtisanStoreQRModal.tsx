@@ -43,19 +43,16 @@ export const ArtisanStoreQRModal: React.FC = () => {
           gsap.fromTo(
             cardRef.current,
             { 
-              scale: 0.8, 
-              y: 45, 
+              scale: 0.94, 
+              y: 20, 
               opacity: 0,
-              rotateZ: -1.5,
-              transformPerspective: 1000 
             },
             { 
               scale: 1, 
               y: 0, 
               opacity: 1, 
-              rotateZ: 0,
-              duration: 0.5, 
-              ease: 'back.out(1.5)' 
+              duration: 0.35, 
+              ease: 'power3.out' 
             }
           );
 
@@ -113,7 +110,7 @@ export const ArtisanStoreQRModal: React.FC = () => {
     <div 
       ref={overlayRef}
       id="store-qr-modal-overlay"
-      className="fixed inset-0 z-[99999] flex items-center justify-center p-3 sm:p-4 bg-black/80 backdrop-blur-md overflow-y-auto"
+      className="fixed inset-0 z-[99999] flex items-center justify-center p-2.5 xs:p-3 sm:p-4 bg-black/80 backdrop-blur-md overflow-y-auto"
       onClick={(e) => {
         if (e.target === e.currentTarget) handleClose();
       }}
@@ -125,7 +122,7 @@ export const ArtisanStoreQRModal: React.FC = () => {
         onWheel={(e) => e.stopPropagation()}
         onTouchMove={(e) => e.stopPropagation()}
         onClick={(e) => e.stopPropagation()}
-        className="relative w-[94%] sm:w-full max-w-xl mx-auto max-h-[88vh] overflow-y-auto rounded-3xl shadow-2xl p-4 sm:p-6 md:p-8 overscroll-contain bg-[#0C243C] text-white border border-amber-500/30 flex flex-col space-y-4 box-border touch-pan-y"
+        className="relative w-full max-w-xl mx-auto max-h-[88vh] overflow-y-auto rounded-2xl sm:rounded-3xl shadow-2xl p-3.5 xs:p-4 sm:p-6 md:p-8 overscroll-contain bg-[#0C243C] text-white border border-amber-500/30 flex flex-col space-y-4 box-border touch-pan-y"
         style={{
           scrollbarWidth: 'thin',
           scrollbarColor: '#D4AF37 transparent',

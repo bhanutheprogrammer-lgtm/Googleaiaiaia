@@ -1,10 +1,10 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect, useRef } from 'react';
 import confetti from 'canvas-confetti';
 import { CraftItem, LanguageCode, InquiryMessage, ArtisanProfile } from '../types';
 import { INITIAL_CRAFTS, INITIAL_INQUIRIES, INDIAN_LANGUAGES } from '../data/mockCrafts';
 import { TranslationSchema, getTranslation } from '../locales';
 import { useAuth } from './AuthContext';
-import { db, collection, doc, setDoc, updateDoc, deleteDoc, onSnapshot, getDocs } from '../firebase';
+import { db, collection, doc, setDoc, updateDoc, deleteDoc, onSnapshot, getDocs, handleFirestoreError, OperationType } from '../firebase';
 
 export const CURRENT_ARTISAN_PROFILE: ArtisanProfile = {
   id: 'artisan-ramesh-rao',
@@ -145,6 +145,9 @@ export const ArtisanProvider: React.FC<{ children: React.ReactNode }> = ({ child
   const [selectedState, setSelectedState] = useState<string>('All');
   const [giOnlyFilter, setGiOnlyFilter] = useState(false);
 
+  const hasSeededCraftsRef = useRef(false);
+  const hasSeededInquiriesRef = useRef(false);
+
   // Firestore Realtime Synchronization for Crafts & Inquiries
   useEffect(() => {
     let unsubscribeCrafts: (() => void) | undefined;
@@ -161,19 +164,19 @@ export const ArtisanProvider: React.FC<{ children: React.ReactNode }> = ({ child
             snapshot.forEach((docSnap) => {
               firestoreCrafts.push(docSnap.data() as CraftItem);
             });
-            // Keep crafts in order of latest
             setCrafts(firestoreCrafts);
-          } else {
+          } else if (!hasSeededCraftsRef.current) {
+            hasSeededCraftsRef.current = true;
             // Seed initial crafts if Firestore collection is brand new
             INITIAL_CRAFTS.forEach((item) => {
               setDoc(doc(db, 'crafts', item.id), item).catch((err) =>
-                console.log('Craft seed note:', err)
+                handleFirestoreError(err, OperationType.WRITE, `crafts/${item.id}`)
               );
             });
           }
         },
         (error) => {
-          console.warn('Firestore crafts snapshot fallback to local state:', error);
+          handleFirestoreError(error, OperationType.LIST, 'crafts');
         }
       );
 
@@ -188,21 +191,22 @@ export const ArtisanProvider: React.FC<{ children: React.ReactNode }> = ({ child
               firestoreInquiries.push(docSnap.data() as InquiryMessage);
             });
             setInquiries(firestoreInquiries);
-          } else {
+          } else if (!hasSeededInquiriesRef.current) {
+            hasSeededInquiriesRef.current = true;
             // Seed initial inquiries if empty
             INITIAL_INQUIRIES.forEach((item) => {
               setDoc(doc(db, 'inquiries', item.id), item).catch((err) =>
-                console.log('Inquiry seed note:', err)
+                handleFirestoreError(err, OperationType.WRITE, `inquiries/${item.id}`)
               );
             });
           }
         },
         (error) => {
-          console.warn('Firestore inquiries snapshot fallback:', error);
+          handleFirestoreError(error, OperationType.LIST, 'inquiries');
         }
       );
     } catch (e) {
-      console.warn('Firestore subscription initialized with offline fallback:', e);
+      handleFirestoreError(e, OperationType.LIST, 'realtime_subscriptions');
     }
 
     return () => {
@@ -231,14 +235,14 @@ export const ArtisanProvider: React.FC<{ children: React.ReactNode }> = ({ child
   const addCraft = (newCraft: CraftItem) => {
     setCrafts((prev) => [newCraft, ...prev]);
     setDoc(doc(db, 'crafts', newCraft.id), newCraft).catch((err) =>
-      console.log('Firestore add craft write:', err)
+      handleFirestoreError(err, OperationType.CREATE, `crafts/${newCraft.id}`)
     );
   };
 
   const updateCraft = (id: string, updated: Partial<CraftItem>) => {
     setCrafts((prev) => prev.map((c) => (c.id === id ? { ...c, ...updated } : c)));
     updateDoc(doc(db, 'crafts', id), updated).catch((err) =>
-      console.log('Firestore update craft write:', err)
+      handleFirestoreError(err, OperationType.UPDATE, `crafts/${id}`)
     );
   };
 
@@ -249,14 +253,14 @@ export const ArtisanProvider: React.FC<{ children: React.ReactNode }> = ({ child
       prev.map((c) => (c.id === id ? { ...c, inStock: newStock } : c))
     );
     updateDoc(doc(db, 'crafts', id), { inStock: newStock }).catch((err) =>
-      console.log('Firestore toggle stock write:', err)
+      handleFirestoreError(err, OperationType.UPDATE, `crafts/${id}`)
     );
   };
 
   const deleteCraft = (id: string) => {
     setCrafts((prev) => prev.filter((c) => c.id !== id));
     deleteDoc(doc(db, 'crafts', id)).catch((err) =>
-      console.log('Firestore delete craft write:', err)
+      handleFirestoreError(err, OperationType.DELETE, `crafts/${id}`)
     );
   };
 

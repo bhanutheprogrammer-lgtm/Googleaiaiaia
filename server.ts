@@ -26,6 +26,7 @@ const LANGUAGE_NAMES: Record<string, string> = {
 
 // Robust Gemini execution helper with automatic multi-model fallback on 503/429 demand spikes
 const SUPPORTED_GEMINI_MODELS = [
+  "gemini-2.5-flash",
   "gemini-3.7-flash",
   "gemini-flash-latest",
   "gemini-3.1-flash-lite",
@@ -287,49 +288,29 @@ app.post("/api/gemini/analyze-craft", async (req, res) => {
       return res.json(fallbackResult);
     }
 
-    const systemInstruction = `You are KalaKriti & Artisan Link AI, an expert cultural anthropologist, National Crafts Council of India appraiser, and Indian handmade craft specialist.
-Carefully inspect the provided image and the artisan's voice/text notes: "${combinedNotes}".
-TARGET REGIONAL LANGUAGE FOR TRANSLATION: ${targetLangName} (code: ${selectedLanguage}, e.g., Telugu, Tamil, Kannada, Malayalam, Marathi, Gujarati, Odia, Bengali, Urdu, Hindi).
-
-TASK:
-1. Examine what is VISUALLY present in this image in detail.
-2. If it is an authentic handmade Indian craft (e.g., pottery, handloom textile, woodcraft, metal casting, painting, jewelry, leather, stone carving, terracotta, embroidery, etc.):
-   - Identify the exact craft technique (e.g. Blue Pottery, Bastar Dhokra, Madhubani, Terracotta, Pochampally Ikat, Channapatna, Pashmina, Tanjore, Warli, Bidriware, Phulkari, Pattachitra, Kasuti).
-   - Accurately list the materials and natural dyes/finishes detected visually.
-   - Compose an evocative 3-sentence cultural heritage narrative in English, Hindi, and the target regional language (${targetLangName}).
-   - Provide fair-trade pricing estimation in INR (₹) based on visible crafting complexity and materials.
-   - Set "isAuthenticCraft": true.
-3. If the image is NOT a handmade craft (e.g. a pet/cat/dog, animal, selfie/person, electronics/gadget, automobile, cartoon, meme, food dish, mass-produced machine item):
-   - Set "isAuthenticCraft": false.
-   - Accurately identify and describe what is visible in the image in the title and craftLineage (e.g. "Domestic Pet Cat (Felis catus)", "Consumer Electronic Gadget").
-   - Set category to "Other".
-   - In "heritageStory", "hindiStory", and "regionalStory", state what was visually recognized in the image, and politely advise the user that Artisan Link requires authentic handmade Indian crafts or handloom artifacts to issue GI certificates and fair price evaluations.
-   - Set pricingEstimation fields to 0 with pricingRationale explaining that a non-craft object was detected.
-
-OUTPUT FORMAT: Return ONLY a valid JSON object matching this schema:
+    const systemInstruction = `Analyze this Indian handicraft photo. Return JSON strictly matching this schema:
 {
-  "title": "Evocative English Product Title based on visual analysis",
-  "hindiTitle": "सटीक व आकर्षक हिंदी शीर्षक",
-  "regionalTitle": "Accurate product title translated into ${targetLangName} script",
-  "selectedLanguage": "${selectedLanguage}",
-  "craftLineage": "Specific craft heritage, traditional technique & GI status (or description of non-craft object)",
-  "category": "One of: Clay/Pottery, Handloom, Woodcraft, Metalcraft, Folk Art, Stone Craft, Jewelry/Terracotta, Other",
-  "stateOfOrigin": "Most probable Indian state of origin (or 'N/A' if non-craft)",
-  "materialsDetected": ["Visually detected material 1", "Material 2", "Natural dye/finish 3"],
-  "heritageStory": "An evocative 3-sentence cultural narrative in English explaining the history, symbolism, and artisan dedication (or polite guidance if non-craft).",
-  "hindiStory": "विरासत और कला की कहानी हिंदी में (3 सुंदर वाक्य)",
-  "regionalStory": "Heritage story translated into ${targetLangName} script",
-  "suggestedTags": ["GI-Tagged", "100% Shuddh Hastshilp", "Made in India", "Eco-Friendly", "3 more specific tags"],
-  "estimatedCraftingDays": 5,
+  "categoryTag": "HANDLOOM • TAMIL NADU",
+  "englishTitle": "Deep Purple Kanchipuram Silk Saree with Zari Border",
+  "hindiTitle": "गहरा बैंगनी कांचीपुरम सिल्क साड़ी ज़री बॉर्डर के साथ",
+  "regionalTitle": "జరి అంచుతో కూడిన ముదురు ఊదా రంగు కాంచీపురం పట్టు చీర",
+  "craftLineage": "Kanchipuram Silk Weaving (GI Tagged), traditional handloom technique from Tamil Nadu.",
+  "heritageStory": "This exquisite Kanchipuram saree is a testament to the timeless artistry of Tamil Nadu's master weavers. Handwoven on traditional pit looms with pure mulberry silk and gold zari, it embodies centuries of heritage.",
+  "regionalStory": "ఈ అద్భుతమైన కాంచీపురం చీర తమిళనాడుకు చెందిన నేత కళాకారుల అమూల్యమైన నైపుణ్యానికి నిదర్శనం. స్వచ్ఛమైన మల్బరీ పట్టు మరియు బంగారు జరీతో సంప్రదాయ మగ్గంపై నేయబడింది.",
+  "materialsDetected": ["Pure Mulberry Silk", "Gold-dipped Zari thread", "Natural vegetable-based dyes"],
+  "smartTags": ["#GI-Tagged", "#100% Shuddh Hastshilp", "#Made In India", "#Traditional Weaving"],
+  "category": "Handloom",
+  "stateOfOrigin": "Tamil Nadu",
+  "estimatedCraftingDays": 14,
   "pricingEstimation": {
-    "baseMaterialCostINR": 800,
-    "fairKarigarWageINR": 1400,
-    "recommendedRetailPriceINR": 2600,
-    "pricingRationale": "Pricing breakdown based on visible intricacy, material quality, and artisan effort."
+    "baseMaterialCostINR": 4500,
+    "fairKarigarWageINR": 3800,
+    "recommendedRetailPriceINR": 9800,
+    "pricingRationale": "Accounts for raw mulberry silk, metallic zari, and 14 days of precision master handloom labor."
   },
-  "careInstructions": "Care and maintenance guidelines for the item.",
   "isAuthenticCraft": true
-}`;
+}
+Note: If the image is not a handmade craft, set isAuthenticCraft: false, category: "Other", stateOfOrigin: "N/A", and identify the object in englishTitle and craftLineage. Target regional language code: ${selectedLanguage} (${targetLangName}).`;
 
     const contents: any[] = [];
     const sourceImage = imageBase64 || imageUrl || "";
@@ -378,6 +359,7 @@ OUTPUT FORMAT: Return ONLY a valid JSON object matching this schema:
         systemInstruction,
         responseMimeType: "application/json",
         temperature: 0.2,
+        maxOutputTokens: 800,
       },
     }, SUPPORTED_GEMINI_MODELS);
 
@@ -395,9 +377,19 @@ OUTPUT FORMAT: Return ONLY a valid JSON object matching this schema:
       }
     }
 
-    // Ensure isAuthenticCraft is a boolean if not explicitly set
-    if (parsedData && parsedData.isAuthenticCraft === undefined) {
-      parsedData.isAuthenticCraft = parsedData.category !== "Other";
+    // Normalize field aliases for frontend components
+    if (parsedData) {
+      parsedData.title = parsedData.englishTitle || parsedData.title || "Master Indian Handcrafted Artifact";
+      parsedData.englishTitle = parsedData.englishTitle || parsedData.title;
+      parsedData.category = parsedData.category || (parsedData.categoryTag ? parsedData.categoryTag.split("•")[0].trim() : "Handloom");
+      parsedData.stateOfOrigin = parsedData.stateOfOrigin || (parsedData.categoryTag && parsedData.categoryTag.includes("•") ? parsedData.categoryTag.split("•")[1].trim() : "India");
+      parsedData.categoryTag = parsedData.categoryTag || `${String(parsedData.category).toUpperCase()} • ${String(parsedData.stateOfOrigin).toUpperCase()}`;
+      parsedData.suggestedTags = parsedData.smartTags || parsedData.suggestedTags || ["#GI-Tagged", "#100% Shuddh Hastshilp", "#Made In India"];
+      parsedData.smartTags = parsedData.smartTags || parsedData.suggestedTags;
+      
+      if (parsedData.isAuthenticCraft === undefined) {
+        parsedData.isAuthenticCraft = parsedData.category !== "Other";
+      }
     }
 
     res.json(parsedData);

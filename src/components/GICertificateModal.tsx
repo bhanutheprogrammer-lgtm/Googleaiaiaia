@@ -65,18 +65,15 @@ export const GICertificateModal: React.FC = () => {
           gsap.fromTo(
             cardRef.current,
             { 
-              scale: 0.9, 
-              y: 30, 
+              scale: 0.94, 
+              y: 20, 
               opacity: 0, 
-              rotateX: 4,
-              transformPerspective: 1200 
             },
             { 
               scale: 1, 
               y: 0, 
               opacity: 1, 
-              rotateX: 0, 
-              duration: 0.45, 
+              duration: 0.35, 
               ease: 'power3.out' 
             }
           );

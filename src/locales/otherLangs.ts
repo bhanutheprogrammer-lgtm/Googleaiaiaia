@@ -7,7 +7,7 @@ function makeLocale(overrides: Partial<TranslationSchema>): TranslationSchema {
 }
 
 export const te: TranslationSchema = makeLocale({
-  app_name: 'ArtLynk (ఆర్టిసాన్ లింక్)',
+  app_name: 'ఆర్ట్లింక్',
   app_badge_handmade: '100% భారతీయ చేతివృత్తి',
   app_tagline_guest: 'భారతీయ చేనేతకారుల నుండి నేరుగా • వారసత్వ కళలు',
   app_tagline_buyer: 'రాయల్ హస్తకళా బజార్ • 100% ప్రత్యక్ష కారిగర్ వాణిజ్యం',
@@ -121,7 +121,7 @@ export const te: TranslationSchema = makeLocale({
 });
 
 export const ta: TranslationSchema = makeLocale({
-  app_name: 'ArtLynk (ஆர்டிசன் லிங்க்)',
+  app_name: 'ஆர்ட்லிங்க்',
   app_badge_handmade: '100% இந்திய கைவினைப்பொருள்',
   app_tagline_guest: 'இந்தியாவின் தலைசிறந்த கைவினைஞர்களிடமிருந்து நேரடியாக',
   app_tagline_buyer: 'பாரம்பரிய கைவினைச் சந்தை • நேரடி வணிகம்',
@@ -203,7 +203,7 @@ export const ta: TranslationSchema = makeLocale({
 });
 
 export const bn: TranslationSchema = makeLocale({
-  app_name: 'ArtLynk (আর্টিসান লিঙ্ক)',
+  app_name: 'আর্টলিংক',
   app_badge_handmade: '১০০% ভারতীয় হস্তনির্মিত',
   app_tagline_guest: 'ভারতের ঐতিহ্যবাহী কারিগরদের থেকে সরাসরি',
   app_tagline_buyer: 'রাজকীয় হস্তশিল্প বাজার • ১০০% সরাসরি কারিগর বাণিজ্য',
@@ -285,7 +285,7 @@ export const bn: TranslationSchema = makeLocale({
 });
 
 export const mr: TranslationSchema = makeLocale({
-  app_name: 'ArtLynk (कारीगर लिंक)',
+  app_name: 'आर्टलिंक',
   app_badge_handmade: '१००% भारतीय हस्तनिर्मित',
   app_tagline_guest: 'भारतातील निष्णात कारागिरांकडून थेट',
   app_tagline_buyer: 'शाही हस्तकला बाजार • १००% थेट कारागीर व्यापार',
@@ -367,7 +367,7 @@ export const mr: TranslationSchema = makeLocale({
 });
 
 export const gu: TranslationSchema = makeLocale({
-  app_name: 'ArtLynk (આર્ટિસન લિંક)',
+  app_name: 'આર્ટલિંક',
   app_badge_handmade: '૧૦૦% ભારતીય હસ્તકળા',
   app_tagline_guest: 'ભારતના કુશળ કારીગરો પાસેથી સીધા • પ્રાચીન વારસો',
   app_tagline_buyer: 'શાહી હસ્તકળા બજાર • ૧૦૦% સીધો કારીગર વેપાર',
@@ -449,7 +449,7 @@ export const gu: TranslationSchema = makeLocale({
 });
 
 export const kn: TranslationSchema = makeLocale({
-  app_name: 'ArtLynk (ಆರ್ಟಿಸನ್ ಲಿಂಕ್)',
+  app_name: 'ಆರ್ಟ್ಲಿಂಕ್',
   app_badge_handmade: '100% ಭಾರತೀಯ ಕರಕುಶಲ',
   app_tagline_guest: 'ಭಾರತದ ನುರಿತ ಕುಶಲಕರ್ಮಿಗಳಿಂದ ನೇರವಾಗಿ',
   app_tagline_buyer: 'ರಾಜಮನೆತನದ ಕರಕುಶಲ ಮಾರುಕಟ್ಟೆ • ನೇರ ವ್ಯಾಪಾರ',
@@ -530,7 +530,7 @@ export const kn: TranslationSchema = makeLocale({
 });
 
 export const ml: TranslationSchema = makeLocale({
-  app_name: 'ArtLynk (ആർട്ടിസൻ ലിങ്ക്)',
+  app_name: 'ആർട്ട്ലിങ്ക്',
   app_badge_handmade: '100% ഇന്ത്യൻ കൈത്തറി & കരകൗശലം',
   app_tagline_guest: 'ഭാരതത്തിലെ പാരമ്പര്യ കരകൗശല വിദഗ്ദ്ധരിൽ നിന്ന് നേരിട്ട്',
   app_tagline_buyer: 'രാജകീയ കരകൗശല ചന്ത • നേരിട്ടുള്ള വിപണനം',
@@ -611,7 +611,7 @@ export const ml: TranslationSchema = makeLocale({
 });
 
 export const or: TranslationSchema = makeLocale({
-  app_name: 'ArtLynk (ଆର୍ଟିସାନ ଲିଙ୍କ)',
+  app_name: 'ଆର୍ଟଲିଙ୍କ୍',
   app_badge_handmade: '୧୦୦% ଭାରତୀୟ ହସ୍ତତନ୍ତ ଓ ହସ୍ତଶିଳ୍ପ',
   app_tagline_guest: 'ଭାରତର ଦକ୍ଷ କାରିଗରମାନଙ୍କ ଠାରୁ ସିଧାସଳଖ',
   app_tagline_buyer: 'ରାଜକୀୟ ହସ୍ତଶିଳ୍ପ ବଜାର • ୧୦୦% ପ୍ରତ୍ୟକ୍ଷ ବାଣିଜ୍ୟ',
@@ -692,7 +692,7 @@ export const or: TranslationSchema = makeLocale({
 });
 
 export const ur: TranslationSchema = makeLocale({
-  app_name: 'ArtLynk (دستکار لنک)',
+  app_name: 'آرٹ لنک',
   app_badge_handmade: '100% ہندوستانی دستکاری',
   app_tagline_guest: 'ہندوستان کے ماہر کاریگروں سے براہ راست • روایتی دستکاری',
   app_tagline_buyer: 'شاہی دستکاری بازار • 100% براہ راست تجارت',
@@ -773,7 +773,7 @@ export const ur: TranslationSchema = makeLocale({
 });
 
 export const pa: TranslationSchema = makeLocale({
-  app_name: 'ArtLynk (ਕਲਾ-ਲਿੰਕ)',
+  app_name: 'ਆਰਟਲਿੰਕ',
   app_badge_handmade: '100% ਭਾਰਤੀ ਹੱਥ-ਕਲਾ',
   app_tagline_guest: 'ਭਾਰਤੀ ਦਸਤਕਾਰਾਂ ਤੋਂ ਸਿੱਧਾ • ਵਿਰਾਸਤੀ ਕਲਾ',
   app_tagline_buyer: 'ਰਾਇਲ ਦਸਤਕਾਰੀ ਬਾਜ਼ਾਰ • 100% ਸਿੱਧਾ ਕਾਰੀਗਰ ਵਪਾਰ',
@@ -856,7 +856,7 @@ export const pa: TranslationSchema = makeLocale({
 
 // 12. Assamese (অসমীয়া)
 export const as: TranslationSchema = makeLocale({
-  app_name: 'ArtLynk (আৰ্টলিংক)',
+  app_name: 'আৰ্টলিংক',
   app_badge_handmade: '১০০% ভাৰতীয় হস্তশিল্প',
   app_tagline_guest: 'ভাৰতৰ শিপিনী আৰু কাৰিকৰৰ পৰা পোনপটীয়া • ঐতিহ্যময় শিল্প',
   app_tagline_buyer: 'ৰয়েল ঐতিহ্য বজাৰ • ১০০% পোনপটীয়া কাৰিকৰ',
@@ -944,7 +944,7 @@ export const as: TranslationSchema = makeLocale({
 
 // 13. Konkani (कोंकणी)
 export const kok: TranslationSchema = makeLocale({
-  app_name: 'ArtLynk (आर्टलिंक)',
+  app_name: 'आर्टलिंक',
   app_badge_handmade: '100% भारतीय हस्तकला',
   app_tagline_guest: 'भारतीय कारागिरांकडल्यान थेट • पारंपरिक कला',
   app_tagline_buyer: 'रॉयल हेरिटेज बाजार • 100% थेट कारागीर व्यापार',
@@ -1032,7 +1032,7 @@ export const kok: TranslationSchema = makeLocale({
 
 // 14. Nepali (नेपाली)
 export const ne: TranslationSchema = makeLocale({
-  app_name: 'ArtLynk (आर्टलिंक)',
+  app_name: 'आर्टलिंक',
   app_badge_handmade: '१००% भारतीय हस्तकला',
   app_tagline_guest: 'भारतीय सीपदार कारीगरहरूबाट सिधै • मौलिक परम्परा',
   app_tagline_buyer: 'रोयल हेरिटेज बजार • १००% प्रत्यक्ष कारीगर व्यापार',
@@ -1120,7 +1120,7 @@ export const ne: TranslationSchema = makeLocale({
 
 // 15. Manipuri (মৈতৈলোন্)
 export const mni: TranslationSchema = makeLocale({
-  app_name: 'ArtLynk (আৰ্টলিঙ্ক)',
+  app_name: 'আৰ্টলিংক',
   app_badge_handmade: '১০০% ভারতকী খুৎশাবা পোৎলম',
   app_tagline_guest: 'ভারতকী হৈথোই-শিংথোইবা শিন্মীশিংদগী হকথেংননা • নাৎকী পোৎলমশিং',
   app_tagline_buyer: 'রোয়েল হেরিটেইজ কাইথেল • ১০০% হকথেংনবা শিন্মী',
@@ -1208,7 +1208,7 @@ export const mni: TranslationSchema = makeLocale({
 
 // 16. Khasi (Ka Ktien Khasi)
 export const kha: TranslationSchema = makeLocale({
-  app_name: 'ArtLynk (Kala-Link)',
+  app_name: 'ArtLynk',
   app_badge_handmade: '100% Ba Shna da ki Kti ha Ri Bharat',
   app_tagline_guest: 'Direct na ki Nongshna Kti ka Ri India • Jingstad Tynrai',
   app_tagline_buyer: 'Iew Riti Tynrai • 100% Direct na u Nongthaw',
@@ -1296,7 +1296,7 @@ export const kha: TranslationSchema = makeLocale({
 
 // 17. Mizo (Mizo ṭawng)
 export const lus: TranslationSchema = makeLocale({
-  app_name: 'ArtLynk (Kala-Link)',
+  app_name: 'ArtLynk',
   app_badge_handmade: '100% Kut chhuak ngei',
   app_tagline_guest: 'India Kutchhuak Thiamte hnen aṭangin Direct • Hnam Rohlu',
   app_tagline_buyer: 'Lal Rohlu Bazar • 100% Direct Kutchhuak sumdawnna',

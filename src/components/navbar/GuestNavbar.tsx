@@ -87,7 +87,7 @@ export const GuestNavbar: React.FC<GuestNavbarProps> = ({ onAuthClick }) => {
 
             <div className="flex flex-col min-w-0">
               <div className="flex items-center gap-1 sm:gap-2">
-                <span className="font-serif font-bold text-base sm:text-lg md:text-xl text-white tracking-tight leading-none shrink-0">
+                <span className="font-serif font-bold text-base sm:text-lg text-white shrink-0 tracking-wide leading-none">
                   {t.app_name || 'ArtLynk'}
                 </span>
                 <span className="hidden 2xl:inline-flex items-center gap-1 text-[10px] font-sans font-bold bg-[#B88E28]/20 text-amber-200 px-2 py-0.5 rounded-full uppercase tracking-wider border border-[#B88E28]/40 whitespace-nowrap shrink-0">

@@ -1,6 +1,7 @@
 import { initializeApp, getApps, getApp } from 'firebase/app';
 import { 
   getFirestore, 
+  initializeFirestore,
   doc, 
   getDoc,
   collection, 
@@ -37,8 +38,23 @@ declare global {
 // Initialize Firebase App
 const app = !getApps().length ? initializeApp(firebaseConfig) : getApp();
 
-// Initialize Firestore with custom Database ID from config as per Firebase Integration Skill
-export const db = getFirestore(app, firebaseConfig.firestoreDatabaseId);
+// Initialize Firestore with custom Database ID & robust auto-detect long polling
+let firestoreInstance;
+try {
+  firestoreInstance = initializeFirestore(
+    app,
+    {
+      experimentalAutoDetectLongPolling: true,
+      ignoreUndefinedProperties: true
+    },
+    firebaseConfig.firestoreDatabaseId
+  );
+} catch {
+  // If already initialized, fallback to getFirestore
+  firestoreInstance = getFirestore(app, firebaseConfig.firestoreDatabaseId);
+}
+
+export const db = firestoreInstance;
 
 // Initialize Firebase Authentication
 export const auth = getAuth(app);
@@ -71,6 +87,12 @@ export interface FirestoreErrorInfo {
 }
 
 export function handleFirestoreError(error: unknown, operationType: OperationType, path: string | null) {
+  const isOfflineOrUnavailable = 
+    error instanceof Error && 
+    (error.message.includes('unavailable') || 
+     error.message.includes('offline') || 
+     error.message.includes('network'));
+
   const errInfo: FirestoreErrorInfo = {
     error: error instanceof Error ? error.message : String(error),
     authInfo: {
@@ -87,7 +109,12 @@ export function handleFirestoreError(error: unknown, operationType: OperationTyp
     operationType,
     path
   };
-  console.warn('Firestore Operation Notice: ', JSON.stringify(errInfo));
+
+  if (isOfflineOrUnavailable) {
+    console.info('Firestore operation using offline/cached local state for:', path);
+  } else {
+    console.warn('Firestore Operation Notice: ', JSON.stringify(errInfo));
+  }
   return errInfo;
 }
 
@@ -129,7 +156,7 @@ export const initRecaptchaVerifier = (containerId: string = 'recaptcha-container
 // Test Connection to Firestore as per Firebase Skill guidelines
 export async function testConnection() {
   try {
-    await getDocFromServer(doc(db, 'test', 'connection'));
+    await getDoc(doc(db, 'test', 'connection'));
   } catch (error: any) {
     if (error instanceof Error && (error.message.includes('the client is offline') || error.message.includes('unavailable'))) {
       console.info('Firestore client is operating with local cache / offline fallback.');
@@ -141,7 +168,7 @@ export async function testConnection() {
 if (typeof window !== 'undefined') {
   setTimeout(() => {
     testConnection().catch(() => {});
-  }, 1000);
+  }, 2000);
 }
 
 export {
