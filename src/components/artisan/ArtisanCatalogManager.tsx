@@ -169,10 +169,15 @@ export const ArtisanCatalogManager: React.FC = () => {
         </div>
 
         <button
+          id="catalog-add-scan-craft-btn"
           onClick={() => setActiveTab('scan_studio')}
-          className="px-5 py-3 rounded-2xl bg-linear-to-r from-[#B83227] to-[#E67E22] text-white text-xs font-bold font-sans uppercase tracking-wider flex items-center justify-center gap-2 hover:scale-105 transition-all shadow-md cursor-pointer border border-[#D4AF37]"
+          className="relative px-5 py-3 rounded-2xl bg-linear-to-r from-[#B83227] to-[#E67E22] text-white text-xs font-bold font-sans uppercase tracking-wider flex items-center justify-center gap-2 hover:scale-105 transition-all shadow-md cursor-pointer border border-[#D4AF37]"
         >
-          <Sparkles className="w-4 h-4 text-amber-300" />
+          <span className="relative flex h-2 w-2">
+            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-300 opacity-75"></span>
+            <span className="relative inline-flex rounded-full h-2 w-2 bg-amber-400"></span>
+          </span>
+          <Sparkles className="w-4 h-4 text-amber-300 animate-pulse" />
           <span>+ {t.dash_new_scan || 'Add New Craft via AI Scan'}</span>
         </button>
       </div>

@@ -66,7 +66,7 @@ export const ArtisanDashboardView: React.FC<ArtisanDashboardViewProps> = ({ arti
   }, [activeTab]);
 
   return (
-    <div id="artisan-studio-workspace" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6 animate-in fade-in duration-300">
+    <div id="artisan-studio-workspace" className="max-w-7xl mx-auto px-4 md:px-8 py-6 space-y-6 animate-in fade-in duration-300">
       
       {/* Sleek Workspace Sub-Navigation Tab Bar */}
       <div className="flex items-center justify-between gap-3 overflow-x-auto pb-1 scrollbar-none">
@@ -74,13 +74,18 @@ export const ArtisanDashboardView: React.FC<ArtisanDashboardViewProps> = ({ arti
           <button
             id="artisan-tab-scan-studio"
             onClick={() => setActiveTab('scan_studio')}
-            className={`px-4 py-2.5 rounded-2xl text-xs sm:text-sm font-sans font-bold transition-all flex items-center gap-2 cursor-pointer shrink-0 shadow-sm ${
+            className={`relative px-4 py-2.5 rounded-2xl text-xs sm:text-sm font-sans font-bold transition-all flex items-center gap-2 cursor-pointer shrink-0 shadow-sm ${
               activeTab === 'scan_studio'
                 ? 'bg-linear-to-r from-[#A84A2C] to-amber-600 text-white border border-amber-400/60 shadow-md ring-2 ring-amber-500/20'
-                : 'bg-white hover:bg-stone-100 text-stone-700 border border-stone-200'
+                : 'bg-white hover:bg-stone-100 text-stone-700 border border-stone-200 shadow-xs'
             }`}
           >
-            <Sparkles className={`w-4 h-4 ${activeTab === 'scan_studio' ? 'text-amber-300' : 'text-[#A84A2C]'}`} />
+            {/* Subtle attention-drawing pulsing indicator */}
+            <span className="relative flex h-2 w-2">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-amber-500"></span>
+            </span>
+            <Sparkles className={`w-4 h-4 ${activeTab === 'scan_studio' ? 'text-amber-300' : 'text-[#A84A2C]'} animate-pulse`} />
             <span>{t.dash_new_scan || 'AI Scan Studio'}</span>
           </button>
 

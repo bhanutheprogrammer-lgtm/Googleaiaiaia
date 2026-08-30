@@ -37,6 +37,7 @@ export const CraftGrid: React.FC = () => {
     setSelectedCraftForStory,
     setSelectedCraftForCertificate,
     generateWhatsAppLink,
+    setActiveTab,
     currentLanguage,
     t
   } = useArtisan();
@@ -123,7 +124,7 @@ export const CraftGrid: React.FC = () => {
       id="marketplace-section" 
       data-scroll-section
       data-scroll
-      className="py-14 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto"
+      className="py-10 sm:py-14 px-4 md:px-8 max-w-7xl mx-auto"
     >
       
       {/* Section Header - Editorial Layout */}
@@ -141,8 +142,24 @@ export const CraftGrid: React.FC = () => {
           </p>
         </div>
 
-        {/* State and GI filter tools - Editorial Boxes */}
+        {/* State, GI, and Scan Tools - Editorial Boxes */}
         <div className="flex items-center flex-wrap gap-2.5">
+          {/* Quick AI Scan for New Craft Listings with Subtle Pulsing Animation */}
+          <button
+            id="marketplace-scan-craft-btn"
+            onClick={() => setActiveTab('scan_studio')}
+            className="relative flex items-center space-x-1.5 sm:space-x-2 px-3.5 py-2 rounded-xl text-xs font-sans uppercase tracking-wider font-bold bg-linear-to-r from-[#A84A2C] to-[#C05621] hover:from-[#913D22] hover:to-[#A84A2C] text-white shadow-xs hover:shadow-md transition-all cursor-pointer group shrink-0"
+            title="Scan handcrafted masterpiece to publish new listing"
+          >
+            {/* Subtle Pulsing attention ring */}
+            <span className="relative flex h-2 w-2">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-300 opacity-75"></span>
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-amber-400"></span>
+            </span>
+            <Sparkles className="w-3.5 h-3.5 text-amber-300 animate-pulse" />
+            <span className="truncate">{t.dash_new_scan || 'Scan Craft'}</span>
+          </button>
+
           {/* State Dropdown */}
           <div className="flex items-center space-x-2 bg-white border border-stone-200 hover:border-[#B88E28] rounded-xl px-3.5 py-2 shadow-2xs transition-colors">
             <MapPin className="w-3.5 h-3.5 text-[#A84A2C]" />

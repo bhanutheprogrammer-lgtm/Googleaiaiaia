@@ -190,21 +190,21 @@ export const BuyerMarketplaceView: React.FC<BuyerMarketplaceViewProps> = ({ buye
         )}
 
         {activeTab === 'craft_map' && (
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
+          <div className="max-w-7xl mx-auto px-4 md:px-8 py-6 sm:py-8 space-y-6">
             {userProfileCard}
             <CraftMapSection />
           </div>
         )}
 
         {activeTab === 'certificates' && (
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
+          <div className="max-w-7xl mx-auto px-4 md:px-8 py-6 sm:py-8 space-y-6">
             {userProfileCard}
             <BuyerCertificateVault />
           </div>
         )}
 
         {activeTab === 'stories' && (
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
+          <div className="max-w-7xl mx-auto px-4 md:px-8 py-6 sm:py-8 space-y-6">
             {userProfileCard}
             <StoriesSection />
           </div>

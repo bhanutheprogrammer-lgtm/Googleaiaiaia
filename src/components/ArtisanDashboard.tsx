@@ -80,7 +80,7 @@ export const ArtisanDashboard: React.FC = () => {
   };
 
   return (
-    <div className="py-8 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto space-y-8">
+    <div className="py-8 px-4 md:px-8 max-w-7xl mx-auto space-y-8">
       
       {/* Master Karigar Header Card */}
       <div className="bg-[#0C243C] text-white rounded-3xl p-6 sm:p-8 border border-[#D4AF37] shadow-xl relative overflow-hidden">

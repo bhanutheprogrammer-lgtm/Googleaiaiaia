@@ -90,7 +90,7 @@ export const HeroSection: React.FC = () => {
       <div className="absolute top-0 right-0 w-[550px] h-[550px] bg-mandala-radial pointer-events-none opacity-60" />
 
       {/* Main Editorial Hero Wrapper */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 py-8 sm:py-10 lg:py-12">
+      <div className="max-w-7xl mx-auto px-4 md:px-8 relative z-10 py-8 sm:py-10 lg:py-12">
         
         {/* Top Header Manifesto */}
         <div className="max-w-4xl mx-auto text-center mb-6">
