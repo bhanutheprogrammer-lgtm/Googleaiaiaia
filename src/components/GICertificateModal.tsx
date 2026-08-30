@@ -122,11 +122,11 @@ export const GICertificateModal: React.FC = () => {
 
   const patronLevel = isBuyerRole && buyerUser?.patronLevel
     ? buyerUser.patronLevel
-    : 'Guardian of Indian Handloom & Heritage — Tier 1';
+    : 'Guardian of Indian Handloom — Level 2';
 
   const patronLocation = isBuyerRole && (buyerUser?.location || buyerUser?.deliveryState)
     ? (buyerUser.deliveryCity ? `${buyerUser.deliveryCity}, ${buyerUser.deliveryState}` : buyerUser.location)
-    : `${craft.stateOfOrigin} Guild Connoisseur, India`;
+    : (currentUser?.location || 'Bengaluru, Karnataka');
 
   // Generate Unique Verifiable Certificate ID per Craft & Patron
   const craftCode = (craft.giTagCode || craft.certificateId || craft.id)
@@ -601,76 +601,60 @@ export const GICertificateModal: React.FC = () => {
             </div>
 
             {/* Legal Lineage Verification Citation */}
-            <div className="bg-[#FAF9F6] p-3 rounded-xl border border-amber-900/15 text-[11px] text-[#0F1E2E] leading-relaxed text-justify font-serif relative z-10">
-              <strong className="text-[#A84A2C] font-sans uppercase tracking-wider">Provenance Guarantee:</strong> This artifact has been verified under the Geographical Indications of Goods (Registration and Protection) Act, 1999. Crafted strictly with hereditary artisan techniques and natural raw materials ({craft.materialsDetected?.join(', ')}), ensuring 100% authentic cultural preservation and fair karigar wage empowerment.
+            <div className="bg-[#FAF9F6] p-3 rounded-xl border border-amber-900/15 text-[11px] text-[#0F1E2E] leading-relaxed text-justify font-serif relative z-10 box-border">
+              <strong className="text-[#A84A2C] font-sans uppercase tracking-wider">PROVENANCE GUARANTEE:</strong> This artifact has been verified under the Geographical Indications of Goods (Registration and Protection) Act, 1999. Crafted strictly with hereditary artisan techniques and natural raw materials ({craft.materialsDetected && craft.materialsDetected.length > 0 ? craft.materialsDetected.join(', ') : 'Pure natural raw materials'}), ensuring 100% authentic cultural preservation and fair karigar wage empowerment.
             </div>
 
             {/* Verification QR Code, Signatures & Royal Seals */}
-            <div className="flex flex-col md:flex-row items-center justify-between gap-4 pt-3.5 border-t border-amber-900/20 relative z-10">
-              
-              {/* Scannable Verification QR Code */}
-              <div className="flex items-center space-x-3 bg-white p-2.5 rounded-xl border border-stone-200 shadow-2xs w-full md:w-auto shrink-0">
-                <div className="w-13 h-13 sm:w-14 sm:h-14 bg-stone-950 rounded-lg flex items-center justify-center text-amber-400 shrink-0 p-1">
-                  <QrCode className="w-full h-full" />
+            <div className="pt-3 border-t-2 border-dashed border-amber-900/20 relative z-10 space-y-3">
+              {/* Scannable Verification QR Code Bar */}
+              <div className="flex flex-col sm:flex-row items-center justify-between gap-3 bg-white/95 p-2.5 sm:p-3 rounded-xl border border-stone-300/80 shadow-xs w-full box-border">
+                <div className="flex items-center gap-3 w-full sm:w-auto min-w-0">
+                  <div className="w-11 h-11 sm:w-13 sm:h-13 bg-stone-950 rounded-lg flex items-center justify-center text-amber-400 shrink-0 p-1 shadow-inner">
+                    <QrCode className="w-full h-full" />
+                  </div>
+                  <div className="text-left font-sans min-w-0 flex-1">
+                    <p className="text-[11px] sm:text-xs font-bold text-[#0F1E2E] leading-tight">Scan to Verify Authenticity</p>
+                    <p className="text-[9px] sm:text-[10px] text-stone-500 leading-tight mt-0.5">Immutable Record on ArtLynk Vault</p>
+                    <p className="text-[8px] sm:text-[9px] font-mono text-[#A84A2C] font-bold break-all mt-0.5">
+                      {dynamicCertId}
+                    </p>
+                  </div>
                 </div>
-                <div className="text-left font-sans">
-                  <p className="text-[10px] sm:text-[11px] font-bold text-[#0F1E2E]">Scan to Verify Authenticity</p>
-                  <p className="text-[9px] text-stone-500">Immutable Record on ArtLynk Vault</p>
-                  <p className="text-[8px] font-mono text-[#A84A2C] font-bold break-all max-w-[150px]">
-                    {dynamicCertId}
-                  </p>
+                <div className="text-left sm:text-right text-[9px] sm:text-[10px] text-stone-500 font-sans shrink-0 border-t sm:border-t-0 pt-1.5 sm:pt-0 w-full sm:w-auto border-stone-200">
+                  <span className="text-emerald-700 font-bold block">✓ Verified Direct Heritage Master</span>
+                  <span>{craft.artisan?.village ? `${craft.artisan.village}, ${craft.artisan.state}` : craft.stateOfOrigin}</span>
                 </div>
               </div>
 
-              {/* Dual Signatures & Registry Seal Stamps */}
-              <div className="flex flex-col sm:flex-row items-center justify-between sm:justify-end gap-4 w-full md:w-auto font-sans">
-                
-                {/* Master Artisan Signature */}
-                <div className="text-center shrink-0">
-                  <div className="h-7 flex items-end justify-center">
-                    <span className="font-serif italic text-sm sm:text-base font-bold text-[#A84A2C] tracking-wide border-b border-stone-400 px-2 pb-0.5">
-                      {craft.artisan.name}
-                    </span>
-                  </div>
-                  <span className="text-[8px] sm:text-[9px] font-bold text-stone-500 uppercase tracking-wider block mt-1">
-                    Master Karigar Seal
+              {/* Master Artisan Signature & Trust Seals Badge Group */}
+              <div className="w-full flex flex-col sm:flex-row items-center justify-between gap-3 pt-3 border-t border-[#b45309]/30 mt-4 px-2 box-border">
+                {/* Artisan Signature Block */}
+                <div className="flex flex-col items-center sm:items-start max-w-full min-w-0 flex-1">
+                  <span className="font-serif italic font-bold text-sm sm:text-base md:text-lg text-[#9a3412] tracking-wide text-center sm:text-left truncate w-full">
+                    {craft.artisan?.name || "Master Artisan"}
+                  </span>
+                  <span className="text-[10px] sm:text-xs uppercase tracking-widest text-[#78350f] font-semibold">
+                    {craft.artisan?.masterTitle || craft.artisan?.experienceLineageText || "Master Karigar Seal"}
                   </span>
                 </div>
 
-                {/* Royal Seal Stamp Badges (Properly sized with clear text) */}
+                {/* Trust Seals Badge Group */}
                 <div className="flex items-center gap-2 shrink-0">
-                  <div className="cert-stamp-badge w-14 h-14 sm:w-15 sm:h-15 rounded-full border-2 border-dashed border-[#27AE60] p-1 flex flex-col items-center justify-center text-center text-[#27AE60] bg-emerald-50/80 shadow-2xs">
-                    <ShieldCheck className="w-3.5 h-3.5 shrink-0 mb-0.5" />
-                    <span className="text-[7px] font-black uppercase leading-tight">
-                      SHUDDH
-                    </span>
-                    <span className="text-[6px] font-extrabold uppercase leading-none">
-                      HASTSHILP
-                    </span>
+                  <div className="cert-stamp-badge w-9 h-9 sm:w-10 sm:h-10 rounded-full border border-dashed border-emerald-600 flex flex-col items-center justify-center p-1 text-center bg-emerald-50/70 shadow-2xs transition-transform hover:scale-105">
+                    <span className="text-[7px] font-bold text-emerald-800 uppercase leading-none">SHUDDH</span>
+                    <span className="text-[6px] text-emerald-700 leading-none">HASTSHILP</span>
                   </div>
-
-                  <div className="cert-stamp-badge w-14 h-14 sm:w-15 sm:h-15 rounded-full border-2 border-dashed border-[#E06B26] p-1 flex flex-col items-center justify-center text-center text-[#E06B26] bg-orange-50/80 shadow-2xs">
-                    <ArtLynkLogo size={16} color="terracotta" className="shrink-0 mb-0.5" />
-                    <span className="text-[7px] font-black uppercase leading-tight">
-                      ARTLYNK
-                    </span>
-                    <span className="text-[6px] font-extrabold uppercase leading-none">
-                      VERIFIED
-                    </span>
+                  <div className="cert-stamp-badge w-9 h-9 sm:w-10 sm:h-10 rounded-full border border-dashed border-amber-600 flex flex-col items-center justify-center p-1 text-center bg-amber-50/70 shadow-2xs transition-transform hover:scale-105">
+                    <span className="text-[7px] font-bold text-amber-800 uppercase leading-none">ARTLYNK</span>
+                    <span className="text-[6px] text-amber-700 leading-none">VERIFIED</span>
                   </div>
-
-                  <div className="cert-stamp-badge w-14 h-14 sm:w-15 sm:h-15 rounded-full border-2 border-dashed border-[#A84A2C] p-1 flex flex-col items-center justify-center text-center text-[#A84A2C] bg-red-50/80 shadow-2xs">
-                    <Award className="w-3.5 h-3.5 shrink-0 mb-0.5" />
-                    <span className="text-[7px] font-black uppercase leading-tight">
-                      GI BHARAT
-                    </span>
-                    <span className="text-[6px] font-extrabold uppercase leading-none">
-                      PROTECTED
-                    </span>
+                  <div className="cert-stamp-badge w-9 h-9 sm:w-10 sm:h-10 rounded-full border border-dashed border-rose-700 flex flex-col items-center justify-center p-1 text-center bg-rose-50/70 shadow-2xs transition-transform hover:scale-105">
+                    <span className="text-[7px] font-bold text-rose-800 uppercase leading-none">GI BHARAT</span>
+                    <span className="text-[6px] text-rose-700 leading-none">PROTECTED</span>
                   </div>
                 </div>
               </div>
-
             </div>
 
           </div>

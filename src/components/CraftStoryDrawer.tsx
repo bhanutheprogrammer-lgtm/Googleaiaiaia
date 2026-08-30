@@ -8,7 +8,6 @@ import {
   MessageCircle, 
   Sparkles, 
   Clock, 
-  Coins, 
   Check, 
   Share2, 
   QrCode, 
@@ -428,42 +427,6 @@ export const CraftStoryDrawer: React.FC = () => {
                 ))}
               </div>
             </div>
-          </div>
-
-          {/* Kala-Moolya Fair Price Transparency Chart */}
-          <div className="p-5 rounded-2xl bg-[#1A344D] text-white border border-amber-500/30 space-y-4">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-2">
-                <Coins className="w-4 h-4 text-amber-400" />
-                <h3 className="text-sm font-bold text-amber-200 uppercase tracking-wider font-sans">
-                  {t.hero_fair_price_title}
-                </h3>
-              </div>
-              <span className="text-xl font-extrabold text-amber-300 font-serif">
-                ₹{craft.pricingEstimation.recommendedRetailPriceINR.toLocaleString('en-IN')}
-              </span>
-            </div>
-
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 font-sans">
-              <div className="p-3 rounded-xl bg-white/5 border border-white/10">
-                <p className="text-[10px] text-stone-300">{t.hero_material_cost}</p>
-                <p className="text-sm font-bold text-white">₹{craft.pricingEstimation.baseMaterialCostINR.toLocaleString('en-IN')}</p>
-              </div>
-
-              <div className="p-3 rounded-xl bg-[#27AE60]/20 border border-[#27AE60]/40">
-                <p className="text-[10px] text-emerald-300 font-semibold">{t.hero_artisan_wage}</p>
-                <p className="text-sm font-bold text-emerald-300">₹{craft.pricingEstimation.fairKarigarWageINR.toLocaleString('en-IN')}</p>
-              </div>
-
-              <div className="p-3 rounded-xl bg-amber-400/20 border border-amber-400/40">
-                <p className="text-[10px] text-amber-300 font-semibold">{t.bazaar_fair_price_label}</p>
-                <p className="text-sm font-bold text-amber-200">₹{craft.pricingEstimation.recommendedRetailPriceINR.toLocaleString('en-IN')}</p>
-              </div>
-            </div>
-
-            <p className="text-xs text-stone-300 italic font-serif">
-              💡 {craft.pricingEstimation.pricingRationale}
-            </p>
           </div>
 
           {/* Care Instructions */}
